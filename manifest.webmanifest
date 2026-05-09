@@ -1,0 +1,33 @@
+{
+  "name": "Primordial Ooze Milestone Rolodex",
+  "short_name": "Ooze",
+  "description": "A sobriety milestone tracker and phone list for the Primordial Ooze home group in Roseville, CA.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f8ee",
+  "theme_color": "#8bd600",
+  "icons": [
+    {
+      "src": "./icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Milestones",
+      "short_name": "Milestones",
+      "url": "./index.html",
+      "description": "Open the milestone rolodex"
+    }
+  ]
+}

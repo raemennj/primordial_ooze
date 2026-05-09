@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ooze">
+  <meta name="theme-color" content="#8bd600">
+  <meta name="description" content="Primordial Ooze milestone rolodex and phone list for Roseville, CA.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.svg">
+  <title>Primordial Ooze</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f4f8ee;
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: rgba(31, 41, 51, 0.12);
+      --ooze: #8bd600;
+      --ooze-dark: #2f6f00;
+      --ooze-bright: #b8ff23;
+      --gold: #b7791f;
+      --green: #24745a;
+      --blue: #2764a7;
+      --rose: #a3445b;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 18% -4%, rgba(160, 230, 20, 0.20), transparent 36%),
+        radial-gradient(circle at 86% 18%, rgba(64, 150, 0, 0.14), transparent 32%),
+        linear-gradient(180deg, #fbfff5 0%, var(--page) 42%, #eef5e7 100%);
+      color: var(--ink);
+      overscroll-behavior-y: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .glass {
+      background: rgba(247, 252, 240, 0.90);
+      border-bottom: 1px solid rgba(47, 111, 0, 0.14);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      transition: transform 240ms ease, opacity 240ms ease;
+      will-change: transform, opacity;
+    }
+
+    .glass.header-hidden {
+      opacity: 0;
+      transform: translateY(-105%);
+    }
+
+    .ooze-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 0 1 auto;
+    }
+
+    .ooze-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 16px rgba(47, 111, 0, 0.28));
+      flex: 0 0 auto;
+    }
+
+    .header-search {
+      flex: 1 1 260px;
+      min-width: 180px;
+    }
+
+    @media (max-width: 640px) {
+      .header-row {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .header-search {
+        order: 3;
+        flex-basis: 100%;
+      }
+    }
+
+    .ooze-title {
+      color: #071202;
+      text-shadow: 0 1px 0 rgba(184, 255, 35, 0.48);
+    }
+
+    .ooze-rule {
+      height: 5px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 18% 50%, #eaff9b 0 8%, transparent 9%),
+        linear-gradient(90deg, #2f6f00, #b8ff23 38%, #67ad00 70%, #173d00);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 5px 12px rgba(47, 111, 0, 0.18);
+    }
+
+    .milestone-card {
+      position: relative;
+      min-height: 190px;
+      padding: 20px 20px 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(252, 255, 248, 0.98)),
+        radial-gradient(circle at 92% 8%, rgba(184, 255, 35, 0.10), transparent 34%);
+      border: 1px solid rgba(31, 41, 51, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 -6px 16px -4px rgba(31, 41, 51, 0.14), 0 14px 30px rgba(31, 41, 51, 0.08);
+      overflow: hidden;
+      will-change: transform;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .milestone-card.is-selected {
+      z-index: 1000 !important;
+      transform: translateY(-4px) scale(1.012);
+      box-shadow: 0 -8px 18px -4px rgba(31, 41, 51, 0.20), 0 22px 42px rgba(31, 41, 51, 0.18);
+    }
+
+    .milestone-card::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 24%),
+        linear-gradient(90deg, rgba(47, 111, 0, 0.10), rgba(255, 255, 255, 0) 22%);
+      mix-blend-mode: multiply;
+      opacity: 0.38;
+    }
+
+    .milestone-card:active {
+      transform: scale(0.99);
+      background: #fafafa;
+    }
+
+    .milestone-card.is-selected:active {
+      transform: translateY(-4px) scale(1.012);
+    }
+
+    .milestone-card + .milestone-card {
+      margin-top: -100px;
+    }
+
+    .milestone-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 14px;
+      background: var(--accent, linear-gradient(90deg, #1f6f55, #38a37d, #165642));
+      box-shadow:
+        inset 2px 0 2px rgba(255, 255, 255, 0.68),
+        inset -3px 0 5px rgba(0, 0, 0, 0.22),
+        5px 0 12px rgba(31, 41, 51, 0.12);
+    }
+
+    .milestone-band {
+      flex: 0 0 auto;
+      width: min(43vw, 214px);
+      min-width: 182px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 12% 24%, rgba(184, 255, 35, 0.18), transparent 28%),
+        color-mix(in srgb, var(--band-color, var(--green)) 12%, white);
+      border: 1px solid color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
+      position: relative;
+      overflow: hidden;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .milestone-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--milestone-bg, radial-gradient(circle at 22% 50%, rgba(255, 255, 255, 0.72), transparent 34%));
+      opacity: 0.72;
+    }
+
+    .milestone-band > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .odometer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .odometer-segments {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .odometer-segment {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .odometer-bevel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 4px 5px 5px;
+      border-radius: 7px;
+      background:
+        linear-gradient(180deg, rgba(139, 214, 0, 0.12), transparent 30%),
+        linear-gradient(180deg, #4a3c25 0%, #2a2219 40%, #2a2219 60%, #1a1209 100%);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 5px 14px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.50);
+    }
+
+    .odometer-bevel::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      top: 50%;
+      height: 2px;
+      transform: translateY(-50%);
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 15%, rgba(0, 0, 0, 0.55) 85%, transparent);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .odometer-digit {
+      position: relative;
+      width: 20px;
+      height: 31px;
+      overflow: hidden;
+      background: #0e0e0e;
+      border-left: 1px solid #3a2c18;
+      border-right: 1px solid #3a2c18;
+    }
+
+    .odometer-digit:first-child {
+      border-left: 0;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .odometer-digit:last-child {
+      border-right: 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .odometer-digit::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 48%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.18) 100%);
+    }
+
+    .odometer-drum {
+      position: absolute;
+      inset: 0 0 auto;
+      transform: translateY(calc(var(--digit) * -31px));
+    }
+
+    .odometer-drum span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 31px;
+      font-family: "SF Pro Display", "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+      font-size: 25px;
+      font-stretch: condensed;
+      font-weight: 650;
+      line-height: 1;
+      color: var(--odometer-color, #ff9500);
+      text-shadow: 0 0 8px var(--odometer-glow, rgba(255, 149, 0, 0.42)), 0 0 18px var(--odometer-glow, rgba(255, 149, 0, 0.34));
+      user-select: none;
+    }
+
+    .odometer-colon {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 1px 12px;
+    }
+
+    .odometer-colon span {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--odometer-color, #ff9500);
+      opacity: 0.42;
+      box-shadow: 0 0 8px var(--odometer-glow, rgba(255, 149, 0, 0.42));
+    }
+
+    .odometer-label {
+      color: var(--odometer-color, #667085);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.82;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(31, 41, 51, 0.08);
+      color: #475467;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 41, 51, 0.1);
+      background: #fff;
+      color: #1f2933;
+    }
+
+    .primary-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 0;
+      background: #1f2933;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .secondary-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 41, 51, 0.12);
+      background: #fff;
+      color: #1f2933;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .card-tools {
+      display: grid !important;
+      grid-template-columns: 11fr 12fr 28fr 15fr 16fr 18fr;
+      gap: 4px;
+      width: 100%;
+      overflow: visible;
+      padding-top: 1px;
+      padding-bottom: 1px;
+    }
+
+    .card-tools .primary-action,
+    .card-tools .secondary-action,
+    .card-tools .chip {
+      width: 100%;
+      min-height: 30px;
+      padding: 0 5px;
+      font-size: 10px;
+      font-weight: 850;
+      line-height: 1;
+      min-width: 0;
+      text-align: center;
+    }
+
+    .card-tools .save-button {
+      font-size: 9.5px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-tools .primary-action {
+      background: #152435;
+    }
+
+    .card-tools .chip {
+      background: rgba(31, 41, 51, 0.07);
+      color: #566375;
+    }
+
+    .card-tools .months::before,
+    .card-tools .weeks::before,
+    .card-tools .days::before {
+      margin-right: 3px;
+      color: #8a97a8;
+      font-weight: 900;
+    }
+
+    .card-tools .months::before {
+      content: "M";
+    }
+
+    .card-tools .weeks::before {
+      content: "W";
+    }
+
+    .card-tools .days::before {
+      content: "D";
+    }
+  </style>
+</head>
+<body class="h-screen w-full overflow-hidden">
+  <header id="app-header" class="glass absolute inset-x-0 top-0 z-30 px-4 pt-12 pb-3">
+    <div class="mx-auto max-w-3xl">
+      <div class="header-row mb-3 flex items-center justify-between gap-3">
+        <div class="ooze-brand">
+          <img class="ooze-logo" src="ooze-header.png" alt="Primordial Ooze recovery logo">
+          <div class="min-w-0">
+            <p class="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4f6f20]">Roseville, CA</p>
+            <h1 class="ooze-title truncate text-2xl font-black leading-tight">PRIMORDIAL OOZE</h1>
+          </div>
+        </div>
+        <div class="header-search relative">
+          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
+          </svg>
+          <input id="search-input" class="block w-full rounded-2xl border-0 bg-white py-3 pl-10 pr-4 text-[16px] font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-black/5 placeholder:text-gray-500 focus:ring-2 focus:ring-[#2764a7]" type="search" placeholder="Search">
+        </div>
+        <button id="refresh-button" class="icon-button active:scale-95" type="button" aria-label="Refresh list" title="Refresh">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+            <path d="M3 4v5h5"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="ooze-rule"></div>
+    </div>
+  </header>
+
+  <main id="app-main" class="h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 pb-40 pt-[168px]">
+    <section class="mx-auto max-w-3xl">
+      <div id="state-panel"></div>
+      <div id="cards" class="mx-auto flex max-w-md flex-col pb-8"></div>
+    </section>
+  </main>
+
+  <template id="card-template">
+    <article class="milestone-card">
+      <div class="mb-4 flex items-start justify-between gap-3">
+        <div class="min-w-0 flex-1">
+          <h2 class="member-name truncate text-xl font-black leading-tight text-gray-950"></h2>
+          <p class="display-phone mt-1 text-sm font-bold text-gray-500"></p>
+          <p class="sobriety-date mt-1 text-sm font-bold text-gray-500"></p>
+        </div>
+        <div class="milestone-band px-3 py-2">
+          <div class="display-milestone odometer"></div>
+        </div>
+      </div>
+
+      <div class="card-tools flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <a class="call-link primary-action" href="#">Call</a>
+        <a class="text-link secondary-action" href="#">Text</a>
+        <button class="save-button secondary-action" type="button">Save Contact</button>
+        <span class="months chip"></span>
+        <span class="weeks chip"></span>
+        <span class="days chip"></span>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const SHEET_ID = '1rqItTzvPbPHIwGtY0sFQcquLP1LGqr8WarcVvBL1Kxw';
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    const state = {
+      contacts: [],
+      query: ''
+    };
+
+    const els = {
+      cards: document.getElementById('cards'),
+      statePanel: document.getElementById('state-panel'),
+      search: document.getElementById('search-input'),
+      refresh: document.getElementById('refresh-button'),
+      header: document.getElementById('app-header'),
+      main: document.getElementById('app-main'),
+      template: document.getElementById('card-template')
+    };
+
+    function normalizeHeader(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    }
+
+    function cell(row, index) {
+      if (index === -1 || !row.c || !row.c[index]) return '';
+      const value = row.c[index].f ?? row.c[index].v ?? '';
+      return String(value).trim();
+    }
+
+    function parseGoogleSheetResponse(text) {
+      const start = text.indexOf('google.visualization.Query.setResponse(');
+      if (start === -1) throw new Error('Google Sheets response did not include table data.');
+
+      const jsonStart = text.indexOf('(', start) + 1;
+      const jsonEnd = text.lastIndexOf(');');
+      if (jsonStart <= 0 || jsonEnd <= jsonStart) {
+        throw new Error('Google Sheets response could not be parsed.');
+      }
+
+      return validateSheetData(JSON.parse(text.slice(jsonStart, jsonEnd)));
+    }
+
+    function validateSheetData(data) {
+      if (!data.table || !Array.isArray(data.table.rows)) {
+        const reason = data.errors && data.errors[0] && data.errors[0].detailed_message;
+        throw new Error(reason || 'Google Sheets response did not include rows.');
+      }
+      return data;
+    }
+
+    function loadSheetViaScript(url) {
+      return new Promise((resolve, reject) => {
+        const previousGoogle = window.google;
+        window.google = window.google || {};
+        window.google.visualization = window.google.visualization || {};
+        window.google.visualization.Query = window.google.visualization.Query || {};
+
+        const script = document.createElement('script');
+        const cleanup = () => {
+          script.remove();
+          if (previousGoogle === undefined) {
+            delete window.google;
+          }
+        };
+
+        window.google.visualization.Query.setResponse = data => {
+          try {
+            cleanup();
+            resolve(validateSheetData(data));
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Google Sheets script load was blocked.'));
+        };
+
+        script.src = url;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadSheetData() {
+      const url = `${SHEET_URL}&cacheBust=${Date.now()}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Sheet request failed: ${response.status}`);
+        return parseGoogleSheetResponse((await response.text()).trim());
+      } catch (fetchError) {
+        console.warn('Fetch load failed, trying script fallback.', fetchError);
+        return loadSheetViaScript(url);
+      }
+    }
+
+    function cleanPhoneNumber(phone) {
+      return String(phone || '').replace(/[^\d+]/g, '');
+    }
+
+    function findColumn(columns, names, fallback = -1) {
+      const normalized = columns.map(col => normalizeHeader(col && col.label));
+      for (const name of names) {
+        const target = normalizeHeader(name);
+        const exact = normalized.indexOf(target);
+        if (exact !== -1) return exact;
+      }
+      for (const name of names) {
+        const target = normalizeHeader(name);
+        const partial = normalized.findIndex(label => label.includes(target));
+        if (partial !== -1) return partial;
+      }
+      return fallback;
+    }
+
+    function parseContacts(data) {
+      const columns = data.table.cols || [];
+      const idx = {
+        name: findColumn(columns, ['display name', 'name'], 0),
+        sobrietyDate: findColumn(columns, ['sobriety date', 'birthday', 'birth date', 'bday'], 1),
+        displayPhone: findColumn(columns, ['display phone', 'phone', 'phone number'], 2),
+        formattedName: findColumn(columns, ['formatted name'], 4),
+        dialerNumber: findColumn(columns, ['dialer number', 'link phone'], 5),
+        totalYears: findColumn(columns, ['total years']),
+        totalMonths: findColumn(columns, ['total months']),
+        totalWeeks: findColumn(columns, ['total weeks']),
+        totalDays: findColumn(columns, ['total days']),
+        milestoneType: findColumn(columns, ['milestone type']),
+        displayMilestone: findColumn(columns, ['pwa display milestone', 'display milestone']),
+        birthMonth: findColumn(columns, ['sobriety birth month', 'birth month']),
+        memberTier: findColumn(columns, ['member tier'])
+      };
+
+      return (data.table.rows || []).map(row => {
+        const name = cell(row, idx.name);
+        const displayPhone = cell(row, idx.displayPhone);
+        const dialerNumber = cell(row, idx.dialerNumber) || cleanPhoneNumber(displayPhone);
+        const totalYears = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, '')) || 0;
+        const totalMonths = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, '')) || 0;
+        const totalWeeks = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, '')) || 0;
+        const totalDays = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, '')) || 0;
+
+        if (!name && !displayPhone) return null;
+
+        return {
+          name,
+          formattedName: cell(row, idx.formattedName) || name,
+          sobrietyDate: cell(row, idx.sobrietyDate),
+          displayPhone,
+          dialerNumber,
+          totalYears,
+          totalMonths,
+          totalWeeks,
+          totalDays,
+          milestoneType: cell(row, idx.milestoneType) || inferMilestoneType(totalYears, totalMonths),
+          displayMilestone: cell(row, idx.displayMilestone) || formatMilestone(totalYears, totalMonths, totalDays),
+          birthMonth: cell(row, idx.birthMonth),
+          memberTier: cell(row, idx.memberTier) || inferTier(totalYears, totalDays)
+        };
+      }).filter(Boolean);
+    }
+
+    function inferMilestoneType(years, months) {
+      if (years >= 1 && months % 12 === 0) return 'Annual milestone';
+      if (months > 0 && months < 12) return 'Monthly milestone';
+      return 'Daily milestone';
+    }
+
+    function inferTier(years, days) {
+      if (years >= 20) return 'Oldtimer';
+      if (years >= 10) return 'Double digits';
+      if (years >= 1) return 'Year marker';
+      if (days >= 30) return 'First year';
+      return 'New';
+    }
+
+    function formatMilestone(years, months, days) {
+      if (years >= 1) return `${Math.floor(years)} ${years === 1 ? 'year' : 'years'}`;
+      if (months >= 1) return `${Math.floor(months)} ${months === 1 ? 'month' : 'months'}`;
+      if (days >= 1) return `${Math.floor(days)} ${days === 1 ? 'day' : 'days'}`;
+      return 'Today';
+    }
+
+    function parseSobrietyDate(value) {
+      const text = String(value || '').trim();
+      const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (!match) return null;
+
+      const month = Number(match[1]) - 1;
+      const day = Number(match[2]);
+      const rawYear = Number(match[3]);
+      const year = rawYear < 100 ? rawYear + 1900 : rawYear;
+      const date = new Date(year, month, day);
+
+      if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null;
+      return date;
+    }
+
+    function durationParts(contact) {
+      const start = parseSobrietyDate(contact.sobrietyDate);
+      const today = new Date();
+      if (start && start <= today) {
+        let years = today.getFullYear() - start.getFullYear();
+        let months = today.getMonth() - start.getMonth();
+        let days = today.getDate() - start.getDate();
+
+        if (days < 0) {
+          months -= 1;
+          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        }
+        if (months < 0) {
+          years -= 1;
+          months += 12;
+        }
+
+        return { years, months, days };
+      }
+
+      return {
+        years: Math.floor(contact.totalYears || 0),
+        months: Math.floor(contact.totalMonths || 0) % 12,
+        days: Math.floor(contact.totalDays || 0) % 30
+      };
+    }
+
+    function buildOdometerNumber(value, digits) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'odometer-bevel';
+      String(Math.max(0, value)).padStart(digits, '0').slice(-digits).split('').forEach(char => {
+        const digit = document.createElement('div');
+        digit.className = 'odometer-digit';
+        const drum = document.createElement('div');
+        drum.className = 'odometer-drum';
+        drum.style.setProperty('--digit', Number(char));
+        for (let i = 0; i <= 10; i += 1) {
+          const span = document.createElement('span');
+          span.textContent = i % 10;
+          drum.appendChild(span);
+        }
+        digit.appendChild(drum);
+        wrapper.appendChild(digit);
+      });
+      return wrapper;
+    }
+
+    function buildOdometerSeparator() {
+      const separator = document.createElement('div');
+      separator.className = 'odometer-colon';
+      separator.innerHTML = '<span></span><span></span>';
+      return separator;
+    }
+
+    function renderOdometer(el, contact) {
+      const parts = durationParts(contact);
+      const segments = document.createElement('div');
+      segments.className = 'odometer-segments';
+
+      [
+        ['Years', parts.years, 2],
+        ['Months', parts.months, 2],
+        ['Days', parts.days, 2]
+      ].forEach(([label, value, digits], index) => {
+        if (index > 0) segments.appendChild(buildOdometerSeparator());
+
+        const segment = document.createElement('div');
+        segment.className = 'odometer-segment';
+        segment.appendChild(buildOdometerNumber(value, digits));
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'odometer-label';
+        labelEl.textContent = label;
+        segment.appendChild(labelEl);
+        segments.appendChild(segment);
+      });
+
+      el.replaceChildren(segments);
+    }
+
+    function tierMetal(contact) {
+      const tier = String(contact.memberTier || '').trim().toLowerCase();
+      if (tier.includes('platinum') || tier.includes('platnum')) {
+        return {
+          band: '#8f9aa3',
+          display: '#eef2f5',
+          glow: 'rgba(238, 242, 245, 0.34)',
+          accent: 'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)'
+        };
+      }
+      if (tier.includes('gold')) {
+        return {
+          band: '#b7791f',
+          display: '#f6c453',
+          glow: 'rgba(246, 196, 83, 0.38)',
+          accent: 'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)'
+        };
+      }
+      if (tier.includes('silver')) {
+        return {
+          band: '#9ca3af',
+          display: '#d9dde3',
+          glow: 'rgba(217, 221, 227, 0.34)',
+          accent: 'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)'
+        };
+      }
+      if (tier.includes('bronze')) {
+        return {
+          band: '#a16207',
+          display: '#dc8d3a',
+          glow: 'rgba(220, 141, 58, 0.38)',
+          accent: 'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)'
+        };
+      }
+      return {
+        band: '#24745a',
+        display: '#58c493',
+        glow: 'rgba(88, 196, 147, 0.34)',
+        accent: 'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)'
+      };
+    }
+
+    function milestoneBackground(contact) {
+      const type = String(contact.milestoneType || '').trim().toLowerCase();
+      if (type.includes('year') || type.includes('annual')) {
+        return [
+          'radial-gradient(circle at 18% 48%, rgba(255, 238, 170, 0.78), transparent 30%)',
+          'linear-gradient(135deg, rgba(183, 121, 31, 0.20), transparent 52%)',
+          'repeating-linear-gradient(90deg, rgba(183, 121, 31, 0.13) 0 2px, transparent 2px 13px)'
+        ].join(', ');
+      }
+      if (type.includes('month')) {
+        return [
+          'radial-gradient(circle at 20% 44%, rgba(126, 211, 180, 0.58), transparent 32%)',
+          'linear-gradient(135deg, rgba(36, 116, 90, 0.18), transparent 58%)',
+          'repeating-linear-gradient(135deg, rgba(36, 116, 90, 0.12) 0 3px, transparent 3px 15px)'
+        ].join(', ');
+      }
+      if (type.includes('week')) {
+        return [
+          'radial-gradient(circle at 18% 48%, rgba(147, 197, 253, 0.58), transparent 32%)',
+          'linear-gradient(135deg, rgba(39, 100, 167, 0.17), transparent 58%)',
+          'repeating-linear-gradient(0deg, rgba(39, 100, 167, 0.10) 0 2px, transparent 2px 12px)'
+        ].join(', ');
+      }
+      return [
+        'radial-gradient(circle at 18% 48%, rgba(203, 213, 225, 0.72), transparent 32%)',
+        'linear-gradient(135deg, rgba(102, 112, 133, 0.14), transparent 58%)'
+      ].join(', ');
+    }
+
+    function matchesQuery(contact) {
+      const q = state.query.trim().toLowerCase();
+      if (!q) return true;
+      return [
+        contact.name,
+        contact.formattedName,
+        contact.displayPhone,
+        contact.sobrietyDate,
+        contact.birthMonth,
+        contact.memberTier,
+        contact.milestoneType,
+        contact.displayMilestone
+      ].some(value => String(value || '').toLowerCase().includes(q));
+    }
+
+    function digitsOnly(value) {
+      return String(value || '').replace(/\D/g, '');
+    }
+
+    function searchRank(contact) {
+      const q = state.query.trim().toLowerCase();
+      if (!q) return 0;
+
+      const phoneQuery = digitsOnly(q);
+      const name = String(contact.name || '').toLowerCase();
+      const formattedName = String(contact.formattedName || '').toLowerCase();
+      const phone = digitsOnly(contact.displayPhone || contact.dialerNumber);
+      const fields = [
+        String(contact.sobrietyDate || '').toLowerCase(),
+        String(contact.birthMonth || '').toLowerCase(),
+        String(contact.memberTier || '').toLowerCase(),
+        String(contact.milestoneType || '').toLowerCase(),
+        String(contact.displayMilestone || '').toLowerCase()
+      ];
+
+      if (name === q || formattedName === q) return 0;
+      if (name.startsWith(q) || formattedName.startsWith(q)) return 1;
+      if (phoneQuery && phone.startsWith(phoneQuery)) return 2;
+      if (name.includes(q) || formattedName.includes(q)) return 3;
+      if (phoneQuery && phone.includes(phoneQuery)) return 4;
+      if (fields.some(field => field.startsWith(q))) return 5;
+      return 6;
+    }
+
+    function visibleContacts() {
+      return state.contacts
+        .filter(matchesQuery)
+        .sort((a, b) => searchRank(a) - searchRank(b) || a.name.localeCompare(b.name) || b.totalDays - a.totalDays);
+    }
+
+    function renderState(message, tone = 'neutral') {
+      els.cards.innerHTML = '';
+      const colors = tone === 'error' ? 'bg-red-50 text-red-700 ring-red-100' : 'bg-white text-gray-600 ring-black/5';
+      els.statePanel.innerHTML = `<div class="${colors} rounded-lg px-4 py-5 text-center text-sm font-semibold shadow-sm ring-1">${message}</div>`;
+    }
+
+    function renderCards() {
+      const contacts = visibleContacts();
+      els.cards.innerHTML = '';
+
+      if (!contacts.length) {
+        renderState(state.contacts.length ? 'No matching members found.' : 'No members found in the sheet.');
+        return;
+      }
+
+      els.statePanel.innerHTML = '';
+      contacts.forEach(contact => {
+        const fragment = els.template.content.cloneNode(true);
+        const card = fragment.querySelector('.milestone-card');
+        card.tabIndex = 0;
+        const metal = tierMetal(contact);
+        card.style.setProperty('--accent', metal.accent);
+        card.style.setProperty('--band-color', metal.band);
+        card.style.setProperty('--odometer-color', metal.display);
+        card.style.setProperty('--odometer-glow', metal.glow);
+        card.querySelector('.milestone-band').style.setProperty('--milestone-bg', milestoneBackground(contact));
+
+        fragment.querySelector('.member-name').textContent = contact.name || 'Unnamed member';
+        fragment.querySelector('.display-phone').textContent = contact.displayPhone || 'No phone number listed';
+        fragment.querySelector('.sobriety-date').textContent = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : 'Sobriety date: TBD';
+        renderOdometer(fragment.querySelector('.display-milestone'), contact);
+        fragment.querySelector('.months').textContent = Math.floor(contact.totalMonths || 0);
+        fragment.querySelector('.weeks').textContent = Math.floor(contact.totalWeeks || 0);
+        fragment.querySelector('.days').textContent = Math.floor(contact.totalDays || 0);
+
+        const call = fragment.querySelector('.call-link');
+        const text = fragment.querySelector('.text-link');
+        const save = fragment.querySelector('.save-button');
+
+        if (contact.dialerNumber) {
+          call.href = `tel:${contact.dialerNumber}`;
+          text.href = `sms:${contact.dialerNumber}`;
+        } else {
+          call.classList.add('opacity-40', 'pointer-events-none');
+          text.classList.add('opacity-40', 'pointer-events-none');
+        }
+
+        save.addEventListener('click', () => downloadVCard(contact));
+        card.addEventListener('pointerdown', () => selectCard(card));
+        card.addEventListener('focusin', () => selectCard(card));
+        els.cards.appendChild(fragment);
+      });
+    }
+
+    function selectCard(card) {
+      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
+        if (selected !== card) selected.classList.remove('is-selected');
+      });
+      card.classList.add('is-selected');
+    }
+
+    function clearSelectedCard() {
+      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
+        selected.classList.remove('is-selected');
+      });
+    }
+
+    function escapeVCard(value) {
+      return String(value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\r?\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+    }
+
+    function safeFileName(value) {
+      return String(value || 'AA Contact')
+        .trim()
+        .replace(/[^a-z0-9]+/gi, '_')
+        .replace(/^_+|_+$/g, '') || 'AA_Contact';
+    }
+
+    function downloadVCard(contact) {
+      const safeName = contact.formattedName || contact.name || 'AA Contact';
+      const note = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : '';
+      const lines = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        `FN:${escapeVCard(safeName)}`,
+        `N:${escapeVCard(safeName)};;;;`,
+        contact.dialerNumber ? `TEL;TYPE=CELL:${escapeVCard(contact.dialerNumber)}` : '',
+        note ? `NOTE:${escapeVCard(note)}` : '',
+        'END:VCARD'
+      ].filter(Boolean);
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
+      const objectUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = `${safeFileName(safeName)}.vcf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(objectUrl);
+    }
+
+    async function fetchContacts() {
+      renderState('Loading members...');
+      try {
+        const data = await loadSheetData();
+        state.contacts = parseContacts(data);
+        renderCards();
+      } catch (error) {
+        console.error(error);
+        renderState(`Unable to load the sheet. ${error.message}`, 'error');
+      }
+    }
+
+    els.search.addEventListener('input', event => {
+      state.query = event.target.value;
+      renderCards();
+    });
+
+    els.refresh.addEventListener('click', fetchContacts);
+
+    let lastScrollTop = 0;
+    els.main.addEventListener('scroll', () => {
+      const current = els.main.scrollTop;
+      const scrollingDown = current > lastScrollTop + 8;
+      const scrollingUp = current < lastScrollTop - 8;
+
+      if (scrollingDown && current > 80 && document.activeElement !== els.search) {
+        els.header.classList.add('header-hidden');
+      }
+      if (scrollingUp || current < 24) {
+        els.header.classList.remove('header-hidden');
+      }
+
+      lastScrollTop = Math.max(0, current);
+    }, { passive: true });
+
+    els.search.addEventListener('focus', () => {
+      els.header.classList.remove('header-hidden');
+    });
+
+    document.addEventListener('pointerdown', event => {
+      if (event.target.closest('.milestone-card')) return;
+      clearSelectedCard();
+    });
+
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(error => {
+          console.warn('Service worker registration failed.', error);
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchContacts);
+  </script>
+</body>
+</html>
