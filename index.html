@@ -322,13 +322,13 @@
     }
 
     .odometer-label {
-      color: var(--odometer-color, #667085);
+      color: color-mix(in srgb, var(--odometer-color, #667085) 80%, black);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      opacity: 0.82;
+      opacity: 1;
     }
 
     .chip {
@@ -411,6 +411,32 @@
       text-align: center;
     }
 
+    .card-tools .chip {
+      flex-direction: column;
+      justify-content: center;
+      gap: 1px;
+      padding-top: 3px;
+      padding-bottom: 3px;
+    }
+
+    .stat-number {
+      display: block;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-label {
+      display: block;
+      color: #64748b;
+      font-size: 7.5px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
     .card-tools .save-button {
       font-size: 9.5px;
       letter-spacing: -0.01em;
@@ -425,25 +451,6 @@
       color: #566375;
     }
 
-    .card-tools .months::before,
-    .card-tools .weeks::before,
-    .card-tools .days::before {
-      margin-right: 3px;
-      color: #8a97a8;
-      font-weight: 900;
-    }
-
-    .card-tools .months::before {
-      content: "M";
-    }
-
-    .card-tools .weeks::before {
-      content: "W";
-    }
-
-    .card-tools .days::before {
-      content: "D";
-    }
   </style>
 </head>
 <body class="h-screen w-full overflow-hidden">
@@ -939,9 +946,9 @@
         fragment.querySelector('.display-phone').textContent = contact.displayPhone || 'No phone number listed';
         fragment.querySelector('.sobriety-date').textContent = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : 'Sobriety date: TBD';
         renderOdometer(fragment.querySelector('.display-milestone'), contact);
-        fragment.querySelector('.months').textContent = Math.floor(contact.totalMonths || 0);
-        fragment.querySelector('.weeks').textContent = Math.floor(contact.totalWeeks || 0);
-        fragment.querySelector('.days').textContent = Math.floor(contact.totalDays || 0);
+        fragment.querySelector('.months').innerHTML = `<span class="stat-number">${Math.floor(contact.totalMonths || 0)}</span><span class="stat-label">Months</span>`;
+        fragment.querySelector('.weeks').innerHTML = `<span class="stat-number">${Math.floor(contact.totalWeeks || 0)}</span><span class="stat-label">Weeks</span>`;
+        fragment.querySelector('.days').innerHTML = `<span class="stat-number">${Math.floor(contact.totalDays || 0)}</span><span class="stat-label">Days</span>`;
 
         const call = fragment.querySelector('.call-link');
         const text = fragment.querySelector('.text-link');
