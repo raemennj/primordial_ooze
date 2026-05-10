@@ -470,12 +470,6 @@
           </svg>
           <input id="search-input" class="block w-full rounded-2xl border-0 bg-white py-3 pl-10 pr-4 text-[16px] font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-black/5 placeholder:text-gray-500 focus:ring-2 focus:ring-[#2764a7]" type="search" placeholder="Search">
         </div>
-        <button id="refresh-button" class="icon-button active:scale-95" type="button" aria-label="Refresh list" title="Refresh">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 12a9 9 0 1 0 3-6.7"></path>
-            <path d="M3 4v5h5"></path>
-          </svg>
-        </button>
       </div>
       <div class="ooze-rule"></div>
     </div>
@@ -525,7 +519,6 @@
       cards: document.getElementById('cards'),
       statePanel: document.getElementById('state-panel'),
       search: document.getElementById('search-input'),
-      refresh: document.getElementById('refresh-button'),
       header: document.getElementById('app-header'),
       main: document.getElementById('app-main'),
       template: document.getElementById('card-template')
@@ -1036,8 +1029,6 @@
       state.query = event.target.value;
       renderCards();
     });
-
-    els.refresh.addEventListener('click', fetchContacts);
 
     let lastScrollTop = 0;
     els.main.addEventListener('scroll', () => {
