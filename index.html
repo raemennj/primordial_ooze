@@ -944,7 +944,7 @@
 
         fragment.querySelector('.member-name').textContent = contact.name || 'Unnamed member';
         fragment.querySelector('.display-phone').textContent = contact.displayPhone || 'No phone number listed';
-        fragment.querySelector('.sobriety-date').textContent = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : 'Sobriety date: TBD';
+        fragment.querySelector('.sobriety-date').textContent = contact.sobrietyDate ? `Since: ${contact.sobrietyDate}` : 'Since: TBD';
         renderOdometer(fragment.querySelector('.display-milestone'), contact);
         fragment.querySelector('.months').innerHTML = `<span class="stat-number">${Math.floor(contact.totalMonths || 0)}</span><span class="stat-label">Months</span>`;
         fragment.querySelector('.weeks').innerHTML = `<span class="stat-number">${Math.floor(contact.totalWeeks || 0)}</span><span class="stat-label">Weeks</span>`;
