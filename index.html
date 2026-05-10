@@ -1044,6 +1044,9 @@
       const current = els.main.scrollTop;
       const scrollingDown = current > lastScrollTop + 8;
       const scrollingUp = current < lastScrollTop - 8;
+      if (Math.abs(current - lastScrollTop) > 3) {
+        clearSelectedCard();
+      }
 
       if (scrollingDown && current > 80 && document.activeElement !== els.search) {
         els.header.classList.add('header-hidden');
