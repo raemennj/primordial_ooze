@@ -991,8 +991,18 @@
       return direction === 'desc' ? bTime - aTime : aTime - bTime;
     }
 
+    function compareDatePresence(a, b) {
+      const aHasDate = sobrietyTime(a) !== null;
+      const bHasDate = sobrietyTime(b) !== null;
+      if (aHasDate === bHasDate) return 0;
+      return aHasDate ? -1 : 1;
+    }
+
     function compareContacts(a, b) {
       const mode = SORT_MODES[state.sortIndex].key;
+      const datePresenceCompare = mode === 'alpha' || mode === 'reverseAlpha' ? 0 : compareDatePresence(a, b);
+      if (datePresenceCompare) return datePresenceCompare;
+
       if (mode === 'milestones') {
         const typeCompare = String(a.milestoneType || '').localeCompare(String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
         return typeCompare || b.totalDays - a.totalDays || compareNames(a, b);
