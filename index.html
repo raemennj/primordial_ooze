@@ -212,13 +212,15 @@
       opacity: 0.38;
     }
 
-    .milestone-card:active {
-      transform: scale(0.99);
-      background: #fafafa;
-    }
+    @media (hover: hover) and (pointer: fine) {
+      .milestone-card:active {
+        transform: scale(0.99);
+        background: #fafafa;
+      }
 
-    .milestone-card.is-selected:active {
-      transform: translateY(-4px) scale(1.012);
+      .milestone-card.is-selected:active {
+        transform: translateY(-4px) scale(1.012);
+      }
     }
 
     .milestone-card + .milestone-card {
@@ -1094,7 +1096,13 @@
         }
 
         save.addEventListener('click', () => downloadVCard(contact));
-        card.addEventListener('pointerdown', () => selectCard(card));
+        card.addEventListener('pointerdown', event => {
+          if (event.pointerType !== 'touch') selectCard(card);
+        });
+        card.addEventListener('click', event => {
+          if (event.target.closest('a, button')) return;
+          selectCard(card);
+        });
         card.addEventListener('focusin', () => selectCard(card));
         els.cards.appendChild(fragment);
       });
