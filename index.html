@@ -85,19 +85,82 @@
     }
 
     .header-search {
-      flex: 1 1 260px;
+      flex: 1 1 100%;
       min-width: 180px;
+      overflow: hidden;
+      max-height: 76px;
+      opacity: 1;
+      transform: translateY(0);
+      transition: max-height 220ms ease, opacity 180ms ease, transform 220ms ease, margin 220ms ease;
+    }
+
+    .header-search.is-collapsed {
+      max-height: 0;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex: 0 0 auto;
+      min-width: 170px;
+    }
+
+    .header-icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(47, 111, 0, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: #1f2933;
+      box-shadow: 0 10px 24px rgba(47, 111, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    }
+
+    .header-icon-button:active {
+      transform: scale(0.96);
+    }
+
+    .header-icon-button.is-active {
+      background: #1f2933;
+      color: #fff;
+      border-color: rgba(31, 41, 51, 0.28);
+    }
+
+    .header-icon-button svg {
+      width: 21px;
+      height: 21px;
+      flex: 0 0 auto;
+    }
+
+    #app-main {
+      transition: padding-top 220ms ease;
+    }
+
+    body.search-collapsed #app-main {
+      padding-top: 112px;
     }
 
     @media (max-width: 640px) {
       .header-row {
-        align-items: flex-start;
-        flex-wrap: wrap;
+        align-items: center;
       }
 
-      .header-search {
-        order: 3;
-        flex-basis: 100%;
+      .header-actions {
+        min-width: 106px;
+        gap: 8px;
+      }
+
+      .header-icon-button {
+        width: 44px;
+        height: 44px;
       }
     }
 
@@ -465,12 +528,28 @@
             <h1 class="ooze-title truncate text-2xl font-black leading-tight">PRIMORDIAL OOZE</h1>
           </div>
         </div>
-        <div class="header-search relative">
-          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
-          </svg>
-          <input id="search-input" class="block w-full rounded-2xl border-0 bg-white py-3 pl-10 pr-4 text-[16px] font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-black/5 placeholder:text-gray-500 focus:ring-2 focus:ring-[#2764a7]" type="search" placeholder="Search">
+        <div class="header-actions" aria-label="List tools">
+          <button id="search-toggle" class="header-icon-button" type="button" aria-label="Show search" aria-pressed="false" title="Search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+          <button id="sort-toggle" class="header-icon-button" type="button" aria-label="Sort: alphabetical" title="Sort: alphabetical">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7h12"></path>
+              <path d="M3 12h8"></path>
+              <path d="M3 17h4"></path>
+              <path d="M18 6v12"></path>
+              <path d="m15 15 3 3 3-3"></path>
+            </svg>
+          </button>
         </div>
+      </div>
+      <div class="header-search relative is-collapsed" id="search-panel">
+        <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
+        </svg>
+        <input id="search-input" class="block w-full rounded-2xl border-0 bg-white py-3 pl-10 pr-4 text-[16px] font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-black/5 placeholder:text-gray-500 focus:ring-2 focus:ring-[#2764a7]" type="search" placeholder="Search">
       </div>
       <div class="ooze-rule"></div>
     </div>
@@ -510,20 +589,36 @@
   <script>
     const SHEET_ID = '1rqItTzvPbPHIwGtY0sFQcquLP1LGqr8WarcVvBL1Kxw';
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    const SORT_MODES = [
+      { key: 'alpha', label: 'alphabetical' },
+      { key: 'milestones', label: 'milestones' },
+      { key: 'years', label: 'years' },
+      { key: 'months', label: 'months' },
+      { key: 'newest', label: 'newest to oldest' },
+      { key: 'oldest', label: 'oldest to newest' },
+      { key: 'reverseAlpha', label: 'reverse alphabetical' }
+    ];
 
     const state = {
       contacts: [],
-      query: ''
+      query: '',
+      searchOpen: false,
+      sortIndex: 0
     };
 
     const els = {
       cards: document.getElementById('cards'),
       statePanel: document.getElementById('state-panel'),
       search: document.getElementById('search-input'),
+      searchPanel: document.getElementById('search-panel'),
+      searchToggle: document.getElementById('search-toggle'),
+      sortToggle: document.getElementById('sort-toggle'),
       header: document.getElementById('app-header'),
       main: document.getElementById('app-main'),
       template: document.getElementById('card-template')
     };
+
+    document.body.classList.add('search-collapsed');
 
     function normalizeHeader(value) {
       return String(value || '')
@@ -878,6 +973,38 @@
       return String(value || '').replace(/\D/g, '');
     }
 
+    function compareNames(a, b) {
+      return String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' });
+    }
+
+    function sobrietyTime(contact) {
+      const date = parseSobrietyDate(contact.sobrietyDate);
+      return date ? date.getTime() : null;
+    }
+
+    function compareSobrietyDates(a, b, direction) {
+      const aTime = sobrietyTime(a);
+      const bTime = sobrietyTime(b);
+      if (aTime === null && bTime === null) return compareNames(a, b);
+      if (aTime === null) return 1;
+      if (bTime === null) return -1;
+      return direction === 'desc' ? bTime - aTime : aTime - bTime;
+    }
+
+    function compareContacts(a, b) {
+      const mode = SORT_MODES[state.sortIndex].key;
+      if (mode === 'milestones') {
+        const typeCompare = String(a.milestoneType || '').localeCompare(String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
+        return typeCompare || b.totalDays - a.totalDays || compareNames(a, b);
+      }
+      if (mode === 'years') return b.totalYears - a.totalYears || compareNames(a, b);
+      if (mode === 'months') return b.totalMonths - a.totalMonths || compareNames(a, b);
+      if (mode === 'newest') return compareSobrietyDates(a, b, 'desc') || compareNames(a, b);
+      if (mode === 'oldest') return compareSobrietyDates(a, b, 'asc') || compareNames(a, b);
+      if (mode === 'reverseAlpha') return compareNames(b, a) || b.totalDays - a.totalDays;
+      return compareNames(a, b) || b.totalDays - a.totalDays;
+    }
+
     function searchRank(contact) {
       const q = state.query.trim().toLowerCase();
       if (!q) return 0;
@@ -906,7 +1033,7 @@
     function visibleContacts() {
       return state.contacts
         .filter(matchesQuery)
-        .sort((a, b) => searchRank(a) - searchRank(b) || a.name.localeCompare(b.name) || b.totalDays - a.totalDays);
+        .sort((a, b) => searchRank(a) - searchRank(b) || compareContacts(a, b));
     }
 
     function renderState(message, tone = 'neutral') {
@@ -1038,6 +1165,48 @@
       }
     }
 
+    function renderSearchState() {
+      els.searchPanel.classList.toggle('is-collapsed', !state.searchOpen);
+      els.searchToggle.classList.toggle('is-active', state.searchOpen);
+      els.searchToggle.setAttribute('aria-pressed', String(state.searchOpen));
+      els.searchToggle.setAttribute('aria-label', state.searchOpen ? 'Hide search' : 'Show search');
+      document.body.classList.toggle('search-collapsed', !state.searchOpen);
+      if (state.searchOpen) {
+        requestAnimationFrame(() => els.search.focus());
+      }
+    }
+
+    function renderSortState() {
+      const mode = SORT_MODES[state.sortIndex];
+      els.sortToggle.setAttribute('aria-label', `Sort: ${mode.label}`);
+      els.sortToggle.setAttribute('title', `Sort: ${mode.label}`);
+    }
+
+    function closeSearch() {
+      state.searchOpen = false;
+      if (state.query) {
+        state.query = '';
+        els.search.value = '';
+        renderCards();
+      }
+      renderSearchState();
+    }
+
+    els.searchToggle.addEventListener('click', () => {
+      state.searchOpen = !state.searchOpen;
+      if (!state.searchOpen) {
+        closeSearch();
+        return;
+      }
+      renderSearchState();
+    });
+
+    els.sortToggle.addEventListener('click', () => {
+      state.sortIndex = (state.sortIndex + 1) % SORT_MODES.length;
+      renderSortState();
+      renderCards();
+    });
+
     els.search.addEventListener('input', event => {
       state.query = event.target.value;
       renderCards();
@@ -1066,6 +1235,10 @@
       els.header.classList.remove('header-hidden');
     });
 
+    els.search.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeSearch();
+    });
+
     document.addEventListener('pointerdown', event => {
       if (event.target.closest('.milestone-card')) return;
       clearSelectedCard();
@@ -1079,6 +1252,8 @@
       });
     }
 
+    renderSearchState();
+    renderSortState();
     window.addEventListener('DOMContentLoaded', fetchContacts);
   </script>
 </body>

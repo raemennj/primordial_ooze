@@ -1,4 +1,4 @@
-const CACHE_NAME = 'primordial-ooze-v2';
+const CACHE_NAME = 'primordial-ooze-v3';
 const APP_SHELL = [
   './',
   './index.html',
