@@ -199,6 +199,31 @@
       box-shadow: 0 -8px 18px -4px rgba(31, 41, 51, 0.20), 0 22px 42px rgba(31, 41, 51, 0.18);
     }
 
+    .milestone-card.was-selected {
+      z-index: 999 !important;
+      transform: translateY(-2px) scale(1.006);
+      box-shadow: 0 -7px 16px -4px rgba(31, 41, 51, 0.16), 0 18px 34px rgba(31, 41, 51, 0.12);
+    }
+
+    .milestone-card.is-selecting {
+      animation: card-swipe-out 360ms ease-in-out both;
+    }
+
+    @keyframes card-swipe-out {
+      0% {
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        transform: translateY(-4px) scale(1.012);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .milestone-card.is-selecting {
+        animation: none;
+      }
+    }
+
     .milestone-card::after {
       content: "";
       pointer-events: none;
@@ -1182,14 +1207,22 @@
 
     function selectCard(card) {
       els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
-        if (selected !== card) selected.classList.remove('is-selected');
+        if (selected !== card) {
+          selected.classList.remove('is-selected', 'is-selecting');
+          selected.classList.add('was-selected');
+          window.setTimeout(() => selected.classList.remove('was-selected'), 380);
+        }
       });
+      card.classList.remove('was-selected', 'is-selecting');
       card.classList.add('is-selected');
+      void card.offsetWidth;
+      card.classList.add('is-selecting');
+      window.setTimeout(() => card.classList.remove('is-selecting'), 380);
     }
 
     function clearSelectedCard() {
       els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
-        selected.classList.remove('is-selected');
+        selected.classList.remove('is-selected', 'is-selecting', 'was-selected');
       });
     }
 
