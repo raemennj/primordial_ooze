@@ -124,16 +124,43 @@
       margin: 0;
     }
 
-    /* ─── SEARCH ROW ─── */
-    .search-row {
+    /* ─── HEADER TOP ROW (brand + action buttons) ─── */
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(8px, 3vw, 14px);
+    }
+
+    .header-actions {
       display: flex;
       align-items: center;
       gap: clamp(6px, 2vw, 10px);
+      flex: 0 0 auto;
+    }
+
+    /* ─── COLLAPSIBLE SEARCH PANEL ─── */
+    .search-collapse {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        max-height 240ms ease,
+        opacity    200ms ease,
+        transform  240ms ease;
+      pointer-events: none;
+    }
+
+    .search-collapse.is-open {
+      max-height: clamp(50px, 14vw, 64px);
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
       margin-top: clamp(10px, 3vw, 14px);
     }
 
     .search-field-wrap {
-      flex: 1 1 auto;
       position: relative;
     }
 
@@ -222,7 +249,12 @@
 
     /* ─── MAIN SCROLL AREA ─── */
     #app-main {
-      padding-top: clamp(158px, 44vw, 200px);
+      transition: padding-top 240ms ease;
+      padding-top: clamp(108px, 30vw, 140px); /* search closed */
+    }
+
+    body.search-open #app-main {
+      padding-top: clamp(160px, 44vw, 200px); /* search open */
     }
 
     /* ─── CARDS ─── */
@@ -672,18 +704,38 @@
   <header id="app-header" class="glass absolute inset-x-0 top-0 z-30 px-4 pt-5 pb-3">
     <div class="mx-auto max-w-3xl">
 
-      <!-- Brand -->
-      <div class="ooze-brand">
-        <img class="ooze-logo" src="ooze-header.png"
-             alt="Primordial Ooze recovery logo">
-        <div class="min-w-0">
-          <p class="ooze-subtitle">Roseville, CA</p>
-          <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
+      <!-- Brand + icon buttons -->
+      <div class="header-top-row">
+        <div class="ooze-brand">
+          <img class="ooze-logo" src="ooze-header.png"
+               alt="Primordial Ooze recovery logo">
+          <div class="min-w-0">
+            <p class="ooze-subtitle">Roseville, CA</p>
+            <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="search-toggle" class="header-icon-button" type="button"
+                  aria-label="Show search" aria-pressed="false" title="Search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+          <button id="sort-toggle" class="header-icon-button" type="button"
+                  aria-label="Sort: alphabetical" title="Sort: alphabetical">
+            <!-- Decreasing-lines sort icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" aria-hidden="true">
+              <path d="M4 6h16M7 12h10M10 18h4"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <!-- Search + sort -->
-      <div class="search-row">
+      <!-- Search field – droops into view when search toggle is active -->
+      <div id="search-panel" class="search-collapse">
         <div class="search-field-wrap">
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"
                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -692,20 +744,6 @@
           <input id="search-input" type="search" placeholder="Search"
                  autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
-        <button id="sort-toggle" class="header-icon-button" type="button"
-                aria-label="Sort: alphabetical" title="Sort: alphabetical">
-          <!-- Adjustments / sliders icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="4"  y1="6"  x2="20" y2="6"/>
-            <line x1="4"  y1="12" x2="20" y2="12"/>
-            <line x1="4"  y1="18" x2="20" y2="18"/>
-            <circle cx="14" cy="6"  r="2" fill="currentColor" stroke="none"/>
-            <circle cx="8"  cy="12" r="2" fill="currentColor" stroke="none"/>
-            <circle cx="16" cy="18" r="2" fill="currentColor" stroke="none"/>
-          </svg>
-        </button>
       </div>
 
       <div class="ooze-rule"></div>
@@ -831,19 +869,22 @@
     ];
 
     const state = {
-      contacts:  [],
-      query:     '',
-      sortIndex: 0
+      contacts:   [],
+      query:      '',
+      searchOpen: false,
+      sortIndex:  0
     };
 
     const els = {
-      cards:      document.getElementById('cards'),
-      statePanel: document.getElementById('state-panel'),
-      search:     document.getElementById('search-input'),
-      sortToggle: document.getElementById('sort-toggle'),
-      header:     document.getElementById('app-header'),
-      main:       document.getElementById('app-main'),
-      template:   document.getElementById('card-template')
+      cards:        document.getElementById('cards'),
+      statePanel:   document.getElementById('state-panel'),
+      search:       document.getElementById('search-input'),
+      searchPanel:  document.getElementById('search-panel'),
+      searchToggle: document.getElementById('search-toggle'),
+      sortToggle:   document.getElementById('sort-toggle'),
+      header:       document.getElementById('app-header'),
+      main:         document.getElementById('app-main'),
+      template:     document.getElementById('card-template')
     };
 
     function normalizeHeader(value) {
@@ -1416,11 +1457,37 @@
       }
     }
 
+    function renderSearchState() {
+      els.searchPanel.classList.toggle('is-open', state.searchOpen);
+      els.searchToggle.classList.toggle('is-active', state.searchOpen);
+      els.searchToggle.setAttribute('aria-pressed', String(state.searchOpen));
+      els.searchToggle.setAttribute('aria-label',
+        state.searchOpen ? 'Hide search' : 'Show search');
+      document.body.classList.toggle('search-open', state.searchOpen);
+      if (state.searchOpen) requestAnimationFrame(() => els.search.focus());
+    }
+
+    function closeSearch() {
+      state.searchOpen = false;
+      if (state.query) {
+        state.query = '';
+        els.search.value = '';
+        renderCards();
+      }
+      renderSearchState();
+    }
+
     function renderSortState() {
       const mode = SORT_MODES[state.sortIndex];
       els.sortToggle.setAttribute('aria-label', `Sort: ${mode.label}`);
       els.sortToggle.setAttribute('title',       `Sort: ${mode.label}`);
     }
+
+    els.searchToggle.addEventListener('click', () => {
+      state.searchOpen = !state.searchOpen;
+      if (!state.searchOpen) { closeSearch(); return; }
+      renderSearchState();
+    });
 
     els.sortToggle.addEventListener('click', () => {
       state.sortIndex = (state.sortIndex + 1) % SORT_MODES.length;
@@ -1434,12 +1501,7 @@
     });
 
     els.search.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        state.query = '';
-        els.search.value = '';
-        renderCards();
-        els.search.blur();
-      }
+      if (event.key === 'Escape') closeSearch();
     });
 
     let lastScrollTop = 0;
@@ -1460,6 +1522,7 @@
 
     els.search.addEventListener('focus', () => {
       els.header.classList.remove('header-hidden');
+      els.main.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     document.addEventListener('pointerdown', event => {
@@ -1475,6 +1538,7 @@
       });
     }
 
+    renderSearchState();
     renderSortState();
     window.addEventListener('DOMContentLoaded', fetchContacts);
   </script>
