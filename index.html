@@ -50,6 +50,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* Remove 300 ms tap delay on mobile browsers */
+    a, button, [role="button"] {
+      touch-action: manipulation;
+    }
+
     /* ─── DARK FOREST BACKGROUND ─── */
     body {
       margin: 0;
