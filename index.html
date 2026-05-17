@@ -68,6 +68,9 @@
       background-attachment: fixed;
       color: #1f2933;
       overscroll-behavior-y: none;
+      overflow: hidden;
+      height: 100dvh;
+      width: 100%;
     }
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -235,6 +238,20 @@
       flex: 0 0 auto;
     }
 
+    /* ─── HEADER POSITIONING (replaces Tailwind absolute/inset/z/px/pt/pb) ─── */
+    #app-header {
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      z-index: 30;
+      padding: clamp(16px, 4.5vw, 22px) 8px clamp(10px, 3vw, 14px);
+    }
+
+    /* Center inner content on wide screens */
+    #app-header > div { max-width: 48rem; margin: 0 auto; }
+
+    /* Prevent brand text from overflowing */
+    .ooze-brand > div { min-width: 0; }
+
     /* ─── OOZE RULE ─── */
     .ooze-rule {
       height: 4px;
@@ -249,13 +266,33 @@
 
     /* ─── MAIN SCROLL AREA ─── */
     #app-main {
+      /* JS sets --header-h after each render; fallback keeps layout intact */
+      position: absolute;
+      inset: 0;
+      padding-top: var(--header-h, clamp(108px, 30vw, 140px));
+      padding-left:  8px;
+      padding-right: 8px;
+      /* enough bottom room to scroll the last expanded card into view */
+      padding-bottom: clamp(80px, 22vw, 120px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
       transition: padding-top 240ms ease;
-      padding-top: clamp(108px, 30vw, 140px); /* search closed */
     }
 
-    body.search-open #app-main {
-      padding-top: clamp(160px, 44vw, 200px); /* search open */
+    /* Center inner section on wide screens */
+    .main-section { max-width: 48rem; margin: 0 auto; }
+
+    /* Cards column (replaces Tailwind flex/flex-col/max-w-md/mx-auto) */
+    #cards {
+      display: flex;
+      flex-direction: column;
+      max-width: 28rem;
+      margin: 0 auto;
     }
+
+    /* Disabled call/text buttons when no phone number */
+    .action-btn.disabled { opacity: 0.4; pointer-events: none; }
 
     /* ─── CARDS ─── */
     .milestone-card {
@@ -699,9 +736,9 @@
     }
   </style>
 </head>
-<body class="h-screen w-full overflow-hidden">
+<body>
 
-  <header id="app-header" class="glass absolute inset-x-0 top-0 z-30 px-4 pt-5 pb-3">
+  <header id="app-header" class="glass">
     <div class="mx-auto max-w-3xl">
 
       <!-- Brand + icon buttons -->
@@ -750,11 +787,10 @@
     </div>
   </header>
 
-  <main id="app-main"
-        class="h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 pb-40">
-    <section class="mx-auto max-w-3xl">
+  <main id="app-main" class="no-scrollbar">
+    <section class="main-section">
       <div id="state-panel"></div>
-      <div id="cards" class="mx-auto flex max-w-md flex-col pb-8"></div>
+      <div id="cards"></div>
     </section>
   </main>
 
@@ -1359,8 +1395,8 @@
           call.href = `tel:${contact.dialerNumber}`;
           text.href = `sms:${contact.dialerNumber}`;
         } else {
-          call.classList.add('opacity-40', 'pointer-events-none');
-          text.classList.add('opacity-40', 'pointer-events-none');
+          call.classList.add('disabled');
+          text.classList.add('disabled');
         }
 
         save.addEventListener('click', () => downloadVCard(contact));
@@ -1457,6 +1493,13 @@
       }
     }
 
+    /* Measure the actual rendered header height and apply it as padding-top
+       on #app-main so the first card sits flush against the header bottom. */
+    function syncMainPadding() {
+      const h = els.header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-h', h + 'px');
+    }
+
     function renderSearchState() {
       els.searchPanel.classList.toggle('is-open', state.searchOpen);
       els.searchToggle.classList.toggle('is-active', state.searchOpen);
@@ -1465,6 +1508,10 @@
         state.searchOpen ? 'Hide search' : 'Show search');
       document.body.classList.toggle('search-open', state.searchOpen);
       if (state.searchOpen) requestAnimationFrame(() => els.search.focus());
+      /* Wait for the search-panel max-height transition (240 ms) to finish
+         before re-measuring so the padding-top lands at the right value. */
+      clearTimeout(renderSearchState._t);
+      renderSearchState._t = setTimeout(syncMainPadding, 260);
     }
 
     function closeSearch() {
@@ -1538,8 +1585,12 @@
       });
     }
 
+    window.addEventListener('resize', syncMainPadding);
+
     renderSearchState();
     renderSortState();
+    /* Measure header height once the browser has laid it out. */
+    requestAnimationFrame(syncMainPadding);
     window.addEventListener('DOMContentLoaded', fetchContacts);
   </script>
 </body>
