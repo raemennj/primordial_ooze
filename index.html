@@ -6,59 +6,79 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ooze">
-  <meta name="theme-color" content="#8bd600">
+  <meta name="theme-color" content="#0d1a07">
   <meta name="description" content="Primordial Ooze milestone rolodex and phone list for Roseville, CA.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <title>Primordial Ooze</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ─── SCALE TOKENS ──────────────────────────────────────────
+       Every size is expressed as clamp(min, fluid, max) so the
+       layout scales smoothly from a 320 px phone to a tablet.    */
     :root {
-      color-scheme: light;
-      --page: #f4f8ee;
-      --ink: #1f2933;
-      --muted: #667085;
-      --line: rgba(31, 41, 51, 0.12);
-      --ooze: #8bd600;
+      --digit-h:        clamp(26px, 7.5vw, 34px);
+      --digit-w:        clamp(15px, 4.2vw, 21px);
+      --odometer-font:  clamp(19px, 5.5vw, 26px);
+      --name-font:      clamp(1.05rem, 5.2vw, 1.35rem);
+      --meta-font:      clamp(0.72rem, 3vw,  0.875rem);
+      --label-font:     clamp(0.52rem, 2vw,  0.65rem);
+      --btn-font:       clamp(0.68rem, 2.8vw, 0.85rem);
+      --stat-num-font:  clamp(0.78rem, 3.2vw, 0.95rem);
+      --stat-lbl-font:  clamp(0.48rem, 1.8vw, 0.58rem);
+      --card-px:        clamp(14px, 4vw,  20px);
+      --card-py:        clamp(14px, 3.5vw, 18px);
+      --card-radius:    clamp(18px, 5vw,  24px);
+      --card-overlap:   clamp(72px, 20vw, 96px);
+      --btn-h:          clamp(34px, 9vw,  44px);
+      --header-logo:    clamp(48px, 13vw, 62px);
+      --accent-bar-w:   clamp(10px, 2.8vw, 14px);
+
+      /* Brand palette */
+      --ooze:      #8bd600;
       --ooze-dark: #2f6f00;
-      --ooze-bright: #b8ff23;
-      --gold: #b7791f;
-      --green: #24745a;
-      --blue: #2764a7;
-      --rose: #a3445b;
+      --ooze-glow: rgba(139, 214, 0, 0.38);
+      --green:     #24745a;
+      --gold:      #b7791f;
+      --blue:      #2764a7;
+      --rose:      #a3445b;
     }
 
-    * {
+    *, *::before, *::after {
+      box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* ─── DARK FOREST BACKGROUND ─── */
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
       background:
-        radial-gradient(circle at 18% -4%, rgba(160, 230, 20, 0.20), transparent 36%),
-        radial-gradient(circle at 86% 18%, rgba(64, 150, 0, 0.14), transparent 32%),
-        linear-gradient(180deg, #fbfff5 0%, var(--page) 42%, #eef5e7 100%);
-      color: var(--ink);
+        radial-gradient(ellipse 62% 42% at 20% -6%,
+          rgba(139, 214, 0, 0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 48% 38% at 88% 22%,
+          rgba(48, 130, 0, 0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 55% at 52% 70%,
+          rgba(18, 65, 0, 0.52) 0%, transparent 72%),
+        radial-gradient(ellipse 38% 28% at 8% 90%,
+          rgba(35, 100, 0, 0.22) 0%, transparent 60%),
+        linear-gradient(175deg, #121e09 0%, #0a1404 55%, #0e1c07 100%);
+      background-attachment: fixed;
+      color: #1f2933;
       overscroll-behavior-y: none;
     }
 
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
+    /* ─── GLASS HEADER ─── */
     .glass {
-      background: rgba(247, 252, 240, 0.50);
-      border-bottom: 1px solid rgba(47, 111, 0, 0.14);
-      -webkit-backdrop-filter: blur(18px);
-      backdrop-filter: blur(18px);
+      background: rgba(8, 16, 4, 0.62);
+      border-bottom: 1px solid rgba(139, 214, 0, 0.12);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
       transition: transform 240ms ease, opacity 240ms ease;
       will-change: transform, opacity;
     }
@@ -68,251 +88,289 @@
       transform: translateY(-105%);
     }
 
+    /* ─── BRAND ─── */
     .ooze-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: clamp(8px, 3vw, 14px);
       min-width: 0;
-      flex: 0 1 auto;
     }
 
     .ooze-logo {
-      width: 58px;
-      height: 58px;
+      width: var(--header-logo);
+      height: var(--header-logo);
       object-fit: contain;
-      filter: drop-shadow(0 10px 16px rgba(47, 111, 0, 0.28));
+      filter: drop-shadow(0 8px 14px rgba(47, 111, 0, 0.50));
       flex: 0 0 auto;
     }
 
-    .header-search {
-      flex: 1 1 100%;
-      min-width: 180px;
-      overflow: hidden;
-      max-height: 76px;
-      opacity: 1;
-      transform: translateY(0);
-      transition: max-height 220ms ease, opacity 180ms ease, transform 220ms ease, margin 220ms ease;
+    .ooze-subtitle {
+      font-size: clamp(10px, 2.8vw, 13px);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ooze);
+      line-height: 1;
+      margin: 0 0 3px;
     }
 
-    .header-search.is-collapsed {
-      max-height: 0;
+    .ooze-title {
+      font-size: clamp(1.25rem, 6.5vw, 1.75rem);
+      font-weight: 900;
+      line-height: 1.05;
+      color: #ffffff;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+      letter-spacing: -0.01em;
       margin: 0;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-8px);
     }
 
-    .header-actions {
+    /* ─── SEARCH ROW ─── */
+    .search-row {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      flex: 0 0 auto;
-      min-width: 170px;
+      gap: clamp(6px, 2vw, 10px);
+      margin-top: clamp(10px, 3vw, 14px);
     }
 
+    .search-field-wrap {
+      flex: 1 1 auto;
+      position: relative;
+    }
+
+    .search-field-wrap .search-icon {
+      position: absolute;
+      left: clamp(11px, 3vw, 15px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(14px, 4vw, 17px);
+      height: clamp(14px, 4vw, 17px);
+      color: rgba(255, 255, 255, 0.42);
+      pointer-events: none;
+    }
+
+    #search-input {
+      display: block;
+      width: 100%;
+      height: clamp(40px, 11vw, 50px);
+      padding: 0 clamp(12px, 3.5vw, 16px)
+               0 clamp(36px, 9.5vw, 46px);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.10);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      font-size: clamp(14px, 4vw, 16px);
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    #search-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+
+    #search-input:focus {
+      border-color: rgba(139, 214, 0, 0.45);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Cancel button that browsers render on type="search" */
+    #search-input::-webkit-search-cancel-button { filter: invert(1) opacity(0.5); }
+
+    /* ─── HEADER ICON BUTTON (sort toggle) ─── */
     .header-icon-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(47, 111, 0, 0.16);
+      width:  clamp(40px, 11vw, 50px);
+      height: clamp(40px, 11vw, 50px);
+      flex: 0 0 auto;
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      color: #1f2933;
-      box-shadow: 0 10px 24px rgba(47, 111, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.10);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: rgba(255, 255, 255, 0.72);
+      cursor: pointer;
     }
 
-    .header-icon-button:active {
-      transform: scale(0.96);
-    }
+    .header-icon-button:active { transform: scale(0.93); }
 
     .header-icon-button.is-active {
-      background: #1f2933;
-      color: #fff;
-      border-color: rgba(31, 41, 51, 0.28);
+      background: var(--ooze);
+      border-color: var(--ooze-dark);
+      color: #0a1404;
     }
 
     .header-icon-button svg {
-      width: 21px;
-      height: 21px;
+      width:  clamp(17px, 4.5vw, 22px);
+      height: clamp(17px, 4.5vw, 22px);
       flex: 0 0 auto;
     }
 
-    #app-main {
-      transition: padding-top 220ms ease;
-    }
-
-    body.search-collapsed #app-main {
-      padding-top: 112px;
-    }
-
-    @media (max-width: 640px) {
-      .header-row {
-        align-items: center;
-      }
-
-      .header-actions {
-        min-width: 106px;
-        gap: 8px;
-      }
-
-      .header-icon-button {
-        width: 44px;
-        height: 44px;
-      }
-    }
-
-    .ooze-title {
-      color: #071202;
-      text-shadow: 0 1px 0 rgba(184, 255, 35, 0.48);
-    }
-
+    /* ─── OOZE RULE ─── */
     .ooze-rule {
-      height: 5px;
+      height: 4px;
       border-radius: 999px;
+      margin-top: clamp(10px, 3vw, 14px);
       background:
         radial-gradient(circle at 18% 50%, #eaff9b 0 8%, transparent 9%),
         linear-gradient(90deg, #2f6f00, #b8ff23 38%, #67ad00 70%, #173d00);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 5px 12px rgba(47, 111, 0, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                  0 4px 10px rgba(47, 111, 0, 0.30);
     }
 
+    /* ─── MAIN SCROLL AREA ─── */
+    #app-main {
+      padding-top: clamp(158px, 44vw, 200px);
+    }
+
+    /* ─── CARDS ─── */
     .milestone-card {
       position: relative;
-      min-height: 182px;
-      padding: 18px 20px 12px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(252, 255, 248, 0.98)),
-        radial-gradient(circle at 92% 8%, rgba(184, 255, 35, 0.10), transparent 34%);
-      border: 1px solid rgba(31, 41, 51, 0.08);
-      border-radius: 24px;
-      box-shadow: 0 -6px 16px -4px rgba(31, 41, 51, 0.14), 0 14px 30px rgba(31, 41, 51, 0.08);
+      padding: var(--card-py) var(--card-px) 0;
+      background: rgba(252, 255, 248, 0.96);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      backdrop-filter: blur(16px) saturate(140%);
+      border: 1.5px solid rgba(255, 255, 255, 0.82);
+      border-radius: var(--card-radius);
+      box-shadow:
+        0 -4px 14px -4px rgba(0, 0, 0, 0.20),
+        0 14px 36px rgba(0, 0, 0, 0.32);
       overflow: hidden;
       will-change: transform;
-      transition: transform 160ms ease, background 160ms ease;
+      transition: transform 160ms ease, box-shadow 160ms ease,
+                  border-color 160ms ease;
     }
 
+    /* Left tier accent bar */
+    .milestone-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--accent-bar-w);
+      background: var(--accent,
+        linear-gradient(180deg, #24745a, #38a37d, #165642));
+      box-shadow:
+        inset 2px 0 2px rgba(255, 255, 255, 0.55),
+        inset -2px 0 4px rgba(0, 0, 0, 0.20),
+        4px 0 10px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Card stacking */
+    .milestone-card + .milestone-card {
+      margin-top: calc(-1 * var(--card-overlap));
+    }
+
+    /* ─── SELECTED / EXPANDED STATE ─── */
     .milestone-card.is-selected {
       z-index: 1000 !important;
       transform: translateY(-4px) scale(1.012);
-      box-shadow: 0 -8px 18px -4px rgba(31, 41, 51, 0.20), 0 22px 42px rgba(31, 41, 51, 0.18);
+      border-color: rgba(139, 214, 0, 0.68);
+      box-shadow:
+        0 0 0 2px rgba(139, 214, 0, 0.32),
+        0 -6px 18px -4px rgba(0, 0, 0, 0.22),
+        0 22px 48px rgba(0, 0, 0, 0.40),
+        0 0 30px rgba(100, 200, 0, 0.18);
     }
 
     .milestone-card.was-selected {
       z-index: 999 !important;
       transform: translateY(-2px) scale(1.006);
-      box-shadow: 0 -7px 16px -4px rgba(31, 41, 51, 0.16), 0 18px 34px rgba(31, 41, 51, 0.12);
     }
 
     .milestone-card.is-selecting {
-      animation: card-swipe-out 360ms ease-in-out both;
+      animation: card-lift 360ms ease-in-out both;
     }
 
-    @keyframes card-swipe-out {
-      0% {
-        transform: translateY(0) scale(1);
-      }
-      100% {
-        transform: translateY(-4px) scale(1.012);
-      }
+    @keyframes card-lift {
+      0%   { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-4px) scale(1.012); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .milestone-card.is-selecting {
-        animation: none;
-      }
+      .milestone-card.is-selecting { animation: none; }
     }
 
-    .milestone-card::after {
-      content: "";
-      pointer-events: none;
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 24%),
-        linear-gradient(90deg, rgba(47, 111, 0, 0.10), rgba(255, 255, 255, 0) 22%);
-      mix-blend-mode: multiply;
-      opacity: 0.38;
+    /* ─── CARD HEADER CONTENT ─── */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: clamp(8px, 2.5vw, 14px);
+      margin-bottom: clamp(10px, 3vw, 16px);
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .milestone-card:active {
-        transform: scale(0.99);
-        background: #fafafa;
-      }
+    .card-info { min-width: 0; flex: 1 1 auto; }
 
-      .milestone-card.is-selected:active {
-        transform: translateY(-4px) scale(1.012);
-      }
-
-      .card-tools .primary-action:hover {
-        background: linear-gradient(180deg, #2a1400 0%, #3c2000 45%, #221000 100%);
-        box-shadow:
-          0 0 16px rgba(220, 160, 40, 0.4),
-          inset 0 1px 0 rgba(255, 215, 80, 0.25),
-          inset 0 -1px 0 rgba(0,0,0,0.55);
-      }
-
-      .card-tools .secondary-action:hover {
-        background: linear-gradient(180deg, #1e2a40 0%, #141d2e 100%);
-        border-color: rgba(100, 140, 200, 0.55);
-        color: #a8c4e8;
-      }
+    .member-name {
+      font-size: var(--name-font);
+      font-weight: 900;
+      line-height: 1.15;
+      color: #0f1a05;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .milestone-card + .milestone-card {
-      margin-top: -84px;
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: clamp(4px, 1.2vw, 6px);
+      margin: clamp(4px, 1.2vw, 6px) 0 0;
+      color: #52617a;
+      font-size: var(--meta-font);
+      font-weight: 600;
     }
 
-    .milestone-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 14px;
-      background: var(--accent, linear-gradient(90deg, #1f6f55, #38a37d, #165642));
-      box-shadow:
-        inset 2px 0 2px rgba(255, 255, 255, 0.68),
-        inset -3px 0 5px rgba(0, 0, 0, 0.22),
-        5px 0 12px rgba(31, 41, 51, 0.12);
+    .card-meta svg {
+      width:  clamp(12px, 3.2vw, 15px);
+      height: clamp(12px, 3.2vw, 15px);
+      flex: 0 0 auto;
+      opacity: 0.65;
     }
 
+    /* ─── MILESTONE BAND (odometer wrapper) ─── */
     .milestone-band {
       flex: 0 0 auto;
-      width: min(43vw, 214px);
-      min-width: 182px;
-      border-radius: 14px;
+      width: min(44%, 210px);
+      min-width: clamp(148px, 40vw, 198px);
+      border-radius: clamp(10px, 3vw, 14px);
       background:
-        radial-gradient(circle at 12% 24%, rgba(184, 255, 35, 0.18), transparent 28%),
-        color-mix(in srgb, var(--band-color, var(--green)) 12%, white);
-      border: 1px solid color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
+        radial-gradient(circle at 12% 24%,
+          rgba(184, 255, 35, 0.18), transparent 28%),
+        color-mix(in srgb,
+          var(--band-color, var(--green)) 12%, white);
+      border: 1px solid
+        color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
       position: relative;
       overflow: hidden;
-      min-height: 72px;
+      min-height: clamp(62px, 18vw, 80px);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: clamp(6px, 2vw, 10px) clamp(8px, 2.5vw, 12px);
     }
 
     .milestone-band::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: var(--milestone-bg, radial-gradient(circle at 22% 50%, rgba(255, 255, 255, 0.72), transparent 34%));
+      background: var(--milestone-bg,
+        radial-gradient(circle at 22% 50%,
+          rgba(255, 255, 255, 0.72), transparent 34%));
       opacity: 0.72;
     }
 
-    .milestone-band > * {
-      position: relative;
-      z-index: 1;
-    }
+    .milestone-band > * { position: relative; z-index: 1; }
 
+    /* ─── ODOMETER ─── */
     .odometer {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: clamp(3px, 1vw, 5px);
       width: 100%;
     }
 
@@ -320,7 +378,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: clamp(2px, 0.8vw, 4px);
       width: 100%;
     }
 
@@ -328,56 +386,62 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: clamp(2px, 0.8vw, 4px);
     }
 
     .odometer-bevel {
       position: relative;
       display: flex;
       align-items: center;
-      padding: 4px 5px 5px;
-      border-radius: 7px;
+      padding: clamp(3px, 1vw, 5px) clamp(4px, 1.2vw, 6px);
+      border-radius: clamp(5px, 1.5vw, 8px);
       background:
-        linear-gradient(180deg, rgba(139, 214, 0, 0.12), transparent 30%),
-        linear-gradient(180deg, #4a3c25 0%, #2a2219 40%, #2a2219 60%, #1a1209 100%);
+        linear-gradient(180deg,
+          rgba(139, 214, 0, 0.10), transparent 30%),
+        linear-gradient(180deg,
+          #4a3c25 0%, #2a2219 40%, #2a2219 60%, #1a1209 100%);
       box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 5px 14px rgba(0, 0, 0, 0.30),
+        0 4px 12px rgba(0, 0, 0, 0.32),
         inset 0 1px 0 rgba(255, 255, 255, 0.10),
         inset 0 -1px 0 rgba(0, 0, 0, 0.50);
     }
 
+    /* Horizontal split line across digits */
     .odometer-bevel::after {
       content: "";
       position: absolute;
-      left: 5px;
-      right: 5px;
+      left: 4px; right: 4px;
       top: 50%;
-      height: 2px;
+      height: 1px;
       transform: translateY(-50%);
-      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 15%, rgba(0, 0, 0, 0.55) 85%, transparent);
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(0, 0, 0, 0.55) 15%,
+        rgba(0, 0, 0, 0.55) 85%,
+        transparent);
       pointer-events: none;
       z-index: 4;
     }
 
     .odometer-digit {
       position: relative;
-      width: 20px;
-      height: 31px;
+      width: var(--digit-w);
+      height: var(--digit-h);
       overflow: hidden;
       background: #0e0e0e;
-      border-left: 1px solid #3a2c18;
+      border-left:  1px solid #3a2c18;
       border-right: 1px solid #3a2c18;
     }
 
     .odometer-digit:first-child {
       border-left: 0;
-      border-radius: 4px 0 0 4px;
+      border-radius: clamp(3px, 1vw, 5px) 0 0 clamp(3px, 1vw, 5px);
     }
 
     .odometer-digit:last-child {
       border-right: 0;
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 clamp(3px, 1vw, 5px) clamp(3px, 1vw, 5px) 0;
     }
 
     .odometer-digit::before {
@@ -386,275 +450,270 @@
       inset: 0;
       z-index: 3;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 48%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.18) 100%);
+      background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(255, 255, 255, 0.01) 48%,
+        rgba(0, 0, 0, 0) 52%,
+        rgba(0, 0, 0, 0.18) 100%);
     }
 
     .odometer-drum {
       position: absolute;
       inset: 0 0 auto;
-      transform: translateY(calc(var(--digit) * -31px));
+      transform: translateY(calc(var(--digit) * -1 * var(--digit-h)));
     }
 
     .odometer-drum span {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 31px;
-      font-family: "SF Pro Display", "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-      font-size: 25px;
+      height: var(--digit-h);
+      font-family: "SF Pro Display", "Avenir Next Condensed",
+                   "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+      font-size: var(--odometer-font);
       font-stretch: condensed;
       font-weight: 650;
       line-height: 1;
       color: var(--odometer-color, #ff9500);
-      text-shadow: 0 0 8px var(--odometer-glow, rgba(255, 149, 0, 0.42)), 0 0 18px var(--odometer-glow, rgba(255, 149, 0, 0.34));
+      text-shadow:
+        0 0 8px  var(--odometer-glow, rgba(255, 149, 0, 0.42)),
+        0 0 18px var(--odometer-glow, rgba(255, 149, 0, 0.34));
       user-select: none;
     }
 
     .odometer-colon {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      padding: 0 1px 12px;
+      gap: clamp(3px, 1vw, 5px);
+      padding: 0 1px clamp(10px, 3vw, 14px);
     }
 
     .odometer-colon span {
-      width: 4px;
-      height: 4px;
+      width:  clamp(3px, 1vw, 5px);
+      height: clamp(3px, 1vw, 5px);
       border-radius: 999px;
       background: var(--odometer-color, #ff9500);
       opacity: 0.42;
-      box-shadow: 0 0 8px var(--odometer-glow, rgba(255, 149, 0, 0.42));
+      box-shadow: 0 0 6px var(--odometer-glow, rgba(255, 149, 0, 0.42));
     }
 
     .odometer-label {
-      color: color-mix(in srgb, var(--odometer-color, #667085) 45%, black);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 10px;
+      color: color-mix(in srgb,
+        var(--odometer-color, #667085) 45%, black);
+      font-size: var(--label-font);
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      opacity: 1;
     }
 
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      min-height: 26px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: rgba(31, 41, 51, 0.08);
-      color: #475467;
-      font-size: 12px;
-      font-weight: 750;
-      white-space: nowrap;
-    }
-
-    .icon-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: 1px solid rgba(31, 41, 51, 0.1);
-      background: #fff;
-      color: #1f2933;
-    }
-
-    .primary-action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 40px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 0;
-      background: #1f2933;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 800;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .secondary-action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 40px;
-      padding: 0 13px;
-      border-radius: 999px;
-      border: 1px solid rgba(31, 41, 51, 0.12);
-      background: #fff;
-      color: #1f2933;
-      font-size: 13px;
-      font-weight: 800;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
+    /* ─── CARD TOOLS PANEL ─── */
     .card-tools {
-      display: grid !important;
-      grid-template-columns: 11fr 12fr 28fr 15fr 16fr 18fr;
-      gap: 5px;
-      position: relative;
-      margin: 8px -20px -12px;
-      padding: 10px 14px 12px;
-      background:
-        repeating-linear-gradient(
-          135deg,
-          rgba(255,255,255,0.018) 0 2px,
-          transparent 2px 20px
-        ),
-        linear-gradient(180deg, #0f1624 0%, #0b0f1a 100%);
-      overflow: visible;
+      margin: clamp(10px, 3vw, 14px)
+              calc(-1 * var(--card-px))
+              0;
+      padding: clamp(10px, 3vw, 14px)
+               var(--card-px)
+               clamp(12px, 3.5vw, 16px);
+      background: rgba(8, 18, 4, 0.055);
+      border-top: 1px solid rgba(0, 0, 0, 0.07);
     }
 
-    .card-tools::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(140, 100, 20, 0.45) 10%,
-        rgba(220, 165, 50, 0.85) 30%,
-        rgba(255, 210, 80, 1) 50%,
-        rgba(220, 165, 50, 0.85) 70%,
-        rgba(140, 100, 20, 0.45) 90%,
-        transparent 100%
-      );
+    .card-actions-row {
+      display: flex;
+      gap: clamp(6px, 2vw, 10px);
+      margin-bottom: clamp(7px, 2.2vw, 10px);
     }
 
-    .card-tools::after {
-      content: "◆";
-      position: absolute;
-      top: -7px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      line-height: 1;
-      color: #f6c453;
-      text-shadow: 0 0 8px rgba(246, 196, 83, 0.9), 0 0 18px rgba(246, 196, 83, 0.4);
-      pointer-events: none;
+    .card-stats-row {
+      display: flex;
+      gap: clamp(6px, 2vw, 10px);
     }
 
-    .card-tools .primary-action,
-    .card-tools .secondary-action,
-    .card-tools .chip {
-      width: 100%;
-      min-height: 30px;
-      padding: 0 5px;
-      font-size: 10px;
-      font-weight: 850;
-      line-height: 1;
-      min-width: 0;
-      text-align: center;
-    }
-
-    .card-tools .chip {
-      flex-direction: column;
+    /* ─── ACTION BUTTONS ─── */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
-      gap: 1px;
-      padding-top: 3px;
-      padding-bottom: 3px;
-      background: linear-gradient(180deg, #0a0e18 0%, #111827 100%);
-      border: 1px solid rgba(60, 90, 140, 0.38);
-      color: #4a6080;
+      gap: clamp(4px, 1.2vw, 6px);
+      height: var(--btn-h);
+      border-radius: 999px;
+      font-size: var(--btn-font);
+      font-weight: 800;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      flex: 1 1 auto;
+      padding: 0 clamp(8px, 2.5vw, 14px);
+      transition: transform 120ms ease, opacity 120ms ease;
+      border: 1px solid transparent;
+    }
+
+    .action-btn:active { transform: scale(0.95); }
+
+    .action-btn svg {
+      width:  clamp(13px, 3.5vw, 16px);
+      height: clamp(13px, 3.5vw, 16px);
+      flex: 0 0 auto;
+    }
+
+    .action-primary {
+      background: linear-gradient(180deg,
+        #22580a 0%, #2f7200 50%, #1c4c00 100%);
+      border-color: rgba(47, 114, 0, 0.55);
+      color: #ffffff;
       box-shadow:
-        inset 0 1px 3px rgba(0,0,0,0.55),
-        inset 0 -1px 0 rgba(80, 110, 160, 0.08);
+        0 2px 8px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 rgba(184, 255, 35, 0.20),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+    }
+
+    .action-secondary {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(31, 41, 51, 0.13);
+      color: #1f2933;
+      box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* ─── STAT CHIPS ─── */
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1.2vw, 6px);
+      flex: 1 1 0%;
+      min-height: clamp(34px, 9vw, 42px);
+      padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(31, 41, 51, 0.10);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-chip svg {
+      width:  clamp(12px, 3.2vw, 15px);
+      height: clamp(12px, 3.2vw, 15px);
+      flex: 0 0 auto;
+      opacity: 0.60;
+      color: #1f2933;
+    }
+
+    .stat-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
     }
 
     .stat-number {
       display: block;
-      color: #f6c453;
-      font-size: 13px;
+      font-size: var(--stat-num-font);
       font-weight: 900;
+      color: #1f2933;
       line-height: 1;
-      text-shadow: 0 0 8px rgba(246, 196, 83, 0.55), 0 0 16px rgba(246, 196, 83, 0.22);
     }
 
     .stat-label {
       display: block;
-      color: #3d5470;
-      font-size: 7.5px;
-      font-weight: 900;
-      letter-spacing: 0.07em;
-      line-height: 1;
+      font-size: var(--stat-lbl-font);
+      font-weight: 800;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      color: #667085;
+      margin-top: 2px;
     }
 
-    .card-tools .save-button {
-      font-size: 9.5px;
-      letter-spacing: -0.01em;
+    /* ─── STATE / LOADING MESSAGE ─── */
+    .state-msg {
+      background: rgba(255, 255, 255, 0.88);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: clamp(12px, 3.5vw, 16px);
+      padding: clamp(16px, 5vw, 24px) clamp(14px, 4vw, 20px);
+      text-align: center;
+      font-size: clamp(0.8rem, 3.2vw, 0.9rem);
+      font-weight: 600;
+      color: #3d5470;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
     }
 
-    .card-tools .primary-action {
-      background: linear-gradient(180deg, #1e0f00 0%, #2d1800 45%, #180c00 100%);
-      border: 1px solid;
-      border-color: rgba(190, 140, 30, 0.9) rgba(130, 85, 10, 0.8) rgba(100, 60, 5, 0.9);
-      color: #f6c453;
-      text-shadow: 0 0 10px rgba(246, 196, 83, 0.65), 0 1px 0 rgba(0,0,0,0.9);
-      box-shadow:
-        0 0 10px rgba(180, 130, 25, 0.22),
-        inset 0 1px 0 rgba(255, 215, 80, 0.18),
-        inset 0 -1px 0 rgba(0,0,0,0.55);
-      letter-spacing: 0.02em;
+    .state-msg.error {
+      background: rgba(255, 240, 240, 0.94);
+      color: #9b2c2c;
     }
 
-    .card-tools .secondary-action {
-      background: linear-gradient(180deg, #1a2235 0%, #111827 100%);
-      border: 1px solid rgba(80, 110, 160, 0.4);
-      color: #8faad4;
-      text-shadow: 0 0 6px rgba(100, 150, 220, 0.25);
-      box-shadow:
-        inset 0 1px 0 rgba(140, 170, 220, 0.1),
-        inset 0 -1px 0 rgba(0,0,0,0.45);
-    }
+    /* ─── HOVER STATES (pointer devices only) ─── */
+    @media (hover: hover) and (pointer: fine) {
+      .action-primary:hover {
+        background: linear-gradient(180deg,
+          #2a6e0e 0%, #3d8f00 50%, #286000 100%);
+        box-shadow:
+          0 4px 12px rgba(47, 111, 0, 0.30),
+          inset 0 1px 0 rgba(184, 255, 35, 0.26),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+      }
 
+      .action-secondary:hover {
+        background: #ffffff;
+        border-color: rgba(31, 41, 51, 0.22);
+      }
+
+      .header-icon-button:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+    }
   </style>
 </head>
 <body class="h-screen w-full overflow-hidden">
+
   <header id="app-header" class="glass absolute inset-x-0 top-0 z-30 px-4 pt-5 pb-3">
     <div class="mx-auto max-w-3xl">
-      <div class="header-row mb-3 flex items-center justify-between gap-3">
-        <div class="ooze-brand">
-          <img class="ooze-logo" src="ooze-header.png" alt="Primordial Ooze recovery logo">
-          <div class="min-w-0">
-            <p class="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4f6f20]">Roseville, CA</p>
-            <h1 class="ooze-title truncate text-2xl font-black leading-tight">PRIMORDIAL OOZE</h1>
-          </div>
-        </div>
-        <div class="header-actions" aria-label="List tools">
-          <button id="search-toggle" class="header-icon-button" type="button" aria-label="Show search" aria-pressed="false" title="Search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
-            </svg>
-          </button>
-          <button id="sort-toggle" class="header-icon-button" type="button" aria-label="Sort: alphabetical" title="Sort: alphabetical">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M3 7h12"></path>
-              <path d="M3 12h8"></path>
-              <path d="M3 17h4"></path>
-              <path d="M18 6v12"></path>
-              <path d="m15 15 3 3 3-3"></path>
-            </svg>
-          </button>
+
+      <!-- Brand -->
+      <div class="ooze-brand">
+        <img class="ooze-logo" src="ooze-header.png"
+             alt="Primordial Ooze recovery logo">
+        <div class="min-w-0">
+          <p class="ooze-subtitle">Roseville, CA</p>
+          <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
         </div>
       </div>
-      <div class="header-search relative is-collapsed" id="search-panel">
-        <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"></path>
-        </svg>
-        <input id="search-input" class="block w-full rounded-2xl border-0 bg-white py-3 pl-10 pr-4 text-[16px] font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-black/5 placeholder:text-gray-500 focus:ring-2 focus:ring-[#2764a7]" type="search" placeholder="Search">
+
+      <!-- Search + sort -->
+      <div class="search-row">
+        <div class="search-field-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
+          </svg>
+          <input id="search-input" type="search" placeholder="Search"
+                 autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <button id="sort-toggle" class="header-icon-button" type="button"
+                aria-label="Sort: alphabetical" title="Sort: alphabetical">
+          <!-- Adjustments / sliders icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4"  y1="6"  x2="20" y2="6"/>
+            <line x1="4"  y1="12" x2="20" y2="12"/>
+            <line x1="4"  y1="18" x2="20" y2="18"/>
+            <circle cx="14" cy="6"  r="2" fill="currentColor" stroke="none"/>
+            <circle cx="8"  cy="12" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="16" cy="18" r="2" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
       </div>
+
       <div class="ooze-rule"></div>
     </div>
   </header>
 
-  <main id="app-main" class="h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 pb-40 pt-[168px]">
+  <main id="app-main"
+        class="h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 pb-40">
     <section class="mx-auto max-w-3xl">
       <div id="state-panel"></div>
       <div id="cards" class="mx-auto flex max-w-md flex-col pb-8"></div>
@@ -663,25 +722,98 @@
 
   <template id="card-template">
     <article class="milestone-card">
-      <div class="mb-4 flex items-start justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <h2 class="member-name truncate text-xl font-black leading-tight text-gray-950"></h2>
-          <p class="display-phone mt-1 text-sm font-bold text-gray-500"></p>
-          <p class="sobriety-date mt-1 text-sm font-bold text-gray-500"></p>
+
+      <div class="card-header">
+        <div class="card-info">
+          <h2 class="member-name"></h2>
+
+          <p class="display-phone card-meta">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="phone-text"></span>
+          </p>
+
+          <p class="sobriety-date card-meta">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="date-text"></span>
+          </p>
         </div>
-        <div class="milestone-band px-3 py-2">
+
+        <div class="milestone-band">
           <div class="display-milestone odometer"></div>
         </div>
       </div>
 
-      <div class="card-tools flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <a class="call-link primary-action" href="#">Call</a>
-        <a class="text-link secondary-action" href="#">Text</a>
-        <button class="save-button secondary-action" type="button">Save Contact</button>
-        <span class="months chip"></span>
-        <span class="weeks chip"></span>
-        <span class="days chip"></span>
+      <!-- Actions + stats panel -->
+      <div class="card-tools">
+        <div class="card-actions-row">
+          <a class="call-link action-btn action-primary" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/>
+            </svg>
+            Call
+          </a>
+          <a class="text-link action-btn action-secondary" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 3c-4.31 0-8 3.033-8 7 0 2.024.978 3.825 2.499 5.085a3.478 3.478 0 0 1-.522 1.756.75.75 0 0 0 .584 1.143 5.976 5.976 0 0 0 3.936-1.108c.487.082.99.124 1.503.124 4.31 0 8-3.033 8-7s-3.69-7-8-7ZM6 9.75A.75.75 0 0 1 6.75 9h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 9.75ZM7.25 12a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clip-rule="evenodd"/>
+            </svg>
+            Text
+          </a>
+          <button class="save-button action-btn action-secondary" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM2.046 15.253c-.058.468.172.92.57 1.175A9.953 9.953 0 0 0 8 18c1.85 0 3.58-.5 5.044-1.372a1.5 1.5 0 0 0-.684-2.841l-6.83-.002A1.5 1.5 0 0 0 4 15.25v.003ZM12.25 4a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5a.75.75 0 0 1 .75-.75Z"/>
+            </svg>
+            Save Contact
+          </button>
+        </div>
+
+        <div class="card-stats-row">
+          <span class="months stat-chip">
+            <!-- Star icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.83-4.401Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Months</span>
+            </span>
+          </span>
+
+          <span class="weeks stat-chip">
+            <!-- Calendar icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Weeks</span>
+            </span>
+          </span>
+
+          <span class="days stat-chip">
+            <!-- Drop / flame icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M13.5 4.938a7 7 0 1 1-7.84 11.8A7 7 0 0 1 13.5 4.937ZM10 3a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V4a1 1 0 0 0-1-1Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Days</span>
+            </span>
+          </span>
+        </div>
       </div>
+
     </article>
   </template>
 
@@ -689,42 +821,34 @@
     const SHEET_ID = '1rqItTzvPbPHIwGtY0sFQcquLP1LGqr8WarcVvBL1Kxw';
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     const SORT_MODES = [
-      { key: 'alpha', label: 'alphabetical' },
-      { key: 'milestones', label: 'milestones' },
-      { key: 'years', label: 'years' },
-      { key: 'months', label: 'months' },
-      { key: 'newest', label: 'newest to oldest' },
-      { key: 'oldest', label: 'oldest to newest' },
+      { key: 'alpha',        label: 'alphabetical' },
+      { key: 'milestones',   label: 'milestones' },
+      { key: 'years',        label: 'years' },
+      { key: 'months',       label: 'months' },
+      { key: 'newest',       label: 'newest to oldest' },
+      { key: 'oldest',       label: 'oldest to newest' },
       { key: 'reverseAlpha', label: 'reverse alphabetical' }
     ];
 
     const state = {
-      contacts: [],
-      query: '',
-      searchOpen: false,
+      contacts:  [],
+      query:     '',
       sortIndex: 0
     };
 
     const els = {
-      cards: document.getElementById('cards'),
+      cards:      document.getElementById('cards'),
       statePanel: document.getElementById('state-panel'),
-      search: document.getElementById('search-input'),
-      searchPanel: document.getElementById('search-panel'),
-      searchToggle: document.getElementById('search-toggle'),
+      search:     document.getElementById('search-input'),
       sortToggle: document.getElementById('sort-toggle'),
-      header: document.getElementById('app-header'),
-      main: document.getElementById('app-main'),
-      template: document.getElementById('card-template')
+      header:     document.getElementById('app-header'),
+      main:       document.getElementById('app-main'),
+      template:   document.getElementById('card-template')
     };
-
-    document.body.classList.add('search-collapsed');
 
     function normalizeHeader(value) {
       return String(value || '')
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, ' ')
-        .trim();
+        .trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     }
 
     function cell(row, index) {
@@ -736,13 +860,10 @@
     function parseGoogleSheetResponse(text) {
       const start = text.indexOf('google.visualization.Query.setResponse(');
       if (start === -1) throw new Error('Google Sheets response did not include table data.');
-
       const jsonStart = text.indexOf('(', start) + 1;
-      const jsonEnd = text.lastIndexOf(');');
-      if (jsonStart <= 0 || jsonEnd <= jsonStart) {
+      const jsonEnd   = text.lastIndexOf(');');
+      if (jsonStart <= 0 || jsonEnd <= jsonStart)
         throw new Error('Google Sheets response could not be parsed.');
-      }
-
       return validateSheetData(JSON.parse(text.slice(jsonStart, jsonEnd)));
     }
 
@@ -764,18 +885,12 @@
         const script = document.createElement('script');
         const cleanup = () => {
           script.remove();
-          if (previousGoogle === undefined) {
-            delete window.google;
-          }
+          if (previousGoogle === undefined) delete window.google;
         };
 
         window.google.visualization.Query.setResponse = data => {
-          try {
-            cleanup();
-            resolve(validateSheetData(data));
-          } catch (error) {
-            reject(error);
-          }
+          try { cleanup(); resolve(validateSheetData(data)); }
+          catch (error) { reject(error); }
         };
 
         script.onerror = () => {
@@ -822,46 +937,46 @@
     function parseContacts(data) {
       const columns = data.table.cols || [];
       const idx = {
-        name: findColumn(columns, ['display name', 'name'], 0),
-        sobrietyDate: findColumn(columns, ['sobriety date', 'birthday', 'birth date', 'bday'], 1),
-        displayPhone: findColumn(columns, ['display phone', 'phone', 'phone number'], 2),
-        formattedName: findColumn(columns, ['formatted name'], 4),
-        dialerNumber: findColumn(columns, ['dialer number', 'link phone'], 5),
-        totalYears: findColumn(columns, ['total years']),
-        totalMonths: findColumn(columns, ['total months']),
-        totalWeeks: findColumn(columns, ['total weeks']),
-        totalDays: findColumn(columns, ['total days']),
-        milestoneType: findColumn(columns, ['milestone type']),
+        name:             findColumn(columns, ['display name', 'name'], 0),
+        sobrietyDate:     findColumn(columns, ['sobriety date', 'birthday', 'birth date', 'bday'], 1),
+        displayPhone:     findColumn(columns, ['display phone', 'phone', 'phone number'], 2),
+        formattedName:    findColumn(columns, ['formatted name'], 4),
+        dialerNumber:     findColumn(columns, ['dialer number', 'link phone'], 5),
+        totalYears:       findColumn(columns, ['total years']),
+        totalMonths:      findColumn(columns, ['total months']),
+        totalWeeks:       findColumn(columns, ['total weeks']),
+        totalDays:        findColumn(columns, ['total days']),
+        milestoneType:    findColumn(columns, ['milestone type']),
         displayMilestone: findColumn(columns, ['pwa display milestone', 'display milestone']),
-        birthMonth: findColumn(columns, ['sobriety birth month', 'birth month']),
-        memberTier: findColumn(columns, ['member tier'])
+        birthMonth:       findColumn(columns, ['sobriety birth month', 'birth month']),
+        memberTier:       findColumn(columns, ['member tier'])
       };
 
       return (data.table.rows || []).map(row => {
-        const name = cell(row, idx.name);
+        const name         = cell(row, idx.name);
         const displayPhone = cell(row, idx.displayPhone);
         const dialerNumber = cell(row, idx.dialerNumber) || cleanPhoneNumber(displayPhone);
-        const totalYears = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, '')) || 0;
-        const totalMonths = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, '')) || 0;
-        const totalWeeks = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, '')) || 0;
-        const totalDays = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, '')) || 0;
+        const totalYears   = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, ''))  || 0;
+        const totalMonths  = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, '')) || 0;
+        const totalWeeks   = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, ''))  || 0;
+        const totalDays    = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, ''))   || 0;
 
         if (!name && !displayPhone) return null;
 
         return {
           name,
-          formattedName: cell(row, idx.formattedName) || name,
-          sobrietyDate: cell(row, idx.sobrietyDate),
+          formattedName:    cell(row, idx.formattedName) || name,
+          sobrietyDate:     cell(row, idx.sobrietyDate),
           displayPhone,
           dialerNumber,
           totalYears,
           totalMonths,
           totalWeeks,
           totalDays,
-          milestoneType: cell(row, idx.milestoneType) || inferMilestoneType(totalYears, totalMonths),
+          milestoneType:    cell(row, idx.milestoneType) || inferMilestoneType(totalYears, totalMonths),
           displayMilestone: cell(row, idx.displayMilestone) || formatMilestone(totalYears, totalMonths, totalDays),
-          birthMonth: cell(row, idx.birthMonth),
-          memberTier: cell(row, idx.memberTier) || inferTier(totalYears, totalDays)
+          birthMonth:       cell(row, idx.birthMonth),
+          memberTier:       cell(row, idx.memberTier) || inferTier(totalYears, totalDays)
         };
       }).filter(Boolean);
     }
@@ -875,30 +990,32 @@
     function inferTier(years, days) {
       if (years >= 20) return 'Oldtimer';
       if (years >= 10) return 'Double digits';
-      if (years >= 1) return 'Year marker';
-      if (days >= 30) return 'First year';
+      if (years >= 1)  return 'Year marker';
+      if (days >= 30)  return 'First year';
       return 'New';
     }
 
     function formatMilestone(years, months, days) {
-      if (years >= 1) return `${Math.floor(years)} ${years === 1 ? 'year' : 'years'}`;
+      if (years  >= 1) return `${Math.floor(years)}  ${years  === 1 ? 'year'  : 'years'}`;
       if (months >= 1) return `${Math.floor(months)} ${months === 1 ? 'month' : 'months'}`;
-      if (days >= 1) return `${Math.floor(days)} ${days === 1 ? 'day' : 'days'}`;
+      if (days   >= 1) return `${Math.floor(days)}   ${days   === 1 ? 'day'   : 'days'}`;
       return 'Today';
     }
 
     function parseSobrietyDate(value) {
-      const text = String(value || '').trim();
+      const text  = String(value || '').trim();
       const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
       if (!match) return null;
 
-      const month = Number(match[1]) - 1;
-      const day = Number(match[2]);
+      const month  = Number(match[1]) - 1;
+      const day    = Number(match[2]);
       const rawYear = Number(match[3]);
-      const year = rawYear < 100 ? rawYear + 1900 : rawYear;
-      const date = new Date(year, month, day);
+      const year   = rawYear < 100 ? rawYear + 1900 : rawYear;
+      const date   = new Date(year, month, day);
 
-      if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null;
+      if (date.getFullYear() !== year ||
+          date.getMonth()    !== month ||
+          date.getDate()     !== day) return null;
       return date;
     }
 
@@ -906,65 +1023,62 @@
       const start = parseSobrietyDate(contact.sobrietyDate);
       const today = new Date();
       if (start && start <= today) {
-        let years = today.getFullYear() - start.getFullYear();
-        let months = today.getMonth() - start.getMonth();
-        let days = today.getDate() - start.getDate();
+        let years  = today.getFullYear() - start.getFullYear();
+        let months = today.getMonth()    - start.getMonth();
+        let days   = today.getDate()     - start.getDate();
 
         if (days < 0) {
           months -= 1;
           days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
         }
-        if (months < 0) {
-          years -= 1;
-          months += 12;
-        }
-
+        if (months < 0) { years -= 1; months += 12; }
         return { years, months, days };
       }
 
       return {
-        years: Math.floor(contact.totalYears || 0),
+        years:  Math.floor(contact.totalYears  || 0),
         months: Math.floor(contact.totalMonths || 0) % 12,
-        days: Math.floor(contact.totalDays || 0) % 30
+        days:   Math.floor(contact.totalDays   || 0) % 30
       };
     }
 
     function buildOdometerNumber(value, digits) {
       const wrapper = document.createElement('div');
       wrapper.className = 'odometer-bevel';
-      String(Math.max(0, value)).padStart(digits, '0').slice(-digits).split('').forEach(char => {
-        const digit = document.createElement('div');
-        digit.className = 'odometer-digit';
-        const drum = document.createElement('div');
-        drum.className = 'odometer-drum';
-        drum.style.setProperty('--digit', Number(char));
-        for (let i = 0; i <= 10; i += 1) {
-          const span = document.createElement('span');
-          span.textContent = i % 10;
-          drum.appendChild(span);
-        }
-        digit.appendChild(drum);
-        wrapper.appendChild(digit);
-      });
+      String(Math.max(0, value))
+        .padStart(digits, '0').slice(-digits).split('').forEach(char => {
+          const digit = document.createElement('div');
+          digit.className = 'odometer-digit';
+          const drum = document.createElement('div');
+          drum.className = 'odometer-drum';
+          drum.style.setProperty('--digit', Number(char));
+          for (let i = 0; i <= 10; i += 1) {
+            const span = document.createElement('span');
+            span.textContent = i % 10;
+            drum.appendChild(span);
+          }
+          digit.appendChild(drum);
+          wrapper.appendChild(digit);
+        });
       return wrapper;
     }
 
     function buildOdometerSeparator() {
-      const separator = document.createElement('div');
-      separator.className = 'odometer-colon';
-      separator.innerHTML = '<span></span><span></span>';
-      return separator;
+      const sep = document.createElement('div');
+      sep.className = 'odometer-colon';
+      sep.innerHTML = '<span></span><span></span>';
+      return sep;
     }
 
     function renderOdometer(el, contact) {
-      const parts = durationParts(contact);
+      const parts    = durationParts(contact);
       const segments = document.createElement('div');
       segments.className = 'odometer-segments';
 
       [
-        ['Years', parts.years, 2],
+        ['Years',  parts.years,  2],
         ['Months', parts.months, 2],
-        ['Days', parts.days, 2]
+        ['Days',   parts.days,   2]
       ].forEach(([label, value, digits], index) => {
         if (index > 0) segments.appendChild(buildOdometerSeparator());
 
@@ -986,40 +1100,40 @@
       const tier = String(contact.memberTier || '').trim().toLowerCase();
       if (tier.includes('platinum') || tier.includes('platnum')) {
         return {
-          band: '#8f9aa3',
+          band:   '#8f9aa3',
           display: '#eef2f5',
-          glow: 'rgba(238, 242, 245, 0.34)',
+          glow:   'rgba(238, 242, 245, 0.34)',
           accent: 'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)'
         };
       }
       if (tier.includes('gold')) {
         return {
-          band: '#b7791f',
+          band:   '#b7791f',
           display: '#f6c453',
-          glow: 'rgba(246, 196, 83, 0.38)',
+          glow:   'rgba(246, 196, 83, 0.38)',
           accent: 'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)'
         };
       }
       if (tier.includes('silver')) {
         return {
-          band: '#9ca3af',
+          band:   '#9ca3af',
           display: '#d9dde3',
-          glow: 'rgba(217, 221, 227, 0.34)',
+          glow:   'rgba(217, 221, 227, 0.34)',
           accent: 'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)'
         };
       }
       if (tier.includes('bronze')) {
         return {
-          band: '#a16207',
+          band:   '#a16207',
           display: '#dc8d3a',
-          glow: 'rgba(220, 141, 58, 0.38)',
+          glow:   'rgba(220, 141, 58, 0.38)',
           accent: 'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)'
         };
       }
       return {
-        band: '#24745a',
+        band:   '#24745a',
         display: '#58c493',
-        glow: 'rgba(88, 196, 147, 0.34)',
+        glow:   'rgba(88, 196, 147, 0.34)',
         accent: 'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)'
       };
     }
@@ -1057,15 +1171,10 @@
       const q = state.query.trim().toLowerCase();
       if (!q) return true;
       return [
-        contact.name,
-        contact.formattedName,
-        contact.displayPhone,
-        contact.sobrietyDate,
-        contact.birthMonth,
-        contact.memberTier,
-        contact.milestoneType,
-        contact.displayMilestone
-      ].some(value => String(value || '').toLowerCase().includes(q));
+        contact.name, contact.formattedName, contact.displayPhone,
+        contact.sobrietyDate, contact.birthMonth, contact.memberTier,
+        contact.milestoneType, contact.displayMilestone
+      ].some(v => String(v || '').toLowerCase().includes(q));
     }
 
     function digitsOnly(value) {
@@ -1073,7 +1182,8 @@
     }
 
     function compareNames(a, b) {
-      return String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' });
+      return String(a.name || '').localeCompare(
+        String(b.name || ''), undefined, { sensitivity: 'base' });
     }
 
     function sobrietyTime(contact) {
@@ -1091,25 +1201,27 @@
     }
 
     function compareDatePresence(a, b) {
-      const aHasDate = sobrietyTime(a) !== null;
-      const bHasDate = sobrietyTime(b) !== null;
-      if (aHasDate === bHasDate) return 0;
-      return aHasDate ? -1 : 1;
+      const aHas = sobrietyTime(a) !== null;
+      const bHas = sobrietyTime(b) !== null;
+      if (aHas === bHas) return 0;
+      return aHas ? -1 : 1;
     }
 
     function compareContacts(a, b) {
       const mode = SORT_MODES[state.sortIndex].key;
-      const datePresenceCompare = mode === 'alpha' || mode === 'reverseAlpha' ? 0 : compareDatePresence(a, b);
-      if (datePresenceCompare) return datePresenceCompare;
+      const dp   = (mode === 'alpha' || mode === 'reverseAlpha')
+                     ? 0 : compareDatePresence(a, b);
+      if (dp) return dp;
 
       if (mode === 'milestones') {
-        const typeCompare = String(a.milestoneType || '').localeCompare(String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
-        return typeCompare || b.totalDays - a.totalDays || compareNames(a, b);
+        const tc = String(a.milestoneType || '').localeCompare(
+          String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
+        return tc || b.totalDays - a.totalDays || compareNames(a, b);
       }
-      if (mode === 'years') return b.totalYears - a.totalYears || compareNames(a, b);
-      if (mode === 'months') return b.totalMonths - a.totalMonths || compareNames(a, b);
-      if (mode === 'newest') return compareSobrietyDates(a, b, 'desc') || compareNames(a, b);
-      if (mode === 'oldest') return compareSobrietyDates(a, b, 'asc') || compareNames(a, b);
+      if (mode === 'years')        return b.totalYears  - a.totalYears  || compareNames(a, b);
+      if (mode === 'months')       return b.totalMonths - a.totalMonths || compareNames(a, b);
+      if (mode === 'newest')       return compareSobrietyDates(a, b, 'desc') || compareNames(a, b);
+      if (mode === 'oldest')       return compareSobrietyDates(a, b, 'asc')  || compareNames(a, b);
       if (mode === 'reverseAlpha') return compareNames(b, a) || b.totalDays - a.totalDays;
       return compareNames(a, b) || b.totalDays - a.totalDays;
     }
@@ -1118,24 +1230,24 @@
       const q = state.query.trim().toLowerCase();
       if (!q) return 0;
 
-      const phoneQuery = digitsOnly(q);
-      const name = String(contact.name || '').toLowerCase();
-      const formattedName = String(contact.formattedName || '').toLowerCase();
-      const phone = digitsOnly(contact.displayPhone || contact.dialerNumber);
+      const phoneQuery     = digitsOnly(q);
+      const name           = String(contact.name || '').toLowerCase();
+      const formattedName  = String(contact.formattedName || '').toLowerCase();
+      const phone          = digitsOnly(contact.displayPhone || contact.dialerNumber);
       const fields = [
-        String(contact.sobrietyDate || '').toLowerCase(),
-        String(contact.birthMonth || '').toLowerCase(),
-        String(contact.memberTier || '').toLowerCase(),
-        String(contact.milestoneType || '').toLowerCase(),
-        String(contact.displayMilestone || '').toLowerCase()
+        String(contact.sobrietyDate    || '').toLowerCase(),
+        String(contact.birthMonth      || '').toLowerCase(),
+        String(contact.memberTier      || '').toLowerCase(),
+        String(contact.milestoneType   || '').toLowerCase(),
+        String(contact.displayMilestone|| '').toLowerCase()
       ];
 
-      if (name === q || formattedName === q) return 0;
+      if (name === q || formattedName === q)             return 0;
       if (name.startsWith(q) || formattedName.startsWith(q)) return 1;
-      if (phoneQuery && phone.startsWith(phoneQuery)) return 2;
+      if (phoneQuery && phone.startsWith(phoneQuery))   return 2;
       if (name.includes(q) || formattedName.includes(q)) return 3;
-      if (phoneQuery && phone.includes(phoneQuery)) return 4;
-      if (fields.some(field => field.startsWith(q))) return 5;
+      if (phoneQuery && phone.includes(phoneQuery))     return 4;
+      if (fields.some(f => f.startsWith(q)))            return 5;
       return 6;
     }
 
@@ -1147,8 +1259,8 @@
 
     function renderState(message, tone = 'neutral') {
       els.cards.innerHTML = '';
-      const colors = tone === 'error' ? 'bg-red-50 text-red-700 ring-red-100' : 'bg-white text-gray-600 ring-black/5';
-      els.statePanel.innerHTML = `<div class="${colors} rounded-lg px-4 py-5 text-center text-sm font-semibold shadow-sm ring-1">${message}</div>`;
+      const cls = tone === 'error' ? 'state-msg error' : 'state-msg';
+      els.statePanel.innerHTML = `<div class="${cls}">${message}</div>`;
     }
 
     function renderCards() {
@@ -1156,29 +1268,47 @@
       els.cards.innerHTML = '';
 
       if (!contacts.length) {
-        renderState(state.contacts.length ? 'No matching members found.' : 'No members found in the sheet.');
+        renderState(state.contacts.length
+          ? 'No matching members found.'
+          : 'No members found in the sheet.');
         return;
       }
 
       els.statePanel.innerHTML = '';
       contacts.forEach(contact => {
         const fragment = els.template.content.cloneNode(true);
-        const card = fragment.querySelector('.milestone-card');
-        card.tabIndex = 0;
-        const metal = tierMetal(contact);
-        card.style.setProperty('--accent', metal.accent);
-        card.style.setProperty('--band-color', metal.band);
-        card.style.setProperty('--odometer-color', metal.display);
-        card.style.setProperty('--odometer-glow', metal.glow);
-        card.querySelector('.milestone-band').style.setProperty('--milestone-bg', milestoneBackground(contact));
+        const card     = fragment.querySelector('.milestone-card');
+        card.tabIndex  = 0;
 
-        fragment.querySelector('.member-name').textContent = contact.name || 'Unnamed member';
-        fragment.querySelector('.display-phone').textContent = contact.displayPhone || 'No phone number listed';
-        fragment.querySelector('.sobriety-date').textContent = contact.sobrietyDate ? `Since: ${contact.sobrietyDate}` : 'Since: TBD';
+        const metal = tierMetal(contact);
+        card.style.setProperty('--accent',         metal.accent);
+        card.style.setProperty('--band-color',     metal.band);
+        card.style.setProperty('--odometer-color', metal.display);
+        card.style.setProperty('--odometer-glow',  metal.glow);
+        fragment.querySelector('.milestone-band')
+          .style.setProperty('--milestone-bg', milestoneBackground(contact));
+
+        fragment.querySelector('.member-name').textContent =
+          contact.name || 'Unnamed member';
+
+        const phoneSpan = fragment.querySelector('.phone-text');
+        if (phoneSpan)
+          phoneSpan.textContent = contact.displayPhone || 'No phone number listed';
+
+        const dateSpan = fragment.querySelector('.date-text');
+        if (dateSpan)
+          dateSpan.textContent = contact.sobrietyDate
+            ? `Since: ${contact.sobrietyDate}` : 'Since: TBD';
+
         renderOdometer(fragment.querySelector('.display-milestone'), contact);
-        fragment.querySelector('.months').innerHTML = `<span class="stat-number">${Math.floor(contact.totalMonths || 0)}</span><span class="stat-label">Months</span>`;
-        fragment.querySelector('.weeks').innerHTML = `<span class="stat-number">${Math.floor(contact.totalWeeks || 0)}</span><span class="stat-label">Weeks</span>`;
-        fragment.querySelector('.days').innerHTML = `<span class="stat-number">${Math.floor(contact.totalDays || 0)}</span><span class="stat-label">Days</span>`;
+
+        const setNum = (sel, val) => {
+          const el = fragment.querySelector(sel);
+          if (el) el.textContent = val;
+        };
+        setNum('.months .stat-number', Math.floor(contact.totalMonths || 0));
+        setNum('.weeks .stat-number',  Math.floor(contact.totalWeeks  || 0));
+        setNum('.days .stat-number',   Math.floor(contact.totalDays   || 0));
 
         const call = fragment.querySelector('.call-link');
         const text = fragment.querySelector('.text-link');
@@ -1206,11 +1336,11 @@
     }
 
     function selectCard(card) {
-      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
-        if (selected !== card) {
-          selected.classList.remove('is-selected', 'is-selecting');
-          selected.classList.add('was-selected');
-          window.setTimeout(() => selected.classList.remove('was-selected'), 380);
+      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(sel => {
+        if (sel !== card) {
+          sel.classList.remove('is-selected', 'is-selecting');
+          sel.classList.add('was-selected');
+          window.setTimeout(() => sel.classList.remove('was-selected'), 380);
         }
       });
       card.classList.remove('was-selected', 'is-selecting');
@@ -1221,8 +1351,8 @@
     }
 
     function clearSelectedCard() {
-      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(selected => {
-        selected.classList.remove('is-selected', 'is-selecting', 'was-selected');
+      els.cards.querySelectorAll('.milestone-card.is-selected').forEach(sel => {
+        sel.classList.remove('is-selected', 'is-selecting', 'was-selected');
       });
     }
 
@@ -1236,27 +1366,25 @@
 
     function safeFileName(value) {
       return String(value || 'AA Contact')
-        .trim()
-        .replace(/[^a-z0-9]+/gi, '_')
-        .replace(/^_+|_+$/g, '') || 'AA_Contact';
+        .trim().replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '')
+        || 'AA_Contact';
     }
 
     function formatVCardDate(value) {
       const date = parseSobrietyDate(value);
       if (!date) return '';
-      const year = date.getFullYear();
+      const year  = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const day   = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
 
     function downloadVCard(contact) {
-      const safeName = contact.formattedName || contact.name || 'AA Contact';
-      const note = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : '';
+      const safeName         = contact.formattedName || contact.name || 'AA Contact';
+      const note             = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : '';
       const sobrietyVCardDate = formatVCardDate(contact.sobrietyDate);
       const lines = [
-        'BEGIN:VCARD',
-        'VERSION:3.0',
+        'BEGIN:VCARD', 'VERSION:3.0',
         `FN:${escapeVCard(safeName)}`,
         `N:;${escapeVCard(safeName)};;;`,
         contact.dialerNumber ? `TEL;TYPE=CELL:${escapeVCard(contact.dialerNumber)}` : '',
@@ -1265,10 +1393,10 @@
         note ? `NOTE:${escapeVCard(note)}` : '',
         'END:VCARD'
       ].filter(Boolean);
-      const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
+      const blob      = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
       const objectUrl = window.URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = objectUrl;
+      const anchor    = document.createElement('a');
+      anchor.href     = objectUrl;
       anchor.download = `${safeFileName(safeName)}.vcf`;
       document.body.appendChild(anchor);
       anchor.click();
@@ -1277,7 +1405,7 @@
     }
 
     async function fetchContacts() {
-      renderState('Loading members...');
+      renderState('Loading members…');
       try {
         const data = await loadSheetData();
         state.contacts = parseContacts(data);
@@ -1288,41 +1416,11 @@
       }
     }
 
-    function renderSearchState() {
-      els.searchPanel.classList.toggle('is-collapsed', !state.searchOpen);
-      els.searchToggle.classList.toggle('is-active', state.searchOpen);
-      els.searchToggle.setAttribute('aria-pressed', String(state.searchOpen));
-      els.searchToggle.setAttribute('aria-label', state.searchOpen ? 'Hide search' : 'Show search');
-      document.body.classList.toggle('search-collapsed', !state.searchOpen);
-      if (state.searchOpen) {
-        requestAnimationFrame(() => els.search.focus());
-      }
-    }
-
     function renderSortState() {
       const mode = SORT_MODES[state.sortIndex];
       els.sortToggle.setAttribute('aria-label', `Sort: ${mode.label}`);
-      els.sortToggle.setAttribute('title', `Sort: ${mode.label}`);
+      els.sortToggle.setAttribute('title',       `Sort: ${mode.label}`);
     }
-
-    function closeSearch() {
-      state.searchOpen = false;
-      if (state.query) {
-        state.query = '';
-        els.search.value = '';
-        renderCards();
-      }
-      renderSearchState();
-    }
-
-    els.searchToggle.addEventListener('click', () => {
-      state.searchOpen = !state.searchOpen;
-      if (!state.searchOpen) {
-        closeSearch();
-        return;
-      }
-      renderSearchState();
-    });
 
     els.sortToggle.addEventListener('click', () => {
       state.sortIndex = (state.sortIndex + 1) % SORT_MODES.length;
@@ -1335,31 +1433,33 @@
       renderCards();
     });
 
+    els.search.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        state.query = '';
+        els.search.value = '';
+        renderCards();
+        els.search.blur();
+      }
+    });
+
     let lastScrollTop = 0;
     els.main.addEventListener('scroll', () => {
-      const current = els.main.scrollTop;
+      const current      = els.main.scrollTop;
       const scrollingDown = current > lastScrollTop + 8;
-      const scrollingUp = current < lastScrollTop - 8;
-      if (Math.abs(current - lastScrollTop) > 3) {
-        clearSelectedCard();
-      }
+      const scrollingUp   = current < lastScrollTop - 8;
 
-      if (scrollingDown && current > 80 && document.activeElement !== els.search) {
+      if (Math.abs(current - lastScrollTop) > 3) clearSelectedCard();
+
+      if (scrollingDown && current > 80 && document.activeElement !== els.search)
         els.header.classList.add('header-hidden');
-      }
-      if (scrollingUp || current < 24) {
+      if (scrollingUp || current < 24)
         els.header.classList.remove('header-hidden');
-      }
 
       lastScrollTop = Math.max(0, current);
     }, { passive: true });
 
     els.search.addEventListener('focus', () => {
       els.header.classList.remove('header-hidden');
-    });
-
-    els.search.addEventListener('keydown', event => {
-      if (event.key === 'Escape') closeSearch();
     });
 
     document.addEventListener('pointerdown', event => {
@@ -1375,7 +1475,6 @@
       });
     }
 
-    renderSearchState();
     renderSortState();
     window.addEventListener('DOMContentLoaded', fetchContacts);
   </script>
