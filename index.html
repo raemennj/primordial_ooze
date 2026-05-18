@@ -18,20 +18,20 @@
        Every size is expressed as clamp(min, fluid, max) so the
        layout scales smoothly from a 320 px phone to a tablet.    */
     :root {
-      --digit-h:        clamp(26px, 7.5vw, 34px);
-      --digit-w:        clamp(15px, 4.2vw, 21px);
-      --odometer-font:  clamp(19px, 5.5vw, 26px);
-      --name-font:      clamp(1.05rem, 5.2vw, 1.35rem);
-      --meta-font:      clamp(0.72rem, 3vw,  0.875rem);
-      --label-font:     clamp(0.52rem, 2vw,  0.65rem);
-      --btn-font:       clamp(0.68rem, 2.8vw, 0.85rem);
-      --stat-num-font:  clamp(0.78rem, 3.2vw, 0.95rem);
-      --stat-lbl-font:  clamp(0.48rem, 1.8vw, 0.58rem);
+      --digit-h:        clamp(30px, 8.5vw, 39px);
+      --digit-w:        clamp(17px, 4.8vw, 24px);
+      --odometer-font:  clamp(22px, 6.2vw, 30px);
+      --name-font:      clamp(1.2rem,  5.8vw, 1.5rem);
+      --meta-font:      clamp(0.82rem, 3.4vw, 1rem);
+      --label-font:     clamp(0.6rem,  2.3vw, 0.75rem);
+      --btn-font:       clamp(0.78rem, 3.2vw, 0.95rem);
+      --stat-num-font:  clamp(0.9rem,  3.6vw, 1.1rem);
+      --stat-lbl-font:  clamp(0.56rem, 2.1vw, 0.68rem);
       --card-px:        clamp(14px, 4vw,  20px);
       --card-py:        clamp(14px, 3.5vw, 18px);
       --card-radius:    clamp(18px, 5vw,  24px);
       --card-overlap:   clamp(114px, 31vw, 136px);
-      --btn-h:          clamp(34px, 9vw,  44px);
+      --btn-h:          clamp(40px, 10.5vw, 52px);
       --header-logo:    clamp(48px, 13vw, 62px);
       --accent-bar-w:   clamp(10px, 2.8vw, 14px);
 
@@ -673,7 +673,7 @@
       justify-content: center;
       gap: clamp(4px, 1.2vw, 6px);
       flex: 1 1 0%;
-      min-height: clamp(34px, 9vw, 42px);
+      min-height: clamp(40px, 10.5vw, 50px);
       padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.82);
@@ -822,18 +822,10 @@
           <h2 class="member-name"></h2>
 
           <p class="display-phone card-meta">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/>
-            </svg>
             <span class="phone-text"></span>
           </p>
 
           <p class="sobriety-date card-meta">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/>
-            </svg>
             <span class="date-text"></span>
           </p>
         </div>
@@ -846,36 +838,13 @@
       <!-- Actions + stats panel -->
       <div class="card-tools">
         <div class="card-actions-row">
-          <a class="call-link action-btn action-primary" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/>
-            </svg>
-            Call
-          </a>
-          <a class="text-link action-btn action-secondary" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M10 3c-4.31 0-8 3.033-8 7 0 2.024.978 3.825 2.499 5.085a3.478 3.478 0 0 1-.522 1.756.75.75 0 0 0 .584 1.143 5.976 5.976 0 0 0 3.936-1.108c.487.082.99.124 1.503.124 4.31 0 8-3.033 8-7s-3.69-7-8-7ZM6 9.75A.75.75 0 0 1 6.75 9h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 9.75ZM7.25 12a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clip-rule="evenodd"/>
-            </svg>
-            Text
-          </a>
-          <button class="save-button action-btn action-secondary" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM2.046 15.253c-.058.468.172.92.57 1.175A9.953 9.953 0 0 0 8 18c1.85 0 3.58-.5 5.044-1.372a1.5 1.5 0 0 0-.684-2.841l-6.83-.002A1.5 1.5 0 0 0 4 15.25v.003ZM12.25 4a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5a.75.75 0 0 1 .75-.75Z"/>
-            </svg>
-            Save Contact
-          </button>
+          <a class="call-link action-btn action-primary" href="#">Call</a>
+          <a class="text-link action-btn action-secondary" href="#">Text</a>
+          <button class="save-button action-btn action-secondary" type="button">Save Contact</button>
         </div>
 
         <div class="card-stats-row">
           <span class="months stat-chip">
-            <!-- Star icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.83-4.401Z" clip-rule="evenodd"/>
-            </svg>
             <span class="stat-inner">
               <span class="stat-number"></span>
               <span class="stat-label">Months</span>
@@ -883,11 +852,6 @@
           </span>
 
           <span class="weeks stat-chip">
-            <!-- Calendar icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/>
-            </svg>
             <span class="stat-inner">
               <span class="stat-number"></span>
               <span class="stat-label">Weeks</span>
@@ -895,11 +859,6 @@
           </span>
 
           <span class="days stat-chip">
-            <!-- Drop / flame icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M13.5 4.938a7 7 0 1 1-7.84 11.8A7 7 0 0 1 13.5 4.937ZM10 3a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V4a1 1 0 0 0-1-1Z" clip-rule="evenodd"/>
-            </svg>
             <span class="stat-inner">
               <span class="stat-number"></span>
               <span class="stat-label">Days</span>
