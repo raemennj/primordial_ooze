@@ -1392,6 +1392,7 @@
     }
 
     function deselectCard(card) {
+      if (card === _srCard) { srCancel(); return; }
       if (card._startT)    { clearTimeout(card._startT);    card._startT    = null; }
       if (card._riseT)     { clearTimeout(card._riseT);     card._riseT     = null; }
       if (card._settleT)   { clearTimeout(card._settleT);   card._settleT   = null; }
@@ -1416,6 +1417,7 @@
 
     function selectCard(card) {
       if (card.classList.contains('is-selecting') || card.classList.contains('is-selected')) return;
+      if (_srCard && _srCard !== card) srCancel();
       if (card._startT)    { clearTimeout(card._startT);    card._startT    = null; }
       if (card._deselectT) { clearTimeout(card._deselectT); card._deselectT = null; }
       if (card._peakT)     { clearTimeout(card._peakT);     card._peakT     = null; }
@@ -1453,6 +1455,7 @@
     }
 
     function clearSelectedCard() {
+      srCancel();
       els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting').forEach(sel => {
         deselectCard(sel);
       });
@@ -1577,13 +1580,102 @@
     });
 
     let lastScrollTop = 0;
+
+    // Scroll-driven card return state
+    let _srCard     = null;   // card currently under scroll-driven return
+    let _srStart    = 0;      // scrollTop when return began
+    let _srDroppedZ = false;  // whether is-selected (z-index) has been removed
+    let _srVelocity = 0;      // last scroll delta (velocity proxy)
+    let _srStopT    = null;   // timeout for scroll-stop detection
+
+    const SR_FULL_DIST      = 80;   // px of scroll to complete return
+    const SR_SNAP_THRESHOLD = 0.45; // progress below which we snap back on scroll-stop
+    const SR_VELOCITY_SNAP  = 8;    // px/event — fast enough to dismiss regardless of progress
+
+    function srCancel() {
+      if (!_srCard) return;
+      clearTimeout(_srStopT);
+      _srStopT = null;
+      const card  = _srCard;
+      _srCard     = null;
+      _srDroppedZ = false;
+      card.style.transform = '';
+      card.classList.remove('is-selected', 'is-selecting', 'is-deselecting', 'is-above');
+    }
+
+    function srFinish(card) {
+      card.style.transform = '';
+      card.classList.remove('is-selected', 'is-selecting', 'is-deselecting', 'is-above');
+      _srCard     = null;
+      _srDroppedZ = false;
+    }
+
+    function srSnapBack(card) {
+      if (!card.classList.contains('is-selected')) card.classList.add('is-selected');
+      card.style.transform = '';
+      _srCard     = null;
+      _srDroppedZ = false;
+    }
+
     els.main.addEventListener('scroll', () => {
-      const current      = els.main.scrollTop;
+      const current  = els.main.scrollTop;
+      const rawDelta = Math.abs(current - lastScrollTop);
+      _srVelocity    = rawDelta;
+
+      // ── scroll-driven card return ──
+      const settled = _srCard || els.cards.querySelector('.milestone-card.is-selected');
+
+      if (settled && !_srCard && rawDelta > 1) {
+        _srCard     = settled;
+        _srStart    = lastScrollTop;
+        _srDroppedZ = false;
+        ['_startT', '_riseT', '_settleT', '_peakT', '_deselectT'].forEach(k => {
+          if (_srCard[k]) { clearTimeout(_srCard[k]); _srCard[k] = null; }
+        });
+        _srCard.classList.remove('is-selecting', 'is-deselecting', 'is-above');
+        // is-selected stays — preserves z-index and visual state during return
+      }
+
+      if (_srCard) {
+        const scrollDelta = Math.abs(current - _srStart);
+        const progress    = Math.min(1, scrollDelta / SR_FULL_DIST);
+        const y           = -6 * (1 - progress);
+        const s           = 1 + 0.014 * (1 - progress);
+        _srCard.style.transform = `translateY(${y.toFixed(3)}px) scale(${s.toFixed(4)})`;
+
+        // drop z-index at the halfway mark (one-way)
+        if (!_srDroppedZ && progress >= 0.5) {
+          _srCard.classList.remove('is-selected');
+          _srDroppedZ = true;
+        }
+
+        clearTimeout(_srStopT);
+        if (progress >= 1) {
+          _srStopT = null;
+          srFinish(_srCard);
+        } else {
+          _srStopT = setTimeout(() => {
+            _srStopT = null;
+            if (!_srCard) return;
+            const card = _srCard;
+            const d    = Math.abs(els.main.scrollTop - _srStart);
+            const p    = Math.min(1, d / SR_FULL_DIST);
+            if (p >= SR_SNAP_THRESHOLD || _srVelocity >= SR_VELOCITY_SNAP) {
+              srFinish(card);
+            } else {
+              srSnapBack(card);
+            }
+          }, 150);
+        }
+      } else if (rawDelta > 3) {
+        // dismiss any mid-rise card (is-selecting but not yet is-selected)
+        const rising = els.cards.querySelector('.milestone-card.is-selecting');
+        if (rising) deselectCard(rising);
+      }
+
+      // ── header show/hide ──
       const scrollingDown = current > lastScrollTop + 8;
       const scrollingUp   = current < lastScrollTop - 8;
-
-      if (Math.abs(current - lastScrollTop) > 3) clearSelectedCard();
-
       if (scrollingDown && current > 80 && document.activeElement !== els.search)
         els.header.classList.add('header-hidden');
       if (scrollingUp || current < 24)
