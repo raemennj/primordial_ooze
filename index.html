@@ -347,9 +347,9 @@
         0 0 36px rgba(100, 200, 0, 0.22);
     }
 
-    .milestone-card.was-selected {
-      z-index: 999 !important;
-      transform: translateY(-2px) scale(1.006);
+    .milestone-card.is-deselecting {
+      z-index: 1000 !important;
+      animation: card-rise 450ms linear reverse both;
     }
 
     .milestone-card.is-selecting {
@@ -1422,26 +1422,36 @@
       });
     }
 
+    function deselectCard(card) {
+      if (card._riseT)     { clearTimeout(card._riseT);     card._riseT     = null; }
+      if (card._settleT)   { clearTimeout(card._settleT);   card._settleT   = null; }
+      if (card._deselectT) { clearTimeout(card._deselectT); card._deselectT = null; }
+      const atRest = !card.classList.contains('is-selecting');
+      card.classList.remove('is-selected', 'is-selecting', 'is-deselecting');
+      if (atRest) {
+        void card.offsetWidth;
+        card.classList.add('is-deselecting');
+        card._deselectT = window.setTimeout(() => {
+          card._deselectT = null;
+          card.classList.remove('is-deselecting');
+        }, 470);
+      }
+    }
+
     function selectCard(card) {
       if (card.classList.contains('is-selecting') || card.classList.contains('is-selected')) return;
-      if (card._riseT)   { clearTimeout(card._riseT);   card._riseT   = null; }
-      if (card._settleT) { clearTimeout(card._settleT); card._settleT = null; }
+      if (card._deselectT) { clearTimeout(card._deselectT); card._deselectT = null; }
+      if (card._riseT)     { clearTimeout(card._riseT);     card._riseT     = null; }
+      if (card._settleT)   { clearTimeout(card._settleT);   card._settleT   = null; }
 
-      els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting').forEach(sel => {
-        if (sel !== card) {
-          if (sel._riseT)   { clearTimeout(sel._riseT);   sel._riseT   = null; }
-          if (sel._settleT) { clearTimeout(sel._settleT); sel._settleT = null; }
-          sel.classList.remove('is-selected', 'is-selecting');
-          sel.classList.add('was-selected');
-          window.setTimeout(() => sel.classList.remove('was-selected'), 270);
-        }
+      els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting, .milestone-card.is-deselecting').forEach(sel => {
+        if (sel !== card) deselectCard(sel);
       });
 
-      card.classList.remove('was-selected', 'is-selecting', 'is-selected');
+      card.classList.remove('is-deselecting', 'is-selecting', 'is-selected');
       void card.offsetWidth;
       card.classList.add('is-selecting');
 
-      // z-index 1000 and glow are applied at the animation's peak (~40% of 900ms)
       card._riseT = window.setTimeout(() => {
         card._riseT = null;
         card.classList.add('is-selected');
@@ -1455,9 +1465,7 @@
 
     function clearSelectedCard() {
       els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting').forEach(sel => {
-        if (sel._riseT)   { clearTimeout(sel._riseT);   sel._riseT   = null; }
-        if (sel._settleT) { clearTimeout(sel._settleT); sel._settleT = null; }
-        sel.classList.remove('is-selected', 'is-selecting', 'was-selected');
+        deselectCard(sel);
       });
     }
 
