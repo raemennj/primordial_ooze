@@ -348,7 +348,7 @@
     }
 
     .milestone-card.is-deselecting {
-      animation: card-rise 450ms linear reverse both;
+      animation: card-return 250ms linear both;
     }
 
     .milestone-card.is-above {
@@ -370,8 +370,15 @@
       100% { transform: translateY(-6px) scale(1.014); }
     }
 
+    @keyframes card-return {
+      0%   { transform: translateY(-6px) scale(1.014); }
+      20%  { transform: translateY(-10px) scale(1.01); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .milestone-card.is-selecting { animation: none; }
+      .milestone-card.is-selecting,
+      .milestone-card.is-deselecting { animation: none; }
     }
 
     /* ─── CARD HEADER CONTENT ─── */
@@ -1440,11 +1447,11 @@
         card._peakT = window.setTimeout(() => {
           card._peakT = null;
           card.classList.remove('is-above');
-        }, 270);
+        }, 50);
         card._deselectT = window.setTimeout(() => {
           card._deselectT = null;
           card.classList.remove('is-deselecting');
-        }, 470);
+        }, 270);
       }
     }
 
@@ -1461,7 +1468,7 @@
         if (sel !== card) {
           const wasAtRest = !sel.classList.contains('is-selecting');
           deselectCard(sel);
-          if (wasAtRest) delay = 270;
+          if (wasAtRest) delay = 150;
         }
       });
 
