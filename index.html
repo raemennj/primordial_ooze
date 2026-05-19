@@ -14,26 +14,29 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <title>Primordial Ooze</title>
   <style>
-    /* ─── SCALE TOKENS ──────────────────────────────────────────
-       Every size is expressed as clamp(min, fluid, max) so the
-       layout scales smoothly from a 320 px phone to a tablet.    */
+    /* ─── SCALE TOKENS ─── */
     :root {
-      --digit-h:        clamp(30px, 8.5vw, 39px);
-      --digit-w:        clamp(17px, 4.8vw, 24px);
-      --odometer-font:  clamp(22px, 6.2vw, 30px);
+      --digit-h:        clamp(28px, 8vw,   36px);
+      --digit-w:        clamp(15px, 4.4vw, 21px);
+      --odometer-font:  clamp(19px, 5.6vw, 27px);
       --name-font:      clamp(1.2rem,  5.8vw, 1.5rem);
       --meta-font:      clamp(0.82rem, 3.4vw, 1rem);
-      --label-font:     clamp(0.6rem,  2.3vw, 0.75rem);
-      --btn-font:       clamp(0.78rem, 3.2vw, 0.95rem);
-      --stat-num-font:  clamp(0.9rem,  3.6vw, 1.1rem);
-      --stat-lbl-font:  clamp(0.56rem, 2.1vw, 0.68rem);
+      --label-font:     clamp(0.56rem, 2.1vw, 0.70rem);
+      --btn-font:       clamp(0.66rem, 2.5vw, 0.80rem);
+      --stat-num-font:  clamp(1rem,   4vw,   1.3rem);
+      --stat-lbl-font:  clamp(0.52rem, 1.9vw, 0.63rem);
       --card-px:        clamp(14px, 4vw,  20px);
       --card-py:        clamp(14px, 3.5vw, 18px);
       --card-radius:    clamp(18px, 5vw,  24px);
-      --card-overlap:   clamp(114px, 31vw, 136px);
-      --btn-h:          clamp(40px, 10.5vw, 52px);
-      --header-logo:    clamp(48px, 13vw, 62px);
-      --accent-bar-w:   clamp(10px, 2.8vw, 14px);
+      --card-overlap:   clamp(104px, 29vw, 124px);
+      --btn-h:          clamp(40px, 10.5vw, 50px);
+      --header-logo:    clamp(48px, 13vw,  62px);
+
+      /* Tube dimensions */
+      --tube-h:         clamp(32px, 9.5vw, 44px);
+      --tube-cap-d:     clamp(38px, 11vw,  52px);
+      --mini-tube-h:    clamp(9px,  2.6vw, 12px);
+      --mini-cap-d:     clamp(12px, 3.2vw, 15px);
 
       /* Brand palette */
       --ooze:      #8bd600;
@@ -299,35 +302,25 @@
     /* Disabled call/text buttons when no phone number */
     .action-btn.disabled { opacity: 0.4; pointer-events: none; }
 
-    /* ─── CARDS ─── */
+    /* ─── CARDS — GEL / GLASS ─── */
     .milestone-card {
       position: relative;
       padding: var(--card-py) var(--card-px) 0;
-      background: rgba(252, 255, 248, 0.96);
-      -webkit-backdrop-filter: blur(16px) saturate(140%);
-      backdrop-filter: blur(16px) saturate(140%);
-      border: 1.5px solid rgba(255, 255, 255, 0.82);
+      background: linear-gradient(168deg,
+        rgba(248,253,245,0.98) 0%,
+        rgba(240,250,236,0.96) 100%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      backdrop-filter: blur(20px) saturate(140%);
+      border: 1.5px solid rgba(255,255,255,0.88);
       border-radius: var(--card-radius);
       box-shadow:
-        0 -8px 18px -4px rgba(0, 0, 0, 0.28),
-        0 10px 28px rgba(0, 0, 0, 0.28);
+        0 -6px 16px -4px rgba(0,0,0,0.22),
+        0 10px 32px rgba(0,0,0,0.30),
+        inset 0 1px 0 rgba(255,255,255,0.92),
+        inset 0 -1px 0 rgba(0,0,0,0.04);
       overflow: hidden;
       will-change: transform;
       transition: transform 240ms linear;
-    }
-
-    /* Left tier accent bar */
-    .milestone-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: var(--accent-bar-w);
-      background: var(--accent,
-        linear-gradient(180deg, #24745a, #38a37d, #165642));
-      box-shadow:
-        inset 2px 0 2px rgba(255, 255, 255, 0.55),
-        inset -2px 0 4px rgba(0, 0, 0, 0.20),
-        4px 0 10px rgba(0, 0, 0, 0.10);
     }
 
     /* Card stacking */
@@ -381,13 +374,13 @@
       .milestone-card.is-deselecting { animation: none; }
     }
 
-    /* ─── CARD HEADER CONTENT ─── */
+    /* ─── CARD HEADER ─── */
     .card-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: clamp(8px, 2.5vw, 14px);
-      margin-bottom: clamp(10px, 3vw, 16px);
+      gap: 0;
+      margin-bottom: clamp(10px, 3vw, 14px);
     }
 
     .card-info { min-width: 0; flex: 1 1 auto; }
@@ -396,7 +389,7 @@
       font-size: var(--name-font);
       font-weight: 900;
       line-height: 1.15;
-      color: #0f1a05;
+      color: #162d08;
       margin: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -413,46 +406,26 @@
       font-weight: 600;
     }
 
-    .card-meta svg {
-      width:  clamp(12px, 3.2vw, 15px);
-      height: clamp(12px, 3.2vw, 15px);
-      flex: 0 0 auto;
-      opacity: 0.65;
+    .card-header-divider {
+      width: 1.5px;
+      align-self: stretch;
+      flex: 0 0 1.5px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(80,140,80,0.28) 15%,
+        rgba(80,140,80,0.28) 85%,
+        transparent 100%);
+      margin: 0 clamp(6px, 1.8vw, 10px);
     }
 
-    /* ─── MILESTONE BAND (odometer wrapper) ─── */
+    /* ─── MILESTONE BAND (flip clock) ─── */
     .milestone-band {
       flex: 0 0 auto;
-      width: min(44%, 210px);
-      min-width: clamp(148px, 40vw, 198px);
-      border-radius: clamp(10px, 3vw, 14px);
-      background:
-        radial-gradient(circle at 12% 24%,
-          rgba(184, 255, 35, 0.18), transparent 28%),
-        color-mix(in srgb,
-          var(--band-color, var(--green)) 12%, white);
-      border: 1px solid
-        color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
-      position: relative;
-      overflow: hidden;
-      min-height: clamp(62px, 18vw, 80px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(6px, 2vw, 10px) clamp(8px, 2.5vw, 12px);
+      min-width: clamp(130px, 36vw, 170px);
     }
-
-    .milestone-band::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: var(--milestone-bg,
-        radial-gradient(circle at 22% 50%,
-          rgba(255, 255, 255, 0.72), transparent 34%));
-      opacity: 0.72;
-    }
-
-    .milestone-band > * { position: relative; z-index: 1; }
 
     /* ─── ODOMETER ─── */
     .odometer {
@@ -467,7 +440,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(2px, 0.8vw, 4px);
+      gap: clamp(6px, 1.8vw, 10px);
       width: 100%;
     }
 
@@ -475,7 +448,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(2px, 0.8vw, 4px);
+      gap: clamp(4px, 1.2vw, 6px);
     }
 
     .odometer-bevel {
@@ -483,20 +456,17 @@
       display: flex;
       align-items: center;
       padding: clamp(3px, 1vw, 5px) clamp(4px, 1.2vw, 6px);
-      border-radius: clamp(5px, 1.5vw, 8px);
-      background:
-        linear-gradient(180deg,
-          rgba(139, 214, 0, 0.10), transparent 30%),
-        linear-gradient(180deg,
-          #4a3c25 0%, #2a2219 40%, #2a2219 60%, #1a1209 100%);
+      border-radius: clamp(6px, 1.8vw, 9px);
+      background: linear-gradient(180deg,
+        #3d3020 0%, #221808 45%, #150e05 100%);
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 4px 12px rgba(0, 0, 0, 0.32),
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.50);
+        0 0 0 2px rgba(139,214,0,0.52),
+        0 0 14px rgba(139,214,0,0.26),
+        0 3px 10px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -1px 0 rgba(0,0,0,0.55);
     }
 
-    /* Horizontal split line across digits */
     .odometer-bevel::after {
       content: "";
       position: absolute;
@@ -506,8 +476,8 @@
       transform: translateY(-50%);
       background: linear-gradient(90deg,
         transparent,
-        rgba(0, 0, 0, 0.55) 15%,
-        rgba(0, 0, 0, 0.55) 85%,
+        rgba(0,0,0,0.60) 15%,
+        rgba(0,0,0,0.60) 85%,
         transparent);
       pointer-events: none;
       z-index: 4;
@@ -518,9 +488,9 @@
       width: var(--digit-w);
       height: var(--digit-h);
       overflow: hidden;
-      background: #0e0e0e;
-      border-left:  1px solid #3a2c18;
-      border-right: 1px solid #3a2c18;
+      background: #0e0a06;
+      border-left:  1px solid #2e2010;
+      border-right: 1px solid #2e2010;
     }
 
     .odometer-digit:first-child {
@@ -540,10 +510,10 @@
       z-index: 3;
       pointer-events: none;
       background: linear-gradient(180deg,
-        rgba(255, 255, 255, 0.07) 0%,
-        rgba(255, 255, 255, 0.01) 48%,
-        rgba(0, 0, 0, 0) 52%,
-        rgba(0, 0, 0, 0.18) 100%);
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.02) 48%,
+        rgba(0,0,0,0) 52%,
+        rgba(0,0,0,0.20) 100%);
     }
 
     .odometer-drum {
@@ -563,69 +533,170 @@
       font-stretch: condensed;
       font-weight: 650;
       line-height: 1;
-      color: var(--odometer-color, #ff9500);
+      color: #ffffff !important;
       text-shadow:
-        0 0 8px  var(--odometer-glow, rgba(255, 149, 0, 0.42)),
-        0 0 18px var(--odometer-glow, rgba(255, 149, 0, 0.34));
+        0 0 10px rgba(255,255,255,0.55),
+        0 1px 3px rgba(0,0,0,0.50) !important;
       user-select: none;
     }
 
-    .odometer-colon {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(3px, 1vw, 5px);
-      padding: 0 1px clamp(10px, 3vw, 14px);
-    }
-
-    .odometer-colon span {
-      width:  clamp(3px, 1vw, 5px);
-      height: clamp(3px, 1vw, 5px);
-      border-radius: 999px;
-      background: var(--odometer-color, #ff9500);
-      opacity: 0.42;
-      box-shadow: 0 0 6px var(--odometer-glow, rgba(255, 149, 0, 0.42));
-    }
+    /* Hide colon separators — gel design uses spaced segments */
+    .odometer-colon { display: none; }
 
     .odometer-label {
-      color: color-mix(in srgb,
-        var(--odometer-color, #667085) 45%, black);
+      color: #3a5828;
       font-size: var(--label-font);
       font-weight: 800;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     /* ─── CARD TOOLS PANEL ─── */
     .card-tools {
-      margin: clamp(10px, 3vw, 14px)
-              calc(-1 * var(--card-px))
-              0;
-      padding: clamp(10px, 3vw, 14px)
-               var(--card-px)
-               clamp(12px, 3.5vw, 16px);
-      background: rgba(8, 18, 4, 0.055);
-      border-top: 1px solid rgba(0, 0, 0, 0.07);
+      margin: 0 calc(-1 * var(--card-px)) 0;
+      padding: clamp(10px, 3vw, 14px) var(--card-px) clamp(12px, 3.5vw, 16px);
+      background: rgba(228,248,222,0.50);
+      border-top: 1px solid rgba(170,220,170,0.35);
     }
 
+    /* ─── MAIN GLASS TUBE ─── */
+    .glass-tube-wrap {
+      display: flex;
+      align-items: center;
+      height: var(--tube-cap-d);
+      margin-bottom: clamp(10px, 3vw, 13px);
+      position: relative;
+    }
+
+    .glass-tube-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 20% 4%;
+      border-radius: 4px;
+      box-shadow: 0 0 24px 6px var(--tube-glow, rgba(139,214,0,0.32));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .tube-end {
+      flex: 0 0 var(--tube-cap-d);
+      width: var(--tube-cap-d);
+      height: var(--tube-cap-d);
+      border-radius: 50%;
+      position: relative;
+      z-index: 3;
+      flex-shrink: 0;
+      background:
+        radial-gradient(circle at 34% 27%,
+          rgba(255,255,255,0.96) 0%,
+          rgba(228,238,230,0.86) 14%,
+          rgba(188,208,193,0.90) 30%,
+          rgba(150,175,157,0.94) 50%,
+          rgba(112,142,120,0.97) 68%,
+          rgba(80,108,88,1.0)   85%,
+          rgba(58,82,65,1.0)    100%
+        );
+      box-shadow:
+        inset 0 3px 9px rgba(255,255,255,0.74),
+        inset 0 -5px 12px rgba(0,0,0,0.34),
+        inset 3px 0 6px rgba(255,255,255,0.42),
+        inset -3px 0 6px rgba(0,0,0,0.20),
+        0 3px 14px rgba(0,0,0,0.44),
+        0 1px 4px rgba(0,0,0,0.24);
+      border: 2px solid rgba(175,200,180,0.88);
+    }
+
+    .tube-end::before {
+      content: '';
+      position: absolute;
+      top: 17%; left: 19%;
+      width: 32%; height: 32%;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,255,255,0.90) 0%,
+        rgba(255,255,255,0) 100%
+      );
+      pointer-events: none;
+    }
+
+    .tube-body {
+      flex: 1;
+      height: var(--tube-h);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      background: rgba(224,244,224,0.30);
+      border-top: 2px solid rgba(198,228,202,0.80);
+      border-bottom: 2px solid rgba(182,215,186,0.68);
+      box-shadow:
+        inset 0 4px 10px rgba(0,0,0,0.11),
+        inset 0 -3px 6px rgba(255,255,255,0.34);
+    }
+
+    .tube-body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 38%;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.54) 0%,
+        rgba(255,255,255,0.12) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .tube-body::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 16%;
+      background: linear-gradient(0deg,
+        rgba(255,255,255,0.30) 0%,
+        transparent 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .tube-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      min-width: 4%;
+      transition: width 700ms ease;
+      background:
+        radial-gradient(ellipse 14% 65% at  7% 48%, rgba(255,255,255,0.68) 0%, transparent 100%),
+        radial-gradient(ellipse  9% 55% at 18% 30%, rgba(220,255,115,0.70) 0%, transparent 100%),
+        radial-gradient(ellipse 12% 62% at 30% 63%, rgba(255,255,255,0.60) 0%, transparent 100%),
+        radial-gradient(ellipse  8% 50% at 43% 28%, rgba(215,255, 95,0.68) 0%, transparent 100%),
+        radial-gradient(ellipse 10% 58% at 55% 56%, rgba(255,255,255,0.62) 0%, transparent 100%),
+        radial-gradient(ellipse  9% 52% at 67% 34%, rgba(195,255, 75,0.64) 0%, transparent 100%),
+        radial-gradient(ellipse 11% 60% at 79% 50%, rgba(255,255,255,0.58) 0%, transparent 100%),
+        radial-gradient(ellipse  8% 50% at 91% 30%, rgba(215,255, 90,0.62) 0%, transparent 100%),
+        linear-gradient(90deg,
+          var(--tube-fill-a, #4aaa00) 0%,
+          var(--tube-fill-b, #7fd000) 28%,
+          var(--tube-fill-c, #aee800) 58%,
+          var(--tube-fill-d, #caed00) 82%,
+          var(--tube-fill-e, #d6e200) 100%
+        );
+      box-shadow: inset 0 2px 5px rgba(255,255,255,0.44);
+    }
+
+    /* ─── ACTION BUTTONS — GLASS RECTANGULAR ─── */
     .card-actions-row {
       display: flex;
-      gap: clamp(6px, 2vw, 10px);
-      margin-bottom: clamp(7px, 2.2vw, 10px);
+      gap: clamp(5px, 1.8vw, 8px);
+      margin-bottom: clamp(8px, 2.5vw, 11px);
     }
 
-    .card-stats-row {
-      display: flex;
-      gap: clamp(6px, 2vw, 10px);
-    }
-
-    /* ─── ACTION BUTTONS ─── */
     .action-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: clamp(4px, 1.2vw, 6px);
       height: var(--btn-h);
-      border-radius: 999px;
+      border-radius: clamp(8px, 2.4vw, 12px);
       font-size: var(--btn-font);
       font-weight: 800;
       font-family: inherit;
@@ -633,85 +704,160 @@
       white-space: nowrap;
       cursor: pointer;
       flex: 1 1 auto;
-      padding: 0 clamp(8px, 2.5vw, 14px);
-      transition: transform 120ms ease, opacity 120ms ease;
-      border: 1px solid transparent;
+      padding: 0 clamp(6px, 1.8vw, 10px);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      color: #1a5010;
+      background: rgba(255,255,255,0.88);
+      border: 1.5px solid rgba(180,220,178,0.72);
+      box-shadow:
+        0 1px 5px rgba(0,0,0,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.95),
+        inset 0 -1px 0 rgba(0,0,0,0.05);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .action-btn:active { transform: scale(0.95); }
+    .action-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
 
     .action-btn svg {
-      width:  clamp(13px, 3.5vw, 16px);
-      height: clamp(13px, 3.5vw, 16px);
-      flex: 0 0 auto;
-    }
-
-    .action-primary {
-      background: linear-gradient(180deg,
-        #22580a 0%, #2f7200 50%, #1c4c00 100%);
-      border-color: rgba(47, 114, 0, 0.55);
-      color: #ffffff;
-      box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.20),
-        inset 0 1px 0 rgba(184, 255, 35, 0.20),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.28);
-    }
-
-    .action-secondary {
-      background: rgba(255, 255, 255, 0.92);
-      border-color: rgba(31, 41, 51, 0.13);
-      color: #1f2933;
-      box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.07),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    }
-
-    /* ─── STAT CHIPS ─── */
-    .stat-chip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(4px, 1.2vw, 6px);
-      flex: 1 1 0%;
-      min-height: clamp(40px, 10.5vw, 50px);
-      padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid rgba(31, 41, 51, 0.10);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    }
-
-    .stat-chip svg {
       width:  clamp(12px, 3.2vw, 15px);
       height: clamp(12px, 3.2vw, 15px);
       flex: 0 0 auto;
-      opacity: 0.60;
-      color: #1f2933;
+      color: #1d6010;
     }
 
-    .stat-inner {
+    /* ─── STAT CHIPS — GLASS TILES WITH MINI-TUBE ─── */
+    .card-stats-row {
+      display: flex;
+      gap: clamp(5px, 1.8vw, 8px);
+    }
+
+    .stat-chip {
       display: flex;
       flex-direction: column;
       align-items: center;
-      line-height: 1;
+      justify-content: center;
+      flex: 1 1 0%;
+      padding: clamp(8px, 2.5vw, 11px) clamp(5px, 1.5vw, 8px) clamp(7px, 2vw, 10px);
+      border-radius: clamp(10px, 3vw, 14px);
+      background: rgba(255,255,255,0.80);
+      border: 1.5px solid rgba(195,228,196,0.72);
+      box-shadow:
+        0 1px 4px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.94);
     }
 
     .stat-number {
       display: block;
       font-size: var(--stat-num-font);
       font-weight: 900;
-      color: #1f2933;
+      color: #1a3808;
       line-height: 1;
+      margin-bottom: clamp(4px, 1.2vw, 6px);
     }
 
     .stat-label {
       display: block;
       font-size: var(--stat-lbl-font);
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #667085;
-      margin-top: 2px;
+      color: #3e5a2a;
+      margin-top: clamp(3px, 1vw, 5px);
+    }
+
+    /* ─── MINI GLASS TUBE ─── */
+    .mini-tube-wrap {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: var(--mini-cap-d);
+    }
+
+    .mini-tube-end {
+      flex: 0 0 var(--mini-cap-d);
+      width: var(--mini-cap-d);
+      height: var(--mini-cap-d);
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      background:
+        radial-gradient(circle at 33% 28%,
+          rgba(255,255,255,0.92) 0%,
+          rgba(215,228,218,0.82) 18%,
+          rgba(175,196,180,0.88) 38%,
+          rgba(135,162,142,0.94) 60%,
+          rgba(98,126,106,1.0)   82%,
+          rgba(72,98,80,1.0)     100%
+        );
+      box-shadow:
+        inset 0 2px 5px rgba(255,255,255,0.70),
+        inset 0 -3px 7px rgba(0,0,0,0.30),
+        0 2px 7px rgba(0,0,0,0.38);
+      border: 1px solid rgba(175,200,178,0.84);
+    }
+
+    .mini-tube-end::before {
+      content: '';
+      position: absolute;
+      top: 18%; left: 20%;
+      width: 30%; height: 30%;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,255,255,0.88) 0%,
+        rgba(255,255,255,0) 100%
+      );
+      pointer-events: none;
+    }
+
+    .mini-tube-body {
+      flex: 1;
+      height: var(--mini-tube-h);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      background: rgba(224,244,224,0.28);
+      border-top: 1.5px solid rgba(195,225,198,0.78);
+      border-bottom: 1.5px solid rgba(178,212,182,0.66);
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.09),
+        inset 0 -2px 4px rgba(255,255,255,0.30);
+    }
+
+    .mini-tube-body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 42%;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.52) 0%,
+        rgba(255,255,255,0.10) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .mini-tube-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      min-width: 4%;
+      transition: width 700ms ease;
+      background:
+        radial-gradient(ellipse 18% 70% at 12% 46%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(ellipse 14% 62% at 36% 28%, rgba(220,255,110,0.68) 0%, transparent 100%),
+        radial-gradient(ellipse 16% 65% at 64% 60%, rgba(255,255,255,0.58) 0%, transparent 100%),
+        radial-gradient(ellipse 12% 58% at 86% 32%, rgba(200,255,80,0.62)  0%, transparent 100%),
+        linear-gradient(90deg,
+          var(--tube-fill-a, #4aaa00) 0%,
+          var(--tube-fill-b, #7fd000) 30%,
+          var(--tube-fill-c, #aee800) 62%,
+          var(--tube-fill-d, #caed00) 84%,
+          var(--tube-fill-e, #d6e200) 100%
+        );
     }
 
     /* ─── STATE / LOADING MESSAGE ─── */
@@ -733,20 +879,15 @@
       color: #9b2c2c;
     }
 
-    /* ─── HOVER STATES (pointer devices only) ─── */
+    /* ─── HOVER STATES ─── */
     @media (hover: hover) and (pointer: fine) {
-      .action-primary:hover {
-        background: linear-gradient(180deg,
-          #2a6e0e 0%, #3d8f00 50%, #286000 100%);
+      .action-btn:hover {
+        background: rgba(255,255,255,0.96);
+        border-color: rgba(139,214,0,0.48);
         box-shadow:
-          0 4px 12px rgba(47, 111, 0, 0.30),
-          inset 0 1px 0 rgba(184, 255, 35, 0.26),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.28);
-      }
-
-      .action-secondary:hover {
-        background: #ffffff;
-        border-color: rgba(31, 41, 51, 0.22);
+          0 2px 10px rgba(0,0,0,0.12),
+          0 0 0 1px rgba(139,214,0,0.22),
+          inset 0 1px 0 rgba(255,255,255,0.98);
       }
 
       .header-icon-button:hover {
@@ -820,15 +961,15 @@
       <div class="card-header">
         <div class="card-info">
           <h2 class="member-name"></h2>
-
           <p class="display-phone card-meta">
             <span class="phone-text"></span>
           </p>
-
           <p class="sobriety-date card-meta">
             <span class="date-text"></span>
           </p>
         </div>
+
+        <div class="card-header-divider"></div>
 
         <div class="milestone-band">
           <div class="display-milestone odometer"></div>
@@ -837,34 +978,69 @@
 
       <!-- Actions + stats panel -->
       <div class="card-tools">
+
+        <!-- Glass tube progress bar -->
+        <div class="glass-tube-wrap">
+          <div class="tube-end"></div>
+          <div class="tube-body">
+            <div class="tube-fill main-tube-fill"></div>
+          </div>
+          <div class="tube-end"></div>
+        </div>
+
         <div class="card-actions-row">
-          <a class="call-link action-btn action-primary" href="#">Call</a>
-          <a class="text-link action-btn action-secondary" href="#">Text</a>
-          <button class="save-button action-btn action-secondary" type="button">Save Contact</button>
+          <a class="call-link action-btn" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/></svg>
+            Call
+          </a>
+          <a class="text-link action-btn" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 2c-2.236 0-4.43.18-6.57.524C1.993 2.755 1 4.014 1 5.426v5.148c0 1.413.993 2.67 2.43 2.902.848.137 1.705.248 2.57.331v3.443a.75.75 0 0 0 1.28.53l3.58-3.579a.78.78 0 0 1 .527-.224 41.202 41.202 0 0 0 5.183-.5c1.437-.232 2.43-1.49 2.43-2.903V5.426c0-1.413-.993-2.67-2.43-2.902A41.289 41.289 0 0 0 10 2Zm0 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM8 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm5 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+            Text
+          </a>
+          <button class="save-button action-btn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/></svg>
+            Save Contact
+          </button>
         </div>
 
         <div class="card-stats-row">
-          <span class="months stat-chip">
-            <span class="stat-inner">
-              <span class="stat-number"></span>
-              <span class="stat-label">Months</span>
-            </span>
-          </span>
+          <div class="months stat-chip">
+            <span class="stat-number"></span>
+            <div class="mini-tube-wrap">
+              <div class="mini-tube-end"></div>
+              <div class="mini-tube-body">
+                <div class="mini-tube-fill months-fill"></div>
+              </div>
+              <div class="mini-tube-end"></div>
+            </div>
+            <span class="stat-label">Months</span>
+          </div>
 
-          <span class="weeks stat-chip">
-            <span class="stat-inner">
-              <span class="stat-number"></span>
-              <span class="stat-label">Weeks</span>
-            </span>
-          </span>
+          <div class="weeks stat-chip">
+            <span class="stat-number"></span>
+            <div class="mini-tube-wrap">
+              <div class="mini-tube-end"></div>
+              <div class="mini-tube-body">
+                <div class="mini-tube-fill weeks-fill"></div>
+              </div>
+              <div class="mini-tube-end"></div>
+            </div>
+            <span class="stat-label">Weeks</span>
+          </div>
 
-          <span class="days stat-chip">
-            <span class="stat-inner">
-              <span class="stat-number"></span>
-              <span class="stat-label">Days</span>
-            </span>
-          </span>
+          <div class="days stat-chip">
+            <span class="stat-number"></span>
+            <div class="mini-tube-wrap">
+              <div class="mini-tube-end"></div>
+              <div class="mini-tube-body">
+                <div class="mini-tube-fill days-fill"></div>
+              </div>
+              <div class="mini-tube-end"></div>
+            </div>
+            <span class="stat-label">Days</span>
+          </div>
         </div>
+
       </div>
 
     </article>
@@ -1156,41 +1332,70 @@
       const tier = String(contact.memberTier || '').trim().toLowerCase();
       if (tier.includes('platinum') || tier.includes('platnum')) {
         return {
-          band:   '#8f9aa3',
+          band:    '#8f9aa3',
           display: '#eef2f5',
-          glow:   'rgba(238, 242, 245, 0.34)',
-          accent: 'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)'
+          glow:    'rgba(238, 242, 245, 0.34)',
+          accent:  'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)',
+          tubeA:   '#606e7a', tubeB:   '#8898a8', tubeC:   '#a8b8c8',
+          tubeD:   '#c8d8e6', tubeE:   '#d8e8f4',
+          tubeGlow:'rgba(170,190,210,0.38)'
         };
       }
       if (tier.includes('gold')) {
         return {
-          band:   '#b7791f',
+          band:    '#b7791f',
           display: '#f6c453',
-          glow:   'rgba(246, 196, 83, 0.38)',
-          accent: 'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)'
+          glow:    'rgba(246, 196, 83, 0.38)',
+          accent:  'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)',
+          tubeA:   '#b06800', tubeB:   '#d49000', tubeC:   '#f0b800',
+          tubeD:   '#ffd000', tubeE:   '#ffdc00',
+          tubeGlow:'rgba(240,190,0,0.42)'
         };
       }
       if (tier.includes('silver')) {
         return {
-          band:   '#9ca3af',
+          band:    '#9ca3af',
           display: '#d9dde3',
-          glow:   'rgba(217, 221, 227, 0.34)',
-          accent: 'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)'
+          glow:    'rgba(217, 221, 227, 0.34)',
+          accent:  'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)',
+          tubeA:   '#7a8890', tubeB:   '#a0b0ba', tubeC:   '#c0d0da',
+          tubeD:   '#d8e4ec', tubeE:   '#e4eef4',
+          tubeGlow:'rgba(180,200,220,0.38)'
         };
       }
       if (tier.includes('bronze')) {
         return {
-          band:   '#a16207',
+          band:    '#a16207',
           display: '#dc8d3a',
-          glow:   'rgba(220, 141, 58, 0.38)',
-          accent: 'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)'
+          glow:    'rgba(220, 141, 58, 0.38)',
+          accent:  'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)',
+          tubeA:   '#8a4400', tubeB:   '#b46800', tubeC:   '#d08800',
+          tubeD:   '#e8a000', tubeE:   '#f0b000',
+          tubeGlow:'rgba(220,150,0,0.40)'
         };
       }
       return {
-        band:   '#24745a',
+        band:    '#24745a',
         display: '#58c493',
-        glow:   'rgba(88, 196, 147, 0.34)',
-        accent: 'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)'
+        glow:    'rgba(88, 196, 147, 0.34)',
+        accent:  'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)',
+        tubeA:   '#4aaa00', tubeB:   '#7fd000', tubeC:   '#aee800',
+        tubeD:   '#caed00', tubeE:   '#d6e200',
+        tubeGlow:'rgba(139,214,0,0.38)'
+      };
+    }
+
+    function tubeFillPercent(contact) {
+      const parts  = durationParts(contact);
+      const mTotal = Math.floor(contact.totalMonths || 0);
+      const wTotal = Math.floor(contact.totalWeeks  || 0);
+      const dTotal = Math.floor(contact.totalDays   || 0);
+      const clamp  = v => Math.min(96, Math.max(4, v));
+      return {
+        main:   clamp((parts.months / 12) * 100),
+        months: clamp(((mTotal % 12) / 12) * 100),
+        weeks:  clamp(((wTotal % 52) / 52) * 100),
+        days:   clamp(((dTotal % 30) / 30) * 100)
       };
     }
 
@@ -1341,8 +1546,12 @@
         card.style.setProperty('--band-color',     metal.band);
         card.style.setProperty('--odometer-color', metal.display);
         card.style.setProperty('--odometer-glow',  metal.glow);
-        fragment.querySelector('.milestone-band')
-          .style.setProperty('--milestone-bg', milestoneBackground(contact));
+        card.style.setProperty('--tube-fill-a',    metal.tubeA);
+        card.style.setProperty('--tube-fill-b',    metal.tubeB);
+        card.style.setProperty('--tube-fill-c',    metal.tubeC);
+        card.style.setProperty('--tube-fill-d',    metal.tubeD);
+        card.style.setProperty('--tube-fill-e',    metal.tubeE);
+        card.style.setProperty('--tube-glow',      metal.tubeGlow);
 
         fragment.querySelector('.member-name').textContent =
           contact.name || 'Unnamed member';
@@ -1365,6 +1574,16 @@
         setNum('.months .stat-number', Math.floor(contact.totalMonths || 0));
         setNum('.weeks .stat-number',  Math.floor(contact.totalWeeks  || 0));
         setNum('.days .stat-number',   Math.floor(contact.totalDays   || 0));
+
+        const fills = tubeFillPercent(contact);
+        const setFill = (sel, pct) => {
+          const el = fragment.querySelector(sel);
+          if (el) el.style.width = pct + '%';
+        };
+        setFill('.main-tube-fill', fills.main);
+        setFill('.months-fill',    fills.months);
+        setFill('.weeks-fill',     fills.weeks);
+        setFill('.days-fill',      fills.days);
 
         const call = fragment.querySelector('.call-link');
         const text = fragment.querySelector('.text-link');
