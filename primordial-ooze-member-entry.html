@@ -30,19 +30,16 @@
 
     html {
       width: 100%;
-      height: 100%;
-      min-height: -webkit-fill-available;
+      min-height: 100vh;
       margin: 0;
       overflow: hidden;
       background: #05080d;
     }
 
     body {
-      position: fixed;
-      inset: 0;
       width: 100%;
-      height: 100%;
-      min-height: 100%;
+      min-height: 100vh;
+      margin: 0;
       overflow: hidden;
       color: #fff8e8;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -53,8 +50,7 @@
       position: relative;
       isolation: isolate;
       width: 100%;
-      height: 100%;
-      min-height: 100%;
+      min-height: 100vh;
       display: grid;
       place-items: center;
       padding:
@@ -77,7 +73,8 @@
     .skybox {
       z-index: -3;
       inset: 0;
-      overflow: hidden;
+      /* Changed to visible as you requested to prevent clipping at the bottom */
+      overflow: visible; 
       background: #05080d;
     }
 
@@ -102,7 +99,7 @@
       background:
         #05080d
         url("primordial_ooze_member_entry_bg.png")
-        center center / cover no-repeat;
+        center bottom / cover no-repeat; /* Anchored strictly to the bottom */
       transform:
         perspective(900px)
         translate3d(
@@ -239,9 +236,12 @@
       text-shadow: 0 1px 8px #000;
     }
 
-    @supports (height: 100dvh) {
+    /* 
+      Utilize dynamic viewport height correctly. 
+      Ensures the layout reaches the absolute bottom safe areas dynamically 
+    */
+    @supports (min-height: 100dvh) {
       html, body, main {
-        height: 100dvh;
         min-height: 100dvh;
       }
     }
