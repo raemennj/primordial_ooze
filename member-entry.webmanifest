@@ -1,0 +1,26 @@
+{
+  "id": "./member-entry",
+  "name": "Primordial Ooze Member Entry",
+  "short_name": "Ooze Entry",
+  "description": "Add a member to the Primordial Ooze member list.",
+  "start_url": "./primordial-ooze-member-entry.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05080d",
+  "theme_color": "#05080d",
+  "icons": [
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

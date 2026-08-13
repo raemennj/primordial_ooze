@@ -17,8 +17,10 @@
   <style>
     :root {
       color-scheme: dark;
-      --parallax-x: 0px;
-      --parallax-y: 0px;
+      --sky-x: 0;
+      --sky-y: 0;
+      --card-x: 0px;
+      --card-y: 0px;
     }
 
     *, *::before, *::after {
@@ -31,8 +33,8 @@
       height: 100%;
       min-height: -webkit-fill-available;
       margin: 0;
-      background: #05080d;
       overflow: hidden;
+      background: #05080d;
     }
 
     body {
@@ -62,29 +64,72 @@
       overflow: hidden;
     }
 
-    .galaxy {
+    /*
+      The background is split into three depths. The large negative insets keep
+      the edge of the image outside the screen even during a full swipe.
+    */
+    .skybox,
+    .skybox > div {
       position: fixed;
-      z-index: -2;
-      top: -10vmax;
-      right: -10vmax;
-      bottom: -10vmax;
-      left: -10vmax;
+      pointer-events: none;
+    }
+
+    .skybox {
+      z-index: -3;
+      inset: 0;
+      overflow: hidden;
+      background: #05080d;
+    }
+
+    .skybox-stars {
+      inset: -10vmax;
+      opacity: .38;
+      background-image:
+        radial-gradient(circle at 18% 27%, rgba(255, 255, 255, .9) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 72% 63%, rgba(255, 226, 157, .85) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 44% 81%, rgba(189, 224, 255, .8) 0 .8px, transparent 1.4px);
+      background-size: 83px 91px, 127px 119px, 157px 143px;
+      transform: translate3d(
+        calc(var(--sky-x) * -9px),
+        calc(var(--sky-y) * -9px),
+        0
+      );
+      will-change: transform;
+    }
+
+    .skybox-world {
+      inset: -15vmax;
       background:
         #05080d
         url("primordial_ooze_member_entry_bg.png")
         center center / cover no-repeat;
       transform:
-        translate3d(var(--parallax-x), var(--parallax-y), 0)
-        scale(1.055);
-      transition: transform 180ms ease-out;
+        perspective(900px)
+        translate3d(
+          calc(var(--sky-x) * -42px),
+          calc(var(--sky-y) * -42px),
+          0
+        )
+        rotateY(calc(var(--sky-x) * 1.65deg))
+        rotateX(calc(var(--sky-y) * -1.65deg))
+        scale(1.12);
+      transform-origin: center;
       will-change: transform;
     }
 
-    @supports (height: 100dvh) {
-      html, body, main {
-        height: 100dvh;
-        min-height: 100dvh;
-      }
+    .skybox-haze {
+      inset: -18vmax;
+      opacity: .26;
+      filter: blur(18px);
+      background:
+        radial-gradient(ellipse at 66% 38%, rgba(229, 177, 67, .42), transparent 43%),
+        radial-gradient(ellipse at 25% 70%, rgba(33, 119, 96, .28), transparent 48%);
+      transform: translate3d(
+        calc(var(--sky-x) * -62px),
+        calc(var(--sky-y) * -62px),
+        0
+      );
+      will-change: transform;
     }
 
     main::after {
@@ -97,7 +142,7 @@
         180deg,
         rgba(2, 5, 10, .18),
         rgba(2, 5, 10, .03) 48%,
-        rgba(2, 5, 10, .28)
+        rgba(2, 5, 10, .30)
       );
     }
 
@@ -106,16 +151,14 @@
       padding: 25px;
       border: 1px solid rgba(255, 222, 146, .28);
       border-radius: 24px;
-      background: linear-gradient(
-        145deg,
-        rgba(8, 16, 24, .30),
-        rgba(15, 19, 24, .18)
-      );
+      background: linear-gradient(145deg, rgba(8, 16, 24, .30), rgba(15, 19, 24, .18));
       box-shadow:
         0 20px 70px rgba(0, 0, 0, .34),
         inset 0 1px rgba(255, 255, 255, .08);
       -webkit-backdrop-filter: blur(13px) saturate(135%);
       backdrop-filter: blur(13px) saturate(135%);
+      transform: translate3d(var(--card-x), var(--card-y), 0);
+      will-change: transform;
     }
 
     .eyebrow {
@@ -175,11 +218,7 @@
     button {
       margin-top: 21px;
       border: 1px solid rgba(255, 235, 178, .32);
-      background: linear-gradient(
-        135deg,
-        rgba(249, 214, 125, .92),
-        rgba(177, 116, 26, .91)
-      );
+      background: linear-gradient(135deg, rgba(249, 214, 125, .92), rgba(177, 116, 26, .91));
       box-shadow:
         0 8px 28px rgba(67, 40, 0, .34),
         inset 0 1px rgba(255, 255, 255, .34);
@@ -200,32 +239,44 @@
       text-shadow: 0 1px 8px #000;
     }
 
+    @supports (height: 100dvh) {
+      html, body, main {
+        height: 100dvh;
+        min-height: 100dvh;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .galaxy {
-        transform: scale(1.055);
-        transition: none;
+      .skybox-stars,
+      .skybox-haze {
+        transform: none;
+      }
+
+      .skybox-world {
+        transform: scale(1.12);
+      }
+
+      .entry-card {
+        transform: none;
       }
     }
   </style>
 </head>
 
 <body>
-  <main>
-    <div class="galaxy" aria-hidden="true"></div>
+  <main id="scene">
+    <div class="skybox" aria-hidden="true">
+      <div class="skybox-stars"></div>
+      <div class="skybox-world"></div>
+      <div class="skybox-haze"></div>
+    </div>
 
     <form class="entry-card" id="memberForm" autocomplete="off">
       <p class="eyebrow">Add New Member</p>
       <h1>Primordial Ooze</h1>
 
       <label for="name">Name</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        autocapitalize="words"
-        autofocus
-        required
-      >
+      <input id="name" name="name" type="text" autocapitalize="words" autofocus required>
 
       <label for="phone">Phone number</label>
       <input
@@ -270,28 +321,89 @@
     const submitButton = document.querySelector('#submitButton');
     const status = document.querySelector('#status');
     const root = document.documentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    function setParallax(x, y) {
-      const limitedX = Math.max(-18, Math.min(18, x));
-      const limitedY = Math.max(-18, Math.min(18, y));
-      root.style.setProperty('--parallax-x', limitedX + 'px');
-      root.style.setProperty('--parallax-y', limitedY + 'px');
+    /* Smooth, spring-like skybox movement. */
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let pointerDown = false;
+    let activePointerType = '';
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
     }
 
-    window.addEventListener('deviceorientation', event => {
-      if (event.gamma == null || event.beta == null) return;
-      setParallax(
-        event.gamma * -0.45,
-        (event.beta - 45) * -0.22
-      );
+    function setTargetFromPoint(clientX, clientY) {
+      targetX = clamp((clientX / window.innerWidth - .5) * 2, -1, 1);
+      targetY = clamp((clientY / window.innerHeight - .5) * 2, -1, 1);
+    }
+
+    window.addEventListener('pointerdown', event => {
+      if (reduceMotion.matches) return;
+      pointerDown = true;
+      activePointerType = event.pointerType;
+      setTargetFromPoint(event.clientX, event.clientY);
     }, { passive: true });
 
     window.addEventListener('pointermove', event => {
-      setParallax(
-        (event.clientX / window.innerWidth - 0.5) * -24,
-        (event.clientY / window.innerHeight - 0.5) * -24
-      );
+      if (reduceMotion.matches) return;
+
+      if (event.pointerType === 'mouse' || pointerDown) {
+        activePointerType = event.pointerType;
+        setTargetFromPoint(event.clientX, event.clientY);
+      }
     }, { passive: true });
+
+    function releasePointer() {
+      pointerDown = false;
+
+      /* Touch swipes float back to center; mouse movement stays positional. */
+      if (activePointerType !== 'mouse') {
+        targetX = 0;
+        targetY = 0;
+      }
+    }
+
+    window.addEventListener('pointerup', releasePointer, { passive: true });
+    window.addEventListener('pointercancel', releasePointer, { passive: true });
+    window.addEventListener('blur', () => {
+      targetX = 0;
+      targetY = 0;
+    });
+
+    /* Phone tilt is an enhancement where the browser already permits it. */
+    window.addEventListener('deviceorientation', event => {
+      if (reduceMotion.matches || pointerDown) return;
+      if (event.gamma == null || event.beta == null) return;
+
+      targetX = clamp(event.gamma / 24, -1, 1);
+      targetY = clamp((event.beta - 45) / 32, -1, 1);
+    }, { passive: true });
+
+    function animateSkybox() {
+      if (!reduceMotion.matches) {
+        const spring = .055;
+        const damping = .82;
+
+        velocityX = (velocityX + (targetX - currentX) * spring) * damping;
+        velocityY = (velocityY + (targetY - currentY) * spring) * damping;
+        currentX += velocityX;
+        currentY += velocityY;
+
+        root.style.setProperty('--sky-x', currentX.toFixed(4));
+        root.style.setProperty('--sky-y', currentY.toFixed(4));
+        root.style.setProperty('--card-x', (currentX * 3.5).toFixed(2) + 'px');
+        root.style.setProperty('--card-y', (currentY * 3.5).toFixed(2) + 'px');
+      }
+
+      requestAnimationFrame(animateSkybox);
+    }
+
+    animateSkybox();
 
     phoneInput.addEventListener('blur', () => {
       const digits = phoneInput.value.replace(/\D/g, '').slice(-10);
@@ -359,9 +471,7 @@
           headers: {
             'Content-Type': 'text/plain;charset=utf-8'
           },
-          body: JSON.stringify(
-            Object.fromEntries(new FormData(form))
-          )
+          body: JSON.stringify(Object.fromEntries(new FormData(form)))
         });
 
         const result = await response.json();
