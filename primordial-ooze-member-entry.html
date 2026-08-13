@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123b28">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Primordial Ooze Member Entry</title>
+  <style>
+    :root { color-scheme: dark; --background-image: none; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; background: #123b28; }
+    body {
+      min-height: 100svh; color: #fff7d6; font-family: Arial, Helvetica, sans-serif;
+      background-image: linear-gradient(145deg,rgba(7,49,31,.88),rgba(34,84,47,.70) 55%,rgba(177,132,31,.78)),var(--background-image);
+      background-size: cover; background-position: center; background-attachment: fixed;
+    }
+    main { min-height: 100svh; display: grid; place-items: center; padding: max(22px,env(safe-area-inset-top)) 18px max(22px,env(safe-area-inset-bottom)); }
+    form { width: min(100%,390px); padding: 24px; border: 1px solid rgba(255,239,166,.30); border-radius: 22px; background: rgba(5,30,20,.72); box-shadow: 0 18px 55px rgba(0,0,0,.28); backdrop-filter: blur(12px); }
+    h1 { margin: 0 0 22px; font-size: 1.75rem; line-height: 1; }
+    label { display: block; margin: 15px 2px 7px; font-size: .86rem; font-weight: 700; }
+    input,button { width: 100%; min-height: 54px; border-radius: 12px; font: inherit; }
+    input { border: 1px solid rgba(255,255,255,.25); padding: 0 15px; background: rgba(255,255,255,.95); color: #10261b; font-size: 16px; }
+    input:focus { outline: 3px solid rgba(227,181,69,.60); border-color: #e3b545; }
+    button { margin-top: 21px; border: 0; background: linear-gradient(135deg,#f2cf72,#b77b17); color: #193322; font-weight: 800; cursor: pointer; }
+    button:active { transform: translateY(1px); }
+    button:disabled { opacity: .65; cursor: wait; }
+    [role=status] { min-height: 1.25em; margin: 12px 2px 0; font-size: .88rem; color: #ffe9a5; }
+  </style>
+</head>
+<body>
+  <main>
+    <form id="memberForm" autocomplete="off">
+      <h1>Add Member</h1>
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" autocapitalize="words" autofocus required>
+      <label for="phone">Phone number</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(916) 555-1234" required>
+      <label for="sobrietyDate">Sobriety date</label>
+      <input id="sobrietyDate" name="sobrietyDate" type="date" required>
+      <button id="submitButton" type="submit">Add member</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+  <script>
+    // Replace this once with the URL from Deploy > New deployment in Apps Script.
+    const GOOGLE_APPS_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    // To use a photo later, replace none with: url('background.jpg')
+    // document.documentElement.style.setProperty('--background-image', "url('background.jpg')");
+
+    const form = document.querySelector('#memberForm');
+    const phone = document.querySelector('#phone');
+    const button = document.querySelector('#submitButton');
+    const status = document.querySelector('#status');
+
+    phone.addEventListener('blur', () => {
+      const digits = phone.value.replace(/\D/g, '').slice(-10);
+      if (digits.length === 10) phone.value = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    });
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      if (GOOGLE_APPS_SCRIPT_URL.startsWith('PASTE_')) {
+        status.textContent = 'Add the Apps Script web-app URL before using this form.';
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Adding…';
+      status.textContent = 'Adding member…';
+      try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        });
+        const result = await response.json();
+        if (!result.ok) throw new Error(result.error || 'Unable to add member.');
+        form.reset();
+        document.querySelector('#name').focus();
+        status.textContent = `${result.name} was added.`;
+      } catch (error) {
+        status.textContent = error.message || 'Unable to add member.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Add member';
+      }
+    });
+  </script>
+</body>
+</html>
+
+<!--
+GOOGLE APPS SCRIPT BACK END — paste this section into Code.gs, then deploy as a Web app.
+
+const SPREADSHEET_ID = '1dNaAYSDLX6VVcY1AvxXIOfSe7b8G8vP-1k2f62QMqPY';
+const SHEET_NAME = 'Primordial Ooze Member List';
+const FIRST_MEMBER_ROW = 6;
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const name = String(data.name || '').trim().replace(/\s+/g, ' ');
+    const phone = formatPhone_(data.phone);
+    const sobrietyDate = parseLocalDate_(data.sobrietyDate);
+    if (!name || !phone || !sobrietyDate) throw new Error('All three fields are required.');
+
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+      if (!sheet) throw new Error('Sheet not found.');
+      const columns = findColumns_(sheet);
+      const lastRow = Math.max(sheet.getLastRow(), FIRST_MEMBER_ROW - 1);
+      const names = lastRow >= FIRST_MEMBER_ROW
+        ? sheet.getRange(FIRST_MEMBER_ROW, columns.name, lastRow - FIRST_MEMBER_ROW + 1, 1).getDisplayValues().flat()
+        : [];
+      let row = FIRST_MEMBER_ROW;
+      while (row - FIRST_MEMBER_ROW < names.length && names[row - FIRST_MEMBER_ROW] &&
+             names[row - FIRST_MEMBER_ROW].localeCompare(name, undefined, {sensitivity:'base'}) <= 0) row++;
+      sheet.insertRowBefore(row);
+      const templateRow = row < sheet.getLastRow() ? row + 1 : row - 1;
+      if (templateRow >= FIRST_MEMBER_ROW) {
+        sheet.getRange(templateRow, 1, 1, sheet.getMaxColumns()).copyTo(
+          sheet.getRange(row, 1, 1, sheet.getMaxColumns()), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+      }
+      sheet.getRange(row, columns.name).setValue(name);
+      sheet.getRange(row, columns.phone).setNumberFormat('@').setValue(phone);
+      const dateCell = sheet.getRange(row, columns.date).setValue(sobrietyDate);
+      const nearbyDateRow = templateRow >= FIRST_MEMBER_ROW ? templateRow : row;
+      const existingFormat = sheet.getRange(nearbyDateRow, columns.date).getNumberFormat();
+      dateCell.setNumberFormat(existingFormat && existingFormat !== 'General' ? existingFormat : 'M/d/yyyy');
+      return json_({ok:true, name:name, row:row});
+    } finally { lock.releaseLock(); }
+  } catch (error) { return json_({ok:false, error:error.message}); }
+}
+
+function findColumns_(sheet) {
+  const rows = sheet.getRange(1, 1, 5, Math.max(3, sheet.getLastColumn())).getDisplayValues();
+  const found = {};
+  rows.forEach(row => row.forEach((value, index) => {
+    const header = String(value).toLowerCase().trim();
+    if (/^name$|member.*name/.test(header)) found.name = index + 1;
+    if (/phone|cell|mobile/.test(header)) found.phone = index + 1;
+    if (/sobriety|clean.*date|date.*sober/.test(header)) found.date = index + 1;
+  }));
+  return {name:found.name || 1, phone:found.phone || 2, date:found.date || 3};
+}
+
+function formatPhone_(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(-10);
+  if (digits.length !== 10) throw new Error('Enter a 10-digit phone number.');
+  return '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+}
+
+function parseLocalDate_(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+  return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
+}
+
+function json_(value) {
+  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
+}
+-->
