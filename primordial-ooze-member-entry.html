@@ -38,12 +38,13 @@
     }
 
     body {
-      position: fixed;
-      inset: 0;
+      position: relative;
       width: 100%;
-      height: 100%;
-      min-height: 100%;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      margin: 0;
       overflow: hidden;
+      background: #05080d;
       color: #fff8e8;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overscroll-behavior: none;
@@ -53,8 +54,8 @@
       position: relative;
       isolation: isolate;
       width: 100%;
-      height: 100%;
-      min-height: 100%;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
       display: grid;
       place-items: center;
       text-align: center;
@@ -77,7 +78,7 @@
 
     .skybox {
       z-index: -3;
-      inset: 0;
+      inset: -2px;
       overflow: hidden;
       background: #05080d;
     }
@@ -241,8 +242,7 @@
     }
 
     @supports (height: 100dvh) {
-      html, body, main {
-        height: 100dvh;
+      body, main {
         min-height: 100dvh;
       }
     }
@@ -463,8 +463,8 @@
       if (!form.reportValidity()) return;
 
       submitButton.disabled = true;
-      submitButton.textContent = 'Adding…';
-      status.textContent = 'Adding member…';
+      submitButton.textContent = 'Addingâ€¦';
+      status.textContent = 'Adding memberâ€¦';
 
       try {
         const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
