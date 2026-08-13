@@ -2,163 +2,365 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#123b28">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#05080d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ooze Entry">
+  <meta name="description" content="Add a member to the Primordial Ooze member list.">
+  <link rel="icon" type="image/png" sizes="16x16" href="icon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <title>Primordial Ooze Member Entry</title>
+
   <style>
-    :root { color-scheme: dark; --background-image: none; }
-    * { box-sizing: border-box; }
-    html, body { min-height: 100%; margin: 0; background: #123b28; }
-    body {
-      min-height: 100svh; color: #fff7d6; font-family: Arial, Helvetica, sans-serif;
-      background-image: linear-gradient(145deg,rgba(7,49,31,.88),rgba(34,84,47,.70) 55%,rgba(177,132,31,.78)),var(--background-image);
-      background-size: cover; background-position: center; background-attachment: fixed;
+    :root {
+      color-scheme: dark;
+      --parallax-x: 0px;
+      --parallax-y: 0px;
     }
-    main { min-height: 100svh; display: grid; place-items: center; padding: max(22px,env(safe-area-inset-top)) 18px max(22px,env(safe-area-inset-bottom)); }
-    form { width: min(100%,390px); padding: 24px; border: 1px solid rgba(255,239,166,.30); border-radius: 22px; background: rgba(5,30,20,.72); box-shadow: 0 18px 55px rgba(0,0,0,.28); backdrop-filter: blur(12px); }
-    h1 { margin: 0 0 22px; font-size: 1.75rem; line-height: 1; }
-    label { display: block; margin: 15px 2px 7px; font-size: .86rem; font-weight: 700; }
-    input,button { width: 100%; min-height: 54px; border-radius: 12px; font: inherit; }
-    input { border: 1px solid rgba(255,255,255,.25); padding: 0 15px; background: rgba(255,255,255,.95); color: #10261b; font-size: 16px; }
-    input:focus { outline: 3px solid rgba(227,181,69,.60); border-color: #e3b545; }
-    button { margin-top: 21px; border: 0; background: linear-gradient(135deg,#f2cf72,#b77b17); color: #193322; font-weight: 800; cursor: pointer; }
-    button:active { transform: translateY(1px); }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: #05080d;
+    }
+
+    body {
+      min-height: 100svh;
+      overflow: hidden;
+      color: #fff8e8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overscroll-behavior: none;
+    }
+
+    main {
+      position: relative;
+      isolation: isolate;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding:
+        max(22px, env(safe-area-inset-top))
+        18px
+        max(22px, env(safe-area-inset-bottom));
+      overflow: hidden;
+    }
+
+    .galaxy {
+      position: fixed;
+      z-index: -2;
+      inset: -32px;
+      background:
+        #05080d
+        url("Golden Spiral Galaxy Core.png")
+        center center / cover no-repeat;
+      transform:
+        translate3d(var(--parallax-x), var(--parallax-y), 0)
+        scale(1.055);
+      transition: transform 180ms ease-out;
+      will-change: transform;
+    }
+
+    main::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        rgba(2, 5, 10, .18),
+        rgba(2, 5, 10, .03) 48%,
+        rgba(2, 5, 10, .28)
+      );
+    }
+
+    .entry-card {
+      width: min(100%, 390px);
+      padding: 25px;
+      border: 1px solid rgba(255, 222, 146, .28);
+      border-radius: 24px;
+      background: linear-gradient(
+        145deg,
+        rgba(8, 16, 24, .30),
+        rgba(15, 19, 24, .18)
+      );
+      box-shadow:
+        0 20px 70px rgba(0, 0, 0, .34),
+        inset 0 1px rgba(255, 255, 255, .08);
+      -webkit-backdrop-filter: blur(13px) saturate(135%);
+      backdrop-filter: blur(13px) saturate(135%);
+    }
+
+    .eyebrow {
+      min-height: 0;
+      margin: 0 0 7px;
+      color: #e4b953;
+      font-size: .71rem;
+      font-weight: 800;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, .85);
+    }
+
+    h1 {
+      margin: 0 0 21px;
+      font-size: 1.82rem;
+      line-height: 1;
+      letter-spacing: -.025em;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, .95);
+    }
+
+    label {
+      display: block;
+      margin: 15px 2px 7px;
+      color: rgba(255, 249, 232, .93);
+      font-size: .84rem;
+      font-weight: 750;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, .95);
+    }
+
+    input, button {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 13px;
+      font: inherit;
+    }
+
+    input {
+      border: 1px solid rgba(255, 255, 255, .28);
+      padding: 0 15px;
+      background: rgba(246, 248, 248, .82);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, .45),
+        0 5px 20px rgba(0, 0, 0, .10);
+      color: #101820;
+      font-size: 16px;
+    }
+
+    input::placeholder { color: rgba(16, 24, 32, .52); }
+
+    input:focus {
+      outline: 3px solid rgba(237, 190, 78, .55);
+      border-color: #e9be59;
+      background: rgba(255, 255, 255, .94);
+    }
+
+    button {
+      margin-top: 21px;
+      border: 1px solid rgba(255, 235, 178, .32);
+      background: linear-gradient(
+        135deg,
+        rgba(249, 214, 125, .92),
+        rgba(177, 116, 26, .91)
+      );
+      box-shadow:
+        0 8px 28px rgba(67, 40, 0, .34),
+        inset 0 1px rgba(255, 255, 255, .34);
+      color: #172018;
+      font-weight: 850;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:active { transform: translateY(1px) scale(.995); }
     button:disabled { opacity: .65; cursor: wait; }
-    [role=status] { min-height: 1.25em; margin: 12px 2px 0; font-size: .88rem; color: #ffe9a5; }
+
+    [role="status"] {
+      min-height: 1.25em;
+      margin: 12px 2px 0;
+      color: #ffe8aa;
+      font-size: .87rem;
+      text-shadow: 0 1px 8px #000;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .galaxy {
+        transform: scale(1.055);
+        transition: none;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main>
-    <form id="memberForm" autocomplete="off">
+    <div class="galaxy" aria-hidden="true"></div>
+
+    <form class="entry-card" id="memberForm" autocomplete="off">
+      <p class="eyebrow">Primordial Ooze</p>
       <h1>Add Member</h1>
+
       <label for="name">Name</label>
-      <input id="name" name="name" type="text" autocapitalize="words" autofocus required>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        autocapitalize="words"
+        autofocus
+        required
+      >
+
       <label for="phone">Phone number</label>
-      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(916) 555-1234" required>
-      <label for="sobrietyDate">Sobriety date</label>
-      <input id="sobrietyDate" name="sobrietyDate" type="date" required>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        placeholder="(916) 555-1234"
+        required
+      >
+
+      <label for="sobrietyDateEntry">Sobriety date</label>
+      <input
+        id="sobrietyDateEntry"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="MM/DD/YYYY"
+        maxlength="10"
+        pattern="(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/[0-9]{4}"
+        aria-describedby="dateHelp"
+        required
+      >
+      <input id="sobrietyDate" name="sobrietyDate" type="hidden">
+      <span id="dateHelp" hidden>Enter the date as month, day, and four-digit year.</span>
+
       <button id="submitButton" type="submit">Add member</button>
       <p id="status" role="status" aria-live="polite"></p>
     </form>
   </main>
+
   <script>
-    // Replace this once with the URL from Deploy > New deployment in Apps Script.
-    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2-f57uCj6ISI-SkfVoaJdI3FJQA7PRowe3tUFpYMZS0VKKAz-YMyuj3EoLuKAlc9Kfw/exec';
-    // To use a photo later, replace none with: url('background.jpg')
-    // document.documentElement.style.setProperty('--background-image', "url('background.jpg')");
+    const GOOGLE_APPS_SCRIPT_URL =
+      'https://script.google.com/macros/s/AKfycbw2-f57uCj6ISI-SkfVoaJdI3FJQA7PRowe3tUFpYMZS0VKKAz-YMyuj3EoLuKAlc9Kfw/exec';
 
     const form = document.querySelector('#memberForm');
-    const phone = document.querySelector('#phone');
-    const button = document.querySelector('#submitButton');
+    const nameInput = document.querySelector('#name');
+    const phoneInput = document.querySelector('#phone');
+    const dateEntry = document.querySelector('#sobrietyDateEntry');
+    const dateValue = document.querySelector('#sobrietyDate');
+    const submitButton = document.querySelector('#submitButton');
     const status = document.querySelector('#status');
+    const root = document.documentElement;
 
-    phone.addEventListener('blur', () => {
-      const digits = phone.value.replace(/\D/g, '').slice(-10);
-      if (digits.length === 10) phone.value = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    function setParallax(x, y) {
+      const limitedX = Math.max(-18, Math.min(18, x));
+      const limitedY = Math.max(-18, Math.min(18, y));
+      root.style.setProperty('--parallax-x', limitedX + 'px');
+      root.style.setProperty('--parallax-y', limitedY + 'px');
+    }
+
+    window.addEventListener('deviceorientation', event => {
+      if (event.gamma == null || event.beta == null) return;
+      setParallax(
+        event.gamma * -0.45,
+        (event.beta - 45) * -0.22
+      );
+    }, { passive: true });
+
+    window.addEventListener('pointermove', event => {
+      setParallax(
+        (event.clientX / window.innerWidth - 0.5) * -24,
+        (event.clientY / window.innerHeight - 0.5) * -24
+      );
+    }, { passive: true });
+
+    phoneInput.addEventListener('blur', () => {
+      const digits = phoneInput.value.replace(/\D/g, '').slice(-10);
+      if (digits.length === 10) {
+        phoneInput.value =
+          '(' + digits.slice(0, 3) + ') ' +
+          digits.slice(3, 6) + '-' +
+          digits.slice(6);
+      }
     });
+
+    dateEntry.addEventListener('input', () => {
+      const digits = dateEntry.value.replace(/\D/g, '').slice(0, 8);
+      let formatted = digits.slice(0, 2);
+      if (digits.length > 2) formatted += '/' + digits.slice(2, 4);
+      if (digits.length > 4) formatted += '/' + digits.slice(4, 8);
+      dateEntry.value = formatted;
+      dateEntry.setCustomValidity('');
+    });
+
+    function prepareSobrietyDate() {
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dateEntry.value);
+      if (!match) {
+        dateEntry.setCustomValidity('Enter the date as MM/DD/YYYY.');
+        return false;
+      }
+
+      const month = Number(match[1]);
+      const day = Number(match[2]);
+      const year = Number(match[3]);
+      const date = new Date(year, month - 1, day);
+      const isRealDate =
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day;
+
+      if (!isRealDate) {
+        dateEntry.setCustomValidity('Enter a real calendar date.');
+        return false;
+      }
+
+      dateEntry.setCustomValidity('');
+      dateValue.value =
+        String(year).padStart(4, '0') + '-' +
+        String(month).padStart(2, '0') + '-' +
+        String(day).padStart(2, '0');
+      return true;
+    }
 
     form.addEventListener('submit', async event => {
       event.preventDefault();
-      if (!form.reportValidity()) return;
-      if (GOOGLE_APPS_SCRIPT_URL.startsWith('PASTE_')) {
-        status.textContent = 'Add the Apps Script web-app URL before using this form.';
+      if (!prepareSobrietyDate()) {
+        form.reportValidity();
         return;
       }
-      button.disabled = true;
-      button.textContent = 'Adding…';
+      if (!form.reportValidity()) return;
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Adding…';
       status.textContent = 'Adding member…';
+
       try {
         const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-          method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'},
-          body: JSON.stringify(Object.fromEntries(new FormData(form)))
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(
+            Object.fromEntries(new FormData(form))
+          )
         });
+
         const result = await response.json();
-        if (!result.ok) throw new Error(result.error || 'Unable to add member.');
+
+        if (!result.ok) {
+          throw new Error(result.error || 'Unable to add member.');
+        }
+
         form.reset();
-        document.querySelector('#name').focus();
-        status.textContent = `${result.name} was added.`;
+        nameInput.focus();
+        status.textContent = result.name + ' was added.';
       } catch (error) {
         status.textContent = error.message || 'Unable to add member.';
       } finally {
-        button.disabled = false;
-        button.textContent = 'Add member';
+        submitButton.disabled = false;
+        submitButton.textContent = 'Add member';
       }
     });
   </script>
 </body>
 </html>
-
-<!--
-GOOGLE APPS SCRIPT BACK END — paste this section into Code.gs, then deploy as a Web app.
-
-const SPREADSHEET_ID = '1dNaAYSDLX6VVcY1AvxXIOfSe7b8G8vP-1k2f62QMqPY';
-const SHEET_NAME = 'Primordial Ooze Member List';
-const FIRST_MEMBER_ROW = 6;
-
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const name = String(data.name || '').trim().replace(/\s+/g, ' ');
-    const phone = formatPhone_(data.phone);
-    const sobrietyDate = parseLocalDate_(data.sobrietyDate);
-    if (!name || !phone || !sobrietyDate) throw new Error('All three fields are required.');
-
-    const lock = LockService.getScriptLock();
-    lock.waitLock(10000);
-    try {
-      const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
-      if (!sheet) throw new Error('Sheet not found.');
-      const columns = findColumns_(sheet);
-      const lastRow = Math.max(sheet.getLastRow(), FIRST_MEMBER_ROW - 1);
-      const names = lastRow >= FIRST_MEMBER_ROW
-        ? sheet.getRange(FIRST_MEMBER_ROW, columns.name, lastRow - FIRST_MEMBER_ROW + 1, 1).getDisplayValues().flat()
-        : [];
-      let row = FIRST_MEMBER_ROW;
-      while (row - FIRST_MEMBER_ROW < names.length && names[row - FIRST_MEMBER_ROW] &&
-             names[row - FIRST_MEMBER_ROW].localeCompare(name, undefined, {sensitivity:'base'}) <= 0) row++;
-      sheet.insertRowBefore(row);
-      const templateRow = row < sheet.getLastRow() ? row + 1 : row - 1;
-      if (templateRow >= FIRST_MEMBER_ROW) {
-        sheet.getRange(templateRow, 1, 1, sheet.getMaxColumns()).copyTo(
-          sheet.getRange(row, 1, 1, sheet.getMaxColumns()), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      }
-      sheet.getRange(row, columns.name).setValue(name);
-      sheet.getRange(row, columns.phone).setNumberFormat('@').setValue(phone);
-      const dateCell = sheet.getRange(row, columns.date).setValue(sobrietyDate);
-      const nearbyDateRow = templateRow >= FIRST_MEMBER_ROW ? templateRow : row;
-      const existingFormat = sheet.getRange(nearbyDateRow, columns.date).getNumberFormat();
-      dateCell.setNumberFormat(existingFormat && existingFormat !== 'General' ? existingFormat : 'M/d/yyyy');
-      return json_({ok:true, name:name, row:row});
-    } finally { lock.releaseLock(); }
-  } catch (error) { return json_({ok:false, error:error.message}); }
-}
-
-function findColumns_(sheet) {
-  const rows = sheet.getRange(1, 1, 5, Math.max(3, sheet.getLastColumn())).getDisplayValues();
-  const found = {};
-  rows.forEach(row => row.forEach((value, index) => {
-    const header = String(value).toLowerCase().trim();
-    if (/^name$|member.*name/.test(header)) found.name = index + 1;
-    if (/phone|cell|mobile/.test(header)) found.phone = index + 1;
-    if (/sobriety|clean.*date|date.*sober/.test(header)) found.date = index + 1;
-  }));
-  return {name:found.name || 1, phone:found.phone || 2, date:found.date || 3};
-}
-
-function formatPhone_(value) {
-  const digits = String(value || '').replace(/\D/g, '').slice(-10);
-  if (digits.length !== 10) throw new Error('Enter a 10-digit phone number.');
-  return '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
-}
-
-function parseLocalDate_(value) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
-  return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
-}
-
-function json_(value) {
-  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
-}
--->
