@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ooze Members">
+  <meta name="theme-color" content="#05080d">
+  <meta name="description" content="Primordial Ooze milestone rolodex and phone list for Roseville, CA.">
+  <link rel="manifest" href="member_manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="16x16" href="icon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <title>Primordial Ooze Member List</title>
+  <style>
+    /* ─── SCALE TOKENS ──────────────────────────────────────────
+       Every size is expressed as clamp(min, fluid, max) so the
+       layout scales smoothly from a 320 px phone to a tablet.    */
+    :root {
+      --digit-h:        clamp(30px, 8.5vw, 39px);
+      --digit-w:        clamp(17px, 4.8vw, 24px);
+      --odometer-font:  clamp(22px, 6.2vw, 30px);
+      --name-font:      clamp(1.2rem,  5.8vw, 1.5rem);
+      --meta-font:      clamp(0.82rem, 3.4vw, 1rem);
+      --label-font:     clamp(0.6rem,  2.3vw, 0.75rem);
+      --btn-font:       clamp(0.78rem, 3.2vw, 0.95rem);
+      --stat-num-font:  clamp(0.9rem,  3.6vw, 1.1rem);
+      --stat-lbl-font:  clamp(0.56rem, 2.1vw, 0.68rem);
+      --card-px:        clamp(14px, 4vw,  20px);
+      --card-py:        clamp(14px, 3.5vw, 18px);
+      --card-radius:    clamp(18px, 5vw,  24px);
+      --card-overlap:   clamp(114px, 31vw, 136px);
+      --btn-h:          clamp(40px, 10.5vw, 52px);
+      --header-logo:    clamp(48px, 13vw, 62px);
+      --accent-bar-w:   clamp(10px, 2.8vw, 14px);
+
+      /* Brand palette */
+      --ooze:      #e4b953;
+      --ooze-dark: #76551b;
+      --ooze-glow: rgba(228, 185, 83, 0.38);
+      --green:     #24745a;
+      --gold:      #b7791f;
+      --blue:      #2764a7;
+      --rose:      #a3445b;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Remove 300 ms tap delay on mobile browsers */
+    a, button, [role="button"] {
+      touch-action: manipulation;
+    }
+
+    html {
+      min-height: 100%;
+      min-height: -webkit-fill-available;
+      background: #05080d;
+    }
+
+    /* ─── SHARED MEMBER-ENTRY SKYBOX ─── */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      position: relative;
+      isolation: isolate;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #05080d;
+      color: #1f2933;
+      overscroll-behavior-y: none;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -2px;
+      z-index: -2;
+      background: #05080d url("primordial_ooze_member_entry_bg.png") center center / cover no-repeat;
+      transform: scale(1.025);
+      will-change: transform;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -2px;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 72% 38% at 50% 8%, rgba(229,177,67,.22), transparent 70%),
+        radial-gradient(ellipse 64% 44% at 42% 88%, rgba(33,119,96,.18), transparent 72%),
+        linear-gradient(180deg, rgba(5,8,13,.10), rgba(5,8,13,.34));
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ─── GLASS HEADER ─── */
+    .glass {
+      background: linear-gradient(145deg, rgba(8,16,24,.52), rgba(15,19,24,.30));
+      border-bottom: 1px solid rgba(255, 222, 146, .28);
+      -webkit-backdrop-filter: blur(13px) saturate(135%);
+      backdrop-filter: blur(13px) saturate(135%);
+      transition: transform 240ms ease, opacity 240ms ease;
+      will-change: transform, opacity;
+    }
+
+    .glass.header-hidden {
+      opacity: 0;
+      transform: translateY(-105%);
+    }
+
+    /* ─── BRAND ─── */
+    .ooze-brand {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 3vw, 14px);
+      min-width: 0;
+    }
+
+    .ooze-logo {
+      width: var(--header-logo);
+      height: var(--header-logo);
+      object-fit: contain;
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.50));
+      flex: 0 0 auto;
+    }
+
+    .ooze-subtitle {
+      font-size: clamp(10px, 2.8vw, 13px);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ooze);
+      line-height: 1;
+      margin: 0 0 3px;
+    }
+
+    .ooze-title {
+      font-size: clamp(1.25rem, 6.5vw, 1.75rem);
+      font-weight: 900;
+      line-height: 1.05;
+      color: #fff8e8;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    /* ─── HEADER TOP ROW (brand + action buttons) ─── */
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(8px, 3vw, 14px);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 2vw, 10px);
+      flex: 0 0 auto;
+    }
+
+    /* ─── COLLAPSIBLE SEARCH PANEL ─── */
+    .search-collapse {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        max-height 240ms ease,
+        opacity    200ms ease,
+        transform  240ms ease;
+      pointer-events: none;
+    }
+
+    .search-collapse.is-open {
+      max-height: clamp(50px, 14vw, 64px);
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      margin-top: clamp(10px, 3vw, 14px);
+    }
+
+    .search-field-wrap {
+      position: relative;
+    }
+
+    .search-field-wrap .search-icon {
+      position: absolute;
+      left: clamp(11px, 3vw, 15px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(14px, 4vw, 17px);
+      height: clamp(14px, 4vw, 17px);
+      color: rgba(255, 255, 255, 0.42);
+      pointer-events: none;
+    }
+
+    #search-input {
+      display: block;
+      width: 100%;
+      height: clamp(40px, 11vw, 50px);
+      padding: 0 clamp(12px, 3.5vw, 16px)
+               0 clamp(36px, 9.5vw, 46px);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.10);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      font-size: clamp(14px, 4vw, 16px);
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    #search-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+
+    #search-input:focus {
+      border-color: rgba(139, 214, 0, 0.45);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Cancel button that browsers render on type="search" */
+    #search-input::-webkit-search-cancel-button { filter: invert(1) opacity(0.5); }
+
+    /* ─── HEADER ICON BUTTON (sort toggle) ─── */
+    .header-icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width:  clamp(40px, 11vw, 50px);
+      height: clamp(40px, 11vw, 50px);
+      flex: 0 0 auto;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.10);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: rgba(255, 255, 255, 0.72);
+      cursor: pointer;
+    }
+
+    .header-icon-button:active { transform: scale(0.93); }
+
+    .header-icon-button.is-active {
+      background: var(--ooze);
+      border-color: var(--ooze-dark);
+      color: #0a1404;
+    }
+
+    .header-icon-button svg {
+      width:  clamp(17px, 4.5vw, 22px);
+      height: clamp(17px, 4.5vw, 22px);
+      flex: 0 0 auto;
+    }
+
+    /* ─── HEADER POSITIONING (replaces Tailwind absolute/inset/z/px/pt/pb) ─── */
+    #app-header {
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      z-index: 30;
+      padding: max(clamp(16px, 4.5vw, 22px), env(safe-area-inset-top)) 8px clamp(10px, 3vw, 14px);
+    }
+
+    /* Center inner content on wide screens */
+    #app-header > div { max-width: 48rem; margin: 0 auto; }
+
+    /* Prevent brand text from overflowing */
+    .ooze-brand > div { min-width: 0; }
+
+    /* ─── OOZE RULE ─── */
+    .ooze-rule {
+      height: 4px;
+      border-radius: 999px;
+      margin-top: clamp(10px, 3vw, 14px);
+      background:
+        radial-gradient(circle at 18% 50%, #eaff9b 0 8%, transparent 9%),
+        linear-gradient(90deg, #76551b, #ffe8aa 38%, #e4b953 70%, #5b3c0e);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                  0 4px 10px rgba(228, 185, 83, 0.30);
+    }
+
+    /* ─── MAIN SCROLL AREA ─── */
+    #app-main {
+      /* JS sets --header-h after each render; fallback keeps layout intact */
+      position: absolute;
+      inset: 0;
+      padding-top: var(--header-h, clamp(108px, 30vw, 140px));
+      padding-left:  8px;
+      padding-right: 8px;
+      /* enough bottom room to scroll the last expanded card into view */
+      padding-bottom: max(clamp(80px, 22vw, 120px), calc(env(safe-area-inset-bottom) + 64px));
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      transition: padding-top 240ms ease;
+    }
+
+    /* Center inner section on wide screens */
+    .main-section { max-width: 48rem; margin: 0 auto; }
+
+    /* Cards column (replaces Tailwind flex/flex-col/max-w-md/mx-auto) */
+    #cards {
+      display: flex;
+      flex-direction: column;
+      max-width: 28rem;
+      margin: 0 auto;
+    }
+
+    /* Disabled call/text buttons when no phone number */
+    .action-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+    /* ─── CARDS ─── */
+    .milestone-card {
+      position: relative;
+      padding: var(--card-py) var(--card-px) 0;
+      background: rgba(252, 255, 248, 0.96);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      backdrop-filter: blur(16px) saturate(140%);
+      border: 1.5px solid rgba(255, 255, 255, 0.82);
+      border-radius: var(--card-radius);
+      box-shadow:
+        0 -8px 18px -4px rgba(0, 0, 0, 0.28),
+        0 10px 28px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      will-change: transform;
+      transition: transform 240ms linear;
+    }
+
+    /* Left tier accent bar */
+    .milestone-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--accent-bar-w);
+      background: var(--accent,
+        linear-gradient(180deg, #24745a, #38a37d, #165642));
+      box-shadow:
+        inset 2px 0 2px rgba(255, 255, 255, 0.55),
+        inset -2px 0 4px rgba(0, 0, 0, 0.20),
+        4px 0 10px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Card stacking */
+    .milestone-card + .milestone-card {
+      margin-top: calc(-1 * var(--card-overlap));
+    }
+
+    /* ─── SELECTED / EXPANDED STATE ─── */
+    .milestone-card.is-selected {
+      z-index: 1000 !important;
+      transform: translateY(-6px) scale(1.014);
+      border-color: rgba(139, 214, 0, 0.72);
+      box-shadow:
+        0 0 0 2px rgba(139, 214, 0, 0.38),
+        0 -10px 24px -4px rgba(0, 0, 0, 0.28),
+        0 28px 56px rgba(0, 0, 0, 0.48),
+        0 0 36px rgba(100, 200, 0, 0.22);
+    }
+
+    .milestone-card.is-deselecting {
+      animation: card-return 250ms linear both;
+    }
+
+    .milestone-card.is-above {
+      z-index: 1000 !important;
+    }
+
+    .milestone-card.is-selecting {
+      animation: card-rise 450ms linear both;
+    }
+
+    @keyframes card-rise {
+      0%   { transform: translateY(0); }
+      8%   { transform: translateY(-4px); }
+      40%  { transform: translateY(calc(-1 * var(--card-overlap) - 14px)); }
+      58%  { transform: translateY(calc(-1 * var(--card-overlap) + 8px)); }
+      72%  { transform: translateY(-18px); }
+      84%  { transform: translateY(-3px); }
+      92%  { transform: translateY(-8px); }
+      100% { transform: translateY(-6px) scale(1.014); }
+    }
+
+    @keyframes card-return {
+      0%   { transform: translateY(-6px) scale(1.014); }
+      20%  { transform: translateY(-10px) scale(1.01); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .milestone-card.is-selecting,
+      .milestone-card.is-deselecting { animation: none; }
+    }
+
+    /* ─── CARD HEADER CONTENT ─── */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: clamp(8px, 2.5vw, 14px);
+      margin-bottom: clamp(10px, 3vw, 16px);
+    }
+
+    .card-info { min-width: 0; flex: 1 1 auto; }
+
+    .member-name {
+      font-size: var(--name-font);
+      font-weight: 900;
+      line-height: 1.15;
+      color: #0f1a05;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: clamp(4px, 1.2vw, 6px);
+      margin: clamp(4px, 1.2vw, 6px) 0 0;
+      color: #52617a;
+      font-size: var(--meta-font);
+      font-weight: 600;
+    }
+
+    .card-meta svg {
+      width:  clamp(12px, 3.2vw, 15px);
+      height: clamp(12px, 3.2vw, 15px);
+      flex: 0 0 auto;
+      opacity: 0.65;
+    }
+
+    /* ─── MILESTONE BAND (odometer wrapper) ─── */
+    .milestone-band {
+      flex: 0 0 auto;
+      width: min(44%, 210px);
+      min-width: clamp(148px, 40vw, 198px);
+      border-radius: clamp(10px, 3vw, 14px);
+      background:
+        radial-gradient(circle at 12% 24%,
+          rgba(184, 255, 35, 0.18), transparent 28%),
+        color-mix(in srgb,
+          var(--band-color, var(--green)) 12%, white);
+      border: 1px solid
+        color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
+      position: relative;
+      overflow: hidden;
+      min-height: clamp(62px, 18vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(6px, 2vw, 10px) clamp(8px, 2.5vw, 12px);
+    }
+
+    .milestone-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--milestone-bg,
+        radial-gradient(circle at 22% 50%,
+          rgba(255, 255, 255, 0.72), transparent 34%));
+      opacity: 0.72;
+    }
+
+    .milestone-band > * { position: relative; z-index: 1; }
+
+    /* ─── ODOMETER ─── */
+    .odometer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(3px, 1vw, 5px);
+      width: 100%;
+    }
+
+    .odometer-segments {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2px, 0.8vw, 4px);
+      width: 100%;
+    }
+
+    .odometer-segment {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(2px, 0.8vw, 4px);
+    }
+
+    .odometer-bevel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: clamp(3px, 1vw, 5px) clamp(4px, 1.2vw, 6px);
+      border-radius: clamp(5px, 1.5vw, 8px);
+      background:
+        linear-gradient(180deg,
+          rgba(139, 214, 0, 0.10), transparent 30%),
+        linear-gradient(180deg,
+          #4a3c25 0%, #2a2219 40%, #2a2219 60%, #1a1209 100%);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 4px 12px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.50);
+    }
+
+    /* Horizontal split line across digits */
+    .odometer-bevel::after {
+      content: "";
+      position: absolute;
+      left: 4px; right: 4px;
+      top: 50%;
+      height: 1px;
+      transform: translateY(-50%);
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(0, 0, 0, 0.55) 15%,
+        rgba(0, 0, 0, 0.55) 85%,
+        transparent);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .odometer-digit {
+      position: relative;
+      width: var(--digit-w);
+      height: var(--digit-h);
+      overflow: hidden;
+      background: #0e0e0e;
+      border-left:  1px solid #3a2c18;
+      border-right: 1px solid #3a2c18;
+    }
+
+    .odometer-digit:first-child {
+      border-left: 0;
+      border-radius: clamp(3px, 1vw, 5px) 0 0 clamp(3px, 1vw, 5px);
+    }
+
+    .odometer-digit:last-child {
+      border-right: 0;
+      border-radius: 0 clamp(3px, 1vw, 5px) clamp(3px, 1vw, 5px) 0;
+    }
+
+    .odometer-digit::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        rgba(255, 255, 255, 0.01) 48%,
+        rgba(0, 0, 0, 0) 52%,
+        rgba(0, 0, 0, 0.18) 100%);
+    }
+
+    .odometer-drum {
+      position: absolute;
+      inset: 0 0 auto;
+      transform: translateY(calc(var(--digit) * -1 * var(--digit-h)));
+    }
+
+    .odometer-drum span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--digit-h);
+      font-family: "SF Pro Display", "Avenir Next Condensed",
+                   "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+      font-size: var(--odometer-font);
+      font-stretch: condensed;
+      font-weight: 650;
+      line-height: 1;
+      color: var(--odometer-color, #ff9500);
+      text-shadow:
+        0 0 8px  var(--odometer-glow, rgba(255, 149, 0, 0.42)),
+        0 0 18px var(--odometer-glow, rgba(255, 149, 0, 0.34));
+      user-select: none;
+    }
+
+    .odometer-colon {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 1vw, 5px);
+      padding: 0 1px clamp(10px, 3vw, 14px);
+    }
+
+    .odometer-colon span {
+      width:  clamp(3px, 1vw, 5px);
+      height: clamp(3px, 1vw, 5px);
+      border-radius: 999px;
+      background: var(--odometer-color, #ff9500);
+      opacity: 0.42;
+      box-shadow: 0 0 6px var(--odometer-glow, rgba(255, 149, 0, 0.42));
+    }
+
+    .odometer-label {
+      color: color-mix(in srgb,
+        var(--odometer-color, #667085) 45%, black);
+      font-size: var(--label-font);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ─── CARD TOOLS PANEL ─── */
+    .card-tools {
+      margin: clamp(10px, 3vw, 14px)
+              calc(-1 * var(--card-px))
+              0;
+      padding: clamp(10px, 3vw, 14px)
+               var(--card-px)
+               clamp(12px, 3.5vw, 16px);
+      background: rgba(8, 18, 4, 0.055);
+      border-top: 1px solid rgba(0, 0, 0, 0.07);
+    }
+
+    .card-actions-row {
+      display: flex;
+      gap: clamp(6px, 2vw, 10px);
+      margin-bottom: clamp(7px, 2.2vw, 10px);
+    }
+
+    .card-stats-row {
+      display: flex;
+      gap: clamp(6px, 2vw, 10px);
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1.2vw, 6px);
+      height: var(--btn-h);
+      border-radius: 999px;
+      font-size: var(--btn-font);
+      font-weight: 800;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      flex: 1 1 auto;
+      padding: 0 clamp(8px, 2.5vw, 14px);
+      transition: transform 120ms ease, opacity 120ms ease;
+      border: 1px solid transparent;
+    }
+
+    .action-btn:active { transform: scale(0.95); }
+
+    .action-btn svg {
+      width:  clamp(13px, 3.5vw, 16px);
+      height: clamp(13px, 3.5vw, 16px);
+      flex: 0 0 auto;
+    }
+
+    .action-primary {
+      background: linear-gradient(180deg,
+        #22580a 0%, #2f7200 50%, #1c4c00 100%);
+      border-color: rgba(47, 114, 0, 0.55);
+      color: #ffffff;
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 rgba(184, 255, 35, 0.20),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+    }
+
+    .action-secondary {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(31, 41, 51, 0.13);
+      color: #1f2933;
+      box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* ─── STAT CHIPS ─── */
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1.2vw, 6px);
+      flex: 1 1 0%;
+      min-height: clamp(40px, 10.5vw, 50px);
+      padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(31, 41, 51, 0.10);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-chip svg {
+      width:  clamp(12px, 3.2vw, 15px);
+      height: clamp(12px, 3.2vw, 15px);
+      flex: 0 0 auto;
+      opacity: 0.60;
+      color: #1f2933;
+    }
+
+    .stat-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .stat-number {
+      display: block;
+      font-size: var(--stat-num-font);
+      font-weight: 900;
+      color: #1f2933;
+      line-height: 1;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: var(--stat-lbl-font);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #667085;
+      margin-top: 2px;
+    }
+
+    /* ─── STATE / LOADING MESSAGE ─── */
+    .state-msg {
+      background: rgba(255, 255, 255, 0.88);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: clamp(12px, 3.5vw, 16px);
+      padding: clamp(16px, 5vw, 24px) clamp(14px, 4vw, 20px);
+      text-align: center;
+      font-size: clamp(0.8rem, 3.2vw, 0.9rem);
+      font-weight: 600;
+      color: #3d5470;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    .state-msg.error {
+      background: rgba(255, 240, 240, 0.94);
+      color: #9b2c2c;
+    }
+
+    /* ─── HOVER STATES (pointer devices only) ─── */
+    @media (hover: hover) and (pointer: fine) {
+      .action-primary:hover {
+        background: linear-gradient(180deg,
+          #2a6e0e 0%, #3d8f00 50%, #286000 100%);
+        box-shadow:
+          0 4px 12px rgba(47, 111, 0, 0.30),
+          inset 0 1px 0 rgba(184, 255, 35, 0.26),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+      }
+
+      .action-secondary:hover {
+        background: #ffffff;
+        border-color: rgba(31, 41, 51, 0.22);
+      }
+
+      .header-icon-button:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+    }
+
+    /* ─── MEMBER-ENTRY GLASS RESTYLE ─── */
+    .milestone-card {
+      background: linear-gradient(145deg, rgba(8,16,24,.78), rgba(15,19,24,.64));
+      border-color: rgba(255, 222, 146, .28);
+      -webkit-backdrop-filter: blur(13px) saturate(135%);
+      backdrop-filter: blur(13px) saturate(135%);
+      box-shadow: 0 -8px 18px -4px rgba(0,0,0,.34),
+                  0 20px 70px rgba(0,0,0,.34),
+                  inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .milestone-card.is-selected {
+      border-color: rgba(255, 232, 170, .75);
+      box-shadow: 0 0 0 2px rgba(228,185,83,.30),
+                  0 28px 56px rgba(0,0,0,.52),
+                  0 0 36px rgba(228,185,83,.18);
+    }
+
+    .member-name { color: #fff8e8; }
+    .card-meta { color: rgba(255, 248, 232, .68); }
+
+    .card-tools {
+      background: rgba(5, 8, 13, .30);
+      border-top-color: rgba(255, 222, 146, .14);
+    }
+
+    .action-primary {
+      background: linear-gradient(180deg, #f0ca6b 0%, #d6a83e 52%, #a87820 100%);
+      border-color: rgba(255,232,170,.58);
+      color: #171006;
+    }
+
+    .action-secondary,
+    .stat-chip {
+      background: rgba(255, 248, 232, .10);
+      border-color: rgba(255, 222, 146, .20);
+      color: #fff8e8;
+    }
+
+    .stat-number { color: #fff8e8; }
+    .stat-label { color: rgba(255,248,232,.58); }
+    .stat-chip svg { color: #fff8e8; }
+
+    .state-msg {
+      background: linear-gradient(145deg, rgba(8,16,24,.78), rgba(15,19,24,.64));
+      border: 1px solid rgba(255, 222, 146, .28);
+      color: #fff8e8;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="app-header" class="glass">
+    <div class="mx-auto max-w-3xl">
+
+      <!-- Brand + icon buttons -->
+      <div class="header-top-row">
+        <div class="ooze-brand">
+          <img class="ooze-logo" src="ooze-header.png"
+               alt="Primordial Ooze recovery logo">
+          <div class="min-w-0">
+            <p class="ooze-subtitle">Roseville, CA</p>
+            <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="search-toggle" class="header-icon-button" type="button"
+                  aria-label="Show search" aria-pressed="false" title="Search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                 fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+          <button id="sort-toggle" class="header-icon-button" type="button"
+                  aria-label="Sort: alphabetical" title="Sort: alphabetical">
+            <!-- Decreasing-lines sort icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" aria-hidden="true">
+              <path d="M4 6h16M7 12h10M10 18h4"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search field – droops into view when search toggle is active -->
+      <div id="search-panel" class="search-collapse">
+        <div class="search-field-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
+          </svg>
+          <input id="search-input" type="search" placeholder="Search"
+                 autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="ooze-rule"></div>
+    </div>
+  </header>
+
+  <main id="app-main" class="no-scrollbar">
+    <section class="main-section">
+      <div id="state-panel"></div>
+      <div id="cards"></div>
+    </section>
+  </main>
+
+  <template id="card-template">
+    <article class="milestone-card">
+
+      <div class="card-header">
+        <div class="card-info">
+          <h2 class="member-name"></h2>
+
+          <p class="display-phone card-meta">
+            <span class="phone-text"></span>
+          </p>
+
+          <p class="sobriety-date card-meta">
+            <span class="date-text"></span>
+          </p>
+        </div>
+
+        <div class="milestone-band">
+          <div class="display-milestone odometer"></div>
+        </div>
+      </div>
+
+      <!-- Actions + stats panel -->
+      <div class="card-tools">
+        <div class="card-actions-row">
+          <a class="call-link action-btn action-primary" href="#">Call</a>
+          <a class="text-link action-btn action-secondary" href="#">Text</a>
+          <button class="save-button action-btn action-secondary" type="button">Save Contact</button>
+        </div>
+
+        <div class="card-stats-row">
+          <span class="months stat-chip">
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Months</span>
+            </span>
+          </span>
+
+          <span class="weeks stat-chip">
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Weeks</span>
+            </span>
+          </span>
+
+          <span class="days stat-chip">
+            <span class="stat-inner">
+              <span class="stat-number"></span>
+              <span class="stat-label">Days</span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+    </article>
+  </template>
+
+  <script>
+    const SHEET_ID = '1rqItTzvPbPHIwGtY0sFQcquLP1LGqr8WarcVvBL1Kxw';
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    const SORT_MODES = [
+      { key: 'alpha',        label: 'alphabetical' },
+      { key: 'milestones',   label: 'milestones' },
+      { key: 'years',        label: 'years' },
+      { key: 'months',       label: 'months' },
+      { key: 'newest',       label: 'newest to oldest' },
+      { key: 'oldest',       label: 'oldest to newest' },
+      { key: 'reverseAlpha', label: 'reverse alphabetical' }
+    ];
+
+    const state = {
+      contacts:   [],
+      query:      '',
+      searchOpen: false,
+      sortIndex:  0
+    };
+
+    const els = {
+      cards:        document.getElementById('cards'),
+      statePanel:   document.getElementById('state-panel'),
+      search:       document.getElementById('search-input'),
+      searchPanel:  document.getElementById('search-panel'),
+      searchToggle: document.getElementById('search-toggle'),
+      sortToggle:   document.getElementById('sort-toggle'),
+      header:       document.getElementById('app-header'),
+      main:         document.getElementById('app-main'),
+      template:     document.getElementById('card-template')
+    };
+
+    function normalizeHeader(value) {
+      return String(value || '')
+        .trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    function cell(row, index) {
+      if (index === -1 || !row.c || !row.c[index]) return '';
+      const value = row.c[index].f ?? row.c[index].v ?? '';
+      return String(value).trim();
+    }
+
+    function parseGoogleSheetResponse(text) {
+      const start = text.indexOf('google.visualization.Query.setResponse(');
+      if (start === -1) throw new Error('Google Sheets response did not include table data.');
+      const jsonStart = text.indexOf('(', start) + 1;
+      const jsonEnd   = text.lastIndexOf(');');
+      if (jsonStart <= 0 || jsonEnd <= jsonStart)
+        throw new Error('Google Sheets response could not be parsed.');
+      return validateSheetData(JSON.parse(text.slice(jsonStart, jsonEnd)));
+    }
+
+    function validateSheetData(data) {
+      if (!data.table || !Array.isArray(data.table.rows)) {
+        const reason = data.errors && data.errors[0] && data.errors[0].detailed_message;
+        throw new Error(reason || 'Google Sheets response did not include rows.');
+      }
+      return data;
+    }
+
+    function loadSheetViaScript(url) {
+      return new Promise((resolve, reject) => {
+        const previousGoogle = window.google;
+        window.google = window.google || {};
+        window.google.visualization = window.google.visualization || {};
+        window.google.visualization.Query = window.google.visualization.Query || {};
+
+        const script = document.createElement('script');
+        const cleanup = () => {
+          script.remove();
+          if (previousGoogle === undefined) delete window.google;
+        };
+
+        window.google.visualization.Query.setResponse = data => {
+          try { cleanup(); resolve(validateSheetData(data)); }
+          catch (error) { reject(error); }
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Google Sheets script load was blocked.'));
+        };
+
+        script.src = url;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadSheetData() {
+      const url = `${SHEET_URL}&cacheBust=${Date.now()}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Sheet request failed: ${response.status}`);
+        return parseGoogleSheetResponse((await response.text()).trim());
+      } catch (fetchError) {
+        console.warn('Fetch load failed, trying script fallback.', fetchError);
+        return loadSheetViaScript(url);
+      }
+    }
+
+    function cleanPhoneNumber(phone) {
+      return String(phone || '').replace(/[^\d+]/g, '');
+    }
+
+    function findColumn(columns, names, fallback = -1) {
+      const normalized = columns.map(col => normalizeHeader(col && col.label));
+      for (const name of names) {
+        const target = normalizeHeader(name);
+        const exact = normalized.indexOf(target);
+        if (exact !== -1) return exact;
+      }
+      for (const name of names) {
+        const target = normalizeHeader(name);
+        const partial = normalized.findIndex(label => label.includes(target));
+        if (partial !== -1) return partial;
+      }
+      return fallback;
+    }
+
+    function parseContacts(data) {
+      const columns = data.table.cols || [];
+      const idx = {
+        name:             findColumn(columns, ['display name', 'name'], 0),
+        sobrietyDate:     findColumn(columns, ['sobriety date', 'birthday', 'birth date', 'bday'], 1),
+        displayPhone:     findColumn(columns, ['display phone', 'phone', 'phone number'], 2),
+        formattedName:    findColumn(columns, ['formatted name'], 4),
+        dialerNumber:     findColumn(columns, ['dialer number', 'link phone'], 5),
+        totalYears:       findColumn(columns, ['total years']),
+        totalMonths:      findColumn(columns, ['total months']),
+        totalWeeks:       findColumn(columns, ['total weeks']),
+        totalDays:        findColumn(columns, ['total days']),
+        milestoneType:    findColumn(columns, ['milestone type']),
+        displayMilestone: findColumn(columns, ['pwa display milestone', 'display milestone']),
+        birthMonth:       findColumn(columns, ['sobriety birth month', 'birth month']),
+        memberTier:       findColumn(columns, ['member tier'])
+      };
+
+      return (data.table.rows || []).map(row => {
+        const name         = cell(row, idx.name);
+        const displayPhone = cell(row, idx.displayPhone);
+        const dialerNumber = cell(row, idx.dialerNumber) || cleanPhoneNumber(displayPhone);
+        const totalYears   = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, ''))  || 0;
+        const totalMonths  = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, '')) || 0;
+        const totalWeeks   = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, ''))  || 0;
+        const totalDays    = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, ''))   || 0;
+
+        if (!name && !displayPhone) return null;
+
+        return {
+          name,
+          formattedName:    cell(row, idx.formattedName) || name,
+          sobrietyDate:     cell(row, idx.sobrietyDate),
+          displayPhone,
+          dialerNumber,
+          totalYears,
+          totalMonths,
+          totalWeeks,
+          totalDays,
+          milestoneType:    cell(row, idx.milestoneType) || inferMilestoneType(totalYears, totalMonths),
+          displayMilestone: cell(row, idx.displayMilestone) || formatMilestone(totalYears, totalMonths, totalDays),
+          birthMonth:       cell(row, idx.birthMonth),
+          memberTier:       cell(row, idx.memberTier) || inferTier(totalYears, totalDays)
+        };
+      }).filter(Boolean);
+    }
+
+    function inferMilestoneType(years, months) {
+      if (years >= 1 && months % 12 === 0) return 'Annual milestone';
+      if (months > 0 && months < 12) return 'Monthly milestone';
+      return 'Daily milestone';
+    }
+
+    function inferTier(years, days) {
+      if (years >= 20) return 'Oldtimer';
+      if (years >= 10) return 'Double digits';
+      if (years >= 1)  return 'Year marker';
+      if (days >= 30)  return 'First year';
+      return 'New';
+    }
+
+    function formatMilestone(years, months, days) {
+      if (years  >= 1) return `${Math.floor(years)}  ${years  === 1 ? 'year'  : 'years'}`;
+      if (months >= 1) return `${Math.floor(months)} ${months === 1 ? 'month' : 'months'}`;
+      if (days   >= 1) return `${Math.floor(days)}   ${days   === 1 ? 'day'   : 'days'}`;
+      return 'Today';
+    }
+
+    function parseSobrietyDate(value) {
+      const text  = String(value || '').trim();
+      const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (!match) return null;
+
+      const month  = Number(match[1]) - 1;
+      const day    = Number(match[2]);
+      const rawYear = Number(match[3]);
+      const year   = rawYear < 100 ? rawYear + 1900 : rawYear;
+      const date   = new Date(year, month, day);
+
+      if (date.getFullYear() !== year ||
+          date.getMonth()    !== month ||
+          date.getDate()     !== day) return null;
+      return date;
+    }
+
+    function durationParts(contact) {
+      const start = parseSobrietyDate(contact.sobrietyDate);
+      const today = new Date();
+      if (start && start <= today) {
+        let years  = today.getFullYear() - start.getFullYear();
+        let months = today.getMonth()    - start.getMonth();
+        let days   = today.getDate()     - start.getDate();
+
+        if (days < 0) {
+          months -= 1;
+          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        }
+        if (months < 0) { years -= 1; months += 12; }
+        return { years, months, days };
+      }
+
+      return {
+        years:  Math.floor(contact.totalYears  || 0),
+        months: Math.floor(contact.totalMonths || 0) % 12,
+        days:   Math.floor(contact.totalDays   || 0) % 30
+      };
+    }
+
+    function buildOdometerNumber(value, digits) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'odometer-bevel';
+      String(Math.max(0, value))
+        .padStart(digits, '0').slice(-digits).split('').forEach(char => {
+          const digit = document.createElement('div');
+          digit.className = 'odometer-digit';
+          const drum = document.createElement('div');
+          drum.className = 'odometer-drum';
+          drum.style.setProperty('--digit', Number(char));
+          for (let i = 0; i <= 10; i += 1) {
+            const span = document.createElement('span');
+            span.textContent = i % 10;
+            drum.appendChild(span);
+          }
+          digit.appendChild(drum);
+          wrapper.appendChild(digit);
+        });
+      return wrapper;
+    }
+
+    function buildOdometerSeparator() {
+      const sep = document.createElement('div');
+      sep.className = 'odometer-colon';
+      sep.innerHTML = '<span></span><span></span>';
+      return sep;
+    }
+
+    function renderOdometer(el, contact) {
+      const parts    = durationParts(contact);
+      const segments = document.createElement('div');
+      segments.className = 'odometer-segments';
+
+      [
+        ['Years',  parts.years,  2],
+        ['Months', parts.months, 2],
+        ['Days',   parts.days,   2]
+      ].forEach(([label, value, digits], index) => {
+        if (index > 0) segments.appendChild(buildOdometerSeparator());
+
+        const segment = document.createElement('div');
+        segment.className = 'odometer-segment';
+        segment.appendChild(buildOdometerNumber(value, digits));
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'odometer-label';
+        labelEl.textContent = label;
+        segment.appendChild(labelEl);
+        segments.appendChild(segment);
+      });
+
+      el.replaceChildren(segments);
+    }
+
+    function tierMetal(contact) {
+      const tier = String(contact.memberTier || '').trim().toLowerCase();
+      if (tier.includes('platinum') || tier.includes('platnum')) {
+        return {
+          band:   '#8f9aa3',
+          display: '#eef2f5',
+          glow:   'rgba(238, 242, 245, 0.34)',
+          accent: 'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)'
+        };
+      }
+      if (tier.includes('gold')) {
+        return {
+          band:   '#b7791f',
+          display: '#f6c453',
+          glow:   'rgba(246, 196, 83, 0.38)',
+          accent: 'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)'
+        };
+      }
+      if (tier.includes('silver')) {
+        return {
+          band:   '#9ca3af',
+          display: '#d9dde3',
+          glow:   'rgba(217, 221, 227, 0.34)',
+          accent: 'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)'
+        };
+      }
+      if (tier.includes('bronze')) {
+        return {
+          band:   '#a16207',
+          display: '#dc8d3a',
+          glow:   'rgba(220, 141, 58, 0.38)',
+          accent: 'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)'
+        };
+      }
+      return {
+        band:   '#24745a',
+        display: '#58c493',
+        glow:   'rgba(88, 196, 147, 0.34)',
+        accent: 'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)'
+      };
+    }
+
+    function milestoneBackground(contact) {
+      const type = String(contact.milestoneType || '').trim().toLowerCase();
+      if (type.includes('year') || type.includes('annual')) {
+        return [
+          'radial-gradient(circle at 18% 48%, rgba(255, 238, 170, 0.78), transparent 30%)',
+          'linear-gradient(135deg, rgba(183, 121, 31, 0.20), transparent 52%)',
+          'repeating-linear-gradient(90deg, rgba(183, 121, 31, 0.13) 0 2px, transparent 2px 13px)'
+        ].join(', ');
+      }
+      if (type.includes('month')) {
+        return [
+          'radial-gradient(circle at 20% 44%, rgba(126, 211, 180, 0.58), transparent 32%)',
+          'linear-gradient(135deg, rgba(36, 116, 90, 0.18), transparent 58%)',
+          'repeating-linear-gradient(135deg, rgba(36, 116, 90, 0.12) 0 3px, transparent 3px 15px)'
+        ].join(', ');
+      }
+      if (type.includes('week')) {
+        return [
+          'radial-gradient(circle at 18% 48%, rgba(147, 197, 253, 0.58), transparent 32%)',
+          'linear-gradient(135deg, rgba(39, 100, 167, 0.17), transparent 58%)',
+          'repeating-linear-gradient(0deg, rgba(39, 100, 167, 0.10) 0 2px, transparent 2px 12px)'
+        ].join(', ');
+      }
+      return [
+        'radial-gradient(circle at 18% 48%, rgba(203, 213, 225, 0.72), transparent 32%)',
+        'linear-gradient(135deg, rgba(102, 112, 133, 0.14), transparent 58%)'
+      ].join(', ');
+    }
+
+    function matchesQuery(contact) {
+      const q = state.query.trim().toLowerCase();
+      if (!q) return true;
+      return [
+        contact.name, contact.formattedName, contact.displayPhone,
+        contact.sobrietyDate, contact.birthMonth, contact.memberTier,
+        contact.milestoneType, contact.displayMilestone
+      ].some(v => String(v || '').toLowerCase().includes(q));
+    }
+
+    function digitsOnly(value) {
+      return String(value || '').replace(/\D/g, '');
+    }
+
+    function compareNames(a, b) {
+      return String(a.name || '').localeCompare(
+        String(b.name || ''), undefined, { sensitivity: 'base' });
+    }
+
+    function sobrietyTime(contact) {
+      const date = parseSobrietyDate(contact.sobrietyDate);
+      return date ? date.getTime() : null;
+    }
+
+    function compareSobrietyDates(a, b, direction) {
+      const aTime = sobrietyTime(a);
+      const bTime = sobrietyTime(b);
+      if (aTime === null && bTime === null) return compareNames(a, b);
+      if (aTime === null) return 1;
+      if (bTime === null) return -1;
+      return direction === 'desc' ? bTime - aTime : aTime - bTime;
+    }
+
+    function compareDatePresence(a, b) {
+      const aHas = sobrietyTime(a) !== null;
+      const bHas = sobrietyTime(b) !== null;
+      if (aHas === bHas) return 0;
+      return aHas ? -1 : 1;
+    }
+
+    function compareContacts(a, b) {
+      const mode = SORT_MODES[state.sortIndex].key;
+      const dp   = (mode === 'alpha' || mode === 'reverseAlpha')
+                     ? 0 : compareDatePresence(a, b);
+      if (dp) return dp;
+
+      if (mode === 'milestones') {
+        const tc = String(a.milestoneType || '').localeCompare(
+          String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
+        return tc || b.totalDays - a.totalDays || compareNames(a, b);
+      }
+      if (mode === 'years')        return b.totalYears  - a.totalYears  || compareNames(a, b);
+      if (mode === 'months')       return b.totalMonths - a.totalMonths || compareNames(a, b);
+      if (mode === 'newest')       return compareSobrietyDates(a, b, 'desc') || compareNames(a, b);
+      if (mode === 'oldest')       return compareSobrietyDates(a, b, 'asc')  || compareNames(a, b);
+      if (mode === 'reverseAlpha') return compareNames(b, a) || b.totalDays - a.totalDays;
+      return compareNames(a, b) || b.totalDays - a.totalDays;
+    }
+
+    function searchRank(contact) {
+      const q = state.query.trim().toLowerCase();
+      if (!q) return 0;
+
+      const phoneQuery     = digitsOnly(q);
+      const name           = String(contact.name || '').toLowerCase();
+      const formattedName  = String(contact.formattedName || '').toLowerCase();
+      const phone          = digitsOnly(contact.displayPhone || contact.dialerNumber);
+      const fields = [
+        String(contact.sobrietyDate    || '').toLowerCase(),
+        String(contact.birthMonth      || '').toLowerCase(),
+        String(contact.memberTier      || '').toLowerCase(),
+        String(contact.milestoneType   || '').toLowerCase(),
+        String(contact.displayMilestone|| '').toLowerCase()
+      ];
+
+      if (name === q || formattedName === q)             return 0;
+      if (name.startsWith(q) || formattedName.startsWith(q)) return 1;
+      if (phoneQuery && phone.startsWith(phoneQuery))   return 2;
+      if (name.includes(q) || formattedName.includes(q)) return 3;
+      if (phoneQuery && phone.includes(phoneQuery))     return 4;
+      if (fields.some(f => f.startsWith(q)))            return 5;
+      return 6;
+    }
+
+    function visibleContacts() {
+      return state.contacts
+        .filter(matchesQuery)
+        .sort((a, b) => searchRank(a) - searchRank(b) || compareContacts(a, b));
+    }
+
+    function renderState(message, tone = 'neutral') {
+      els.cards.innerHTML = '';
+      const cls = tone === 'error' ? 'state-msg error' : 'state-msg';
+      els.statePanel.innerHTML = `<div class="${cls}">${message}</div>`;
+    }
+
+    function renderCards() {
+      const contacts = visibleContacts();
+      els.cards.innerHTML = '';
+
+      if (!contacts.length) {
+        renderState(state.contacts.length
+          ? 'No matching members found.'
+          : 'No members found in the sheet.');
+        return;
+      }
+
+      els.statePanel.innerHTML = '';
+      contacts.forEach(contact => {
+        const fragment = els.template.content.cloneNode(true);
+        const card     = fragment.querySelector('.milestone-card');
+        card.tabIndex  = 0;
+
+        const metal = tierMetal(contact);
+        card.style.setProperty('--accent',         metal.accent);
+        card.style.setProperty('--band-color',     metal.band);
+        card.style.setProperty('--odometer-color', metal.display);
+        card.style.setProperty('--odometer-glow',  metal.glow);
+        fragment.querySelector('.milestone-band')
+          .style.setProperty('--milestone-bg', milestoneBackground(contact));
+
+        fragment.querySelector('.member-name').textContent =
+          contact.name || 'Unnamed member';
+
+        const phoneSpan = fragment.querySelector('.phone-text');
+        if (phoneSpan)
+          phoneSpan.textContent = contact.displayPhone || 'No phone number listed';
+
+        const dateSpan = fragment.querySelector('.date-text');
+        if (dateSpan)
+          dateSpan.textContent = contact.sobrietyDate
+            ? `Since: ${contact.sobrietyDate}` : 'Since: TBD';
+
+        renderOdometer(fragment.querySelector('.display-milestone'), contact);
+
+        const setNum = (sel, val) => {
+          const el = fragment.querySelector(sel);
+          if (el) el.textContent = val;
+        };
+        setNum('.months .stat-number', Math.floor(contact.totalMonths || 0));
+        setNum('.weeks .stat-number',  Math.floor(contact.totalWeeks  || 0));
+        setNum('.days .stat-number',   Math.floor(contact.totalDays   || 0));
+
+        const call = fragment.querySelector('.call-link');
+        const text = fragment.querySelector('.text-link');
+        const save = fragment.querySelector('.save-button');
+
+        if (contact.dialerNumber) {
+          call.href = `tel:${contact.dialerNumber}`;
+          text.href = `sms:${contact.dialerNumber}`;
+        } else {
+          call.classList.add('disabled');
+          text.classList.add('disabled');
+        }
+
+        save.addEventListener('click', () => downloadVCard(contact));
+        card.addEventListener('pointerdown', event => {
+          if (event.pointerType !== 'touch') selectCard(card);
+        });
+        card.addEventListener('click', event => {
+          if (event.target.closest('a, button')) return;
+          selectCard(card);
+        });
+        card.addEventListener('focusin', () => selectCard(card));
+        els.cards.appendChild(fragment);
+      });
+    }
+
+    function deselectCard(card) {
+      if (card._startT)    { clearTimeout(card._startT);    card._startT    = null; }
+      if (card._riseT)     { clearTimeout(card._riseT);     card._riseT     = null; }
+      if (card._settleT)   { clearTimeout(card._settleT);   card._settleT   = null; }
+      if (card._peakT)     { clearTimeout(card._peakT);     card._peakT     = null; }
+      if (card._deselectT) { clearTimeout(card._deselectT); card._deselectT = null; }
+      const atRest = !card.classList.contains('is-selecting');
+      card.classList.remove('is-selected', 'is-selecting', 'is-deselecting', 'is-above');
+      if (atRest) {
+        void card.offsetWidth;
+        card.classList.add('is-deselecting', 'is-above');
+        // drop z-index at the top of the return bump (60% of 450ms)
+        card._peakT = window.setTimeout(() => {
+          card._peakT = null;
+          card.classList.remove('is-above');
+        }, 50);
+        card._deselectT = window.setTimeout(() => {
+          card._deselectT = null;
+          card.classList.remove('is-deselecting');
+        }, 270);
+      }
+    }
+
+    function selectCard(card) {
+      if (card.classList.contains('is-selecting') || card.classList.contains('is-selected')) return;
+      if (card._startT)    { clearTimeout(card._startT);    card._startT    = null; }
+      if (card._deselectT) { clearTimeout(card._deselectT); card._deselectT = null; }
+      if (card._peakT)     { clearTimeout(card._peakT);     card._peakT     = null; }
+      if (card._riseT)     { clearTimeout(card._riseT);     card._riseT     = null; }
+      if (card._settleT)   { clearTimeout(card._settleT);   card._settleT   = null; }
+
+      let delay = 0;
+      els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting, .milestone-card.is-deselecting').forEach(sel => {
+        if (sel !== card) {
+          const wasAtRest = !sel.classList.contains('is-selecting');
+          deselectCard(sel);
+          if (wasAtRest) delay = 150;
+        }
+      });
+
+      const startRise = () => {
+        card.classList.remove('is-deselecting', 'is-above', 'is-selecting', 'is-selected');
+        void card.offsetWidth;
+        card.classList.add('is-selecting');
+        card._riseT = window.setTimeout(() => {
+          card._riseT = null;
+          card.classList.add('is-selected');
+        }, 180);
+        card._settleT = window.setTimeout(() => {
+          card._settleT = null;
+          card.classList.remove('is-selecting');
+        }, 470);
+      };
+
+      if (delay > 0) {
+        card._startT = window.setTimeout(() => { card._startT = null; startRise(); }, delay);
+      } else {
+        startRise();
+      }
+    }
+
+    function clearSelectedCard() {
+      els.cards.querySelectorAll('.milestone-card.is-selected, .milestone-card.is-selecting').forEach(sel => {
+        deselectCard(sel);
+      });
+    }
+
+    function escapeVCard(value) {
+      return String(value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\r?\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+    }
+
+    function safeFileName(value) {
+      return String(value || 'AA Contact')
+        .trim().replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '')
+        || 'AA_Contact';
+    }
+
+    function formatVCardDate(value) {
+      const date = parseSobrietyDate(value);
+      if (!date) return '';
+      const year  = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day   = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function downloadVCard(contact) {
+      const safeName         = contact.formattedName || contact.name || 'AA Contact';
+      const note             = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : '';
+      const sobrietyVCardDate = formatVCardDate(contact.sobrietyDate);
+      const lines = [
+        'BEGIN:VCARD', 'VERSION:3.0',
+        `FN:${escapeVCard(safeName)}`,
+        `N:;${escapeVCard(safeName)};;;`,
+        contact.dialerNumber ? `TEL;TYPE=CELL:${escapeVCard(contact.dialerNumber)}` : '',
+        sobrietyVCardDate ? `item1.X-ABDATE:${escapeVCard(sobrietyVCardDate)}` : '',
+        sobrietyVCardDate ? 'item1.X-ABLabel:Sobriety' : '',
+        note ? `NOTE:${escapeVCard(note)}` : '',
+        'END:VCARD'
+      ].filter(Boolean);
+      const blob      = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
+      const objectUrl = window.URL.createObjectURL(blob);
+      const anchor    = document.createElement('a');
+      anchor.href     = objectUrl;
+      anchor.download = `${safeFileName(safeName)}.vcf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(objectUrl);
+    }
+
+    async function fetchContacts() {
+      renderState('Loading members…');
+      try {
+        const data = await loadSheetData();
+        state.contacts = parseContacts(data);
+        renderCards();
+      } catch (error) {
+        console.error(error);
+        renderState(`Unable to load the sheet. ${error.message}`, 'error');
+      }
+    }
+
+    /* Measure the actual rendered header height and apply it as padding-top
+       on #app-main so the first card sits flush against the header bottom. */
+    function syncMainPadding() {
+      const h = els.header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-h', h + 'px');
+    }
+
+    function renderSearchState() {
+      els.searchPanel.classList.toggle('is-open', state.searchOpen);
+      els.searchToggle.classList.toggle('is-active', state.searchOpen);
+      els.searchToggle.setAttribute('aria-pressed', String(state.searchOpen));
+      els.searchToggle.setAttribute('aria-label',
+        state.searchOpen ? 'Hide search' : 'Show search');
+      document.body.classList.toggle('search-open', state.searchOpen);
+      if (state.searchOpen) requestAnimationFrame(() => els.search.focus());
+      /* Wait for the search-panel max-height transition (240 ms) to finish
+         before re-measuring so the padding-top lands at the right value. */
+      clearTimeout(renderSearchState._t);
+      renderSearchState._t = setTimeout(syncMainPadding, 260);
+    }
+
+    function closeSearch() {
+      state.searchOpen = false;
+      if (state.query) {
+        state.query = '';
+        els.search.value = '';
+        renderCards();
+      }
+      renderSearchState();
+    }
+
+    function renderSortState() {
+      const mode = SORT_MODES[state.sortIndex];
+      els.sortToggle.setAttribute('aria-label', `Sort: ${mode.label}`);
+      els.sortToggle.setAttribute('title',       `Sort: ${mode.label}`);
+    }
+
+    els.searchToggle.addEventListener('click', () => {
+      state.searchOpen = !state.searchOpen;
+      if (!state.searchOpen) { closeSearch(); return; }
+      renderSearchState();
+    });
+
+    els.sortToggle.addEventListener('click', () => {
+      state.sortIndex = (state.sortIndex + 1) % SORT_MODES.length;
+      renderSortState();
+      renderCards();
+    });
+
+    els.search.addEventListener('input', event => {
+      state.query = event.target.value;
+      renderCards();
+    });
+
+    els.search.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeSearch();
+    });
+
+    let lastScrollTop = 0;
+    els.main.addEventListener('scroll', () => {
+      const current      = els.main.scrollTop;
+      const scrollingDown = current > lastScrollTop + 8;
+      const scrollingUp   = current < lastScrollTop - 8;
+
+      if (Math.abs(current - lastScrollTop) > 3) clearSelectedCard();
+
+      if (scrollingDown && current > 80 && document.activeElement !== els.search)
+        els.header.classList.add('header-hidden');
+      if (scrollingUp || current < 24)
+        els.header.classList.remove('header-hidden');
+
+      lastScrollTop = Math.max(0, current);
+    }, { passive: true });
+
+    els.search.addEventListener('focus', () => {
+      els.header.classList.remove('header-hidden');
+      els.main.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.addEventListener('pointerdown', event => {
+      if (event.target.closest('.milestone-card')) return;
+      clearSelectedCard();
+    });
+
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(error => {
+          console.warn('Service worker registration failed.', error);
+        });
+      });
+    }
+
+    window.addEventListener('resize', syncMainPadding);
+
+    renderSearchState();
+    renderSortState();
+    /* Measure header height once the browser has laid it out. */
+    requestAnimationFrame(syncMainPadding);
+    window.addEventListener('DOMContentLoaded', fetchContacts);
+  </script>
+</body>
+</html>
