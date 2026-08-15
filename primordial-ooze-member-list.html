@@ -30,7 +30,7 @@
       --card-px:        clamp(15px, 4.2vw, 20px);
       --card-py:        clamp(13px, 3.5vw, 17px);
       --card-radius:    clamp(18px, 5vw,  24px);
-      --card-overlap:   clamp(122px, 34vw, 148px);
+      --card-overlap:   clamp(104px, 28vw, 126px);
       --btn-h:          clamp(40px, 10.5vw, 52px);
       --header-logo:    clamp(48px, 13vw, 62px);
       --accent-bar-w:   clamp(7px, 2vw, 10px);
@@ -119,18 +119,9 @@
 
     /* ─── BRAND ─── */
     .ooze-brand {
-      display: flex;
-      align-items: center;
-      gap: clamp(8px, 3vw, 14px);
       min-width: 0;
-    }
-
-    .ooze-logo {
-      width: var(--header-logo);
-      height: var(--header-logo);
-      object-fit: contain;
-      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.50));
-      flex: 0 0 auto;
+      text-align: center;
+      padding: 0 clamp(48px, 14vw, 62px);
     }
 
     .ooze-subtitle {
@@ -153,85 +144,21 @@
       margin: 0;
     }
 
-    /* ─── HEADER TOP ROW (brand + action buttons) ─── */
+    /* ─── CENTERED HEADER + MILESTONE TOGGLE ─── */
     .header-top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: clamp(8px, 3vw, 14px);
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: clamp(50px, 14vw, 64px);
     }
 
     .header-actions {
-      display: flex;
-      align-items: center;
-      gap: clamp(6px, 2vw, 10px);
-      flex: 0 0 auto;
-    }
-
-    /* ─── COLLAPSIBLE SEARCH PANEL ─── */
-    .search-collapse {
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transform: translateY(-6px);
-      transition:
-        max-height 240ms ease,
-        opacity    200ms ease,
-        transform  240ms ease;
-      pointer-events: none;
-    }
-
-    .search-collapse.is-open {
-      max-height: clamp(50px, 14vw, 64px);
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-      margin-top: clamp(10px, 3vw, 14px);
-    }
-
-    .search-field-wrap {
-      position: relative;
-    }
-
-    .search-field-wrap .search-icon {
       position: absolute;
-      left: clamp(11px, 3vw, 15px);
+      right: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: clamp(14px, 4vw, 17px);
-      height: clamp(14px, 4vw, 17px);
-      color: rgba(255, 255, 255, 0.42);
-      pointer-events: none;
+      display: flex;
     }
-
-    #search-input {
-      display: block;
-      width: 100%;
-      height: clamp(40px, 11vw, 50px);
-      padding: 0 clamp(12px, 3.5vw, 16px)
-               0 clamp(36px, 9.5vw, 46px);
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.10);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
-      color: #ffffff;
-      font-size: clamp(14px, 4vw, 16px);
-      font-weight: 600;
-      font-family: inherit;
-      outline: none;
-      -webkit-appearance: none;
-    }
-
-    #search-input::placeholder { color: rgba(255, 255, 255, 0.38); }
-
-    #search-input:focus {
-      border-color: rgba(139, 214, 0, 0.45);
-      background: rgba(255, 255, 255, 0.14);
-    }
-
-    /* Cancel button that browsers render on type="search" */
-    #search-input::-webkit-search-cancel-button { filter: invert(1) opacity(0.5); }
 
     /* ─── HEADER ICON BUTTON (sort toggle) ─── */
     .header-icon-button {
@@ -275,8 +202,20 @@
     /* Center inner content on wide screens */
     #app-header > div { max-width: 48rem; margin: 0 auto; }
 
-    /* Prevent brand text from overflowing */
-    .ooze-brand > div { min-width: 0; }
+    .milestone-section-title {
+      position: relative;
+      z-index: 2;
+      margin: clamp(12px, 3vw, 18px) 0 clamp(8px, 2.5vw, 12px);
+      color: #fff8e8;
+      font-size: clamp(.72rem, 2.8vw, .88rem);
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0,0,0,.7);
+    }
+
+    .milestone-section-title:first-child { margin-top: 0; }
 
     /* ─── OOZE RULE ─── */
     .ooze-rule {
@@ -830,7 +769,6 @@
         --btn-h: 40px;
       }
 
-      .ooze-subtitle { display: none; }
       .ooze-title { font-size: 1.05rem; }
 
       .header-icon-button {
@@ -854,42 +792,18 @@
       <!-- Brand + icon buttons -->
       <div class="header-top-row">
         <div class="ooze-brand">
-          <img class="ooze-logo" src="ooze-header.png"
-               alt="Primordial Ooze recovery logo">
-          <div class="min-w-0">
-            <p class="ooze-subtitle">Roseville, CA</p>
-            <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
-          </div>
+          <p class="ooze-subtitle">Roseville, CA</p>
+          <h1 class="ooze-title">PRIMORDIAL OOZE</h1>
         </div>
         <div class="header-actions">
-          <button id="search-toggle" class="header-icon-button" type="button"
-                  aria-label="Show search" aria-pressed="false" title="Search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                 fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-          <button id="sort-toggle" class="header-icon-button" type="button"
-                  aria-label="Sort: alphabetical" title="Sort: alphabetical">
-            <!-- Decreasing-lines sort icon -->
+          <button id="milestone-toggle" class="header-icon-button" type="button"
+                  aria-label="Show milestones" aria-pressed="false" title="Show milestones">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2.2"
-                 stroke-linecap="round" aria-hidden="true">
-              <path d="M4 6h16M7 12h10M10 18h4"/>
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 16.54l-5.3 2.78 1.01-5.91-4.29-4.18 5.93-.86L12 3z"/>
             </svg>
           </button>
-        </div>
-      </div>
-
-      <!-- Search field – droops into view when search toggle is active -->
-      <div id="search-panel" class="search-collapse">
-        <div class="search-field-wrap">
-          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"
-               viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM2 8a6 6 0 1 1 10.89 3.476l4.817 4.817a1 1 0 0 1-1.414 1.414l-4.816-4.816A6 6 0 0 1 2 8Z" clip-rule="evenodd"/>
-          </svg>
-          <input id="search-input" type="search" placeholder="Search"
-                 autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
       </div>
 
@@ -968,30 +882,15 @@
     const SHEET_URL =
       `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
       `?tqx=out:json&gid=${SHEET_GID}&range=${encodeURIComponent(SHEET_RANGE)}&headers=1`;
-    const SORT_MODES = [
-      { key: 'alpha',        label: 'alphabetical' },
-      { key: 'milestones',   label: 'milestones' },
-      { key: 'years',        label: 'years' },
-      { key: 'months',       label: 'months' },
-      { key: 'newest',       label: 'newest to oldest' },
-      { key: 'oldest',       label: 'oldest to newest' },
-      { key: 'reverseAlpha', label: 'reverse alphabetical' }
-    ];
-
     const state = {
       contacts:   [],
-      query:      '',
-      searchOpen: false,
-      sortIndex:  0
+      milestoneView: false
     };
 
     const els = {
       cards:        document.getElementById('cards'),
       statePanel:   document.getElementById('state-panel'),
-      search:       document.getElementById('search-input'),
-      searchPanel:  document.getElementById('search-panel'),
-      searchToggle: document.getElementById('search-toggle'),
-      sortToggle:   document.getElementById('sort-toggle'),
+      milestoneToggle: document.getElementById('milestone-toggle'),
       header:       document.getElementById('app-header'),
       main:         document.getElementById('app-main'),
       template:     document.getElementById('card-template')
@@ -1093,8 +992,6 @@
         name:             findColumn(columns, ['display name', 'member name', 'name'], 1),
         sobrietyDate:     findColumn(columns, ['sobriety date', 'sobriety birthday', 'birthday', 'birth date', 'bday'], 2),
         displayPhone:     findColumn(columns, ['display phone', 'phone number', 'phone'], 3),
-        formattedName:    findColumn(columns, ['formatted name'], 4),
-        dialerNumber:     findColumn(columns, ['dialer number', 'link phone'], 5),
         totalYears:       findColumn(columns, ['total years']),
         totalMonths:      findColumn(columns, ['total months']),
         totalWeeks:       findColumn(columns, ['total weeks']),
@@ -1108,7 +1005,7 @@
       return (data.table.rows || []).map(row => {
         const name         = cell(row, idx.name);
         const displayPhone = cell(row, idx.displayPhone);
-        const dialerNumber = cell(row, idx.dialerNumber) || cleanPhoneNumber(displayPhone);
+        const dialerNumber = cleanPhoneNumber(displayPhone);
         const sheetYears   = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, ''));
         const sheetMonths  = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, ''));
         const sheetWeeks   = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, ''));
@@ -1126,7 +1023,6 @@
 
         return {
           name,
-          formattedName:    cell(row, idx.formattedName) || name,
           sobrietyDate,
           displayPhone,
           dialerNumber,
@@ -1193,9 +1089,13 @@
       today.setHours(0, 0, 0, 0);
       if (!start || start > today) return { valid: false, totalYears: 0, totalMonths: 0, totalWeeks: 0, totalDays: 0 };
 
-      const totalDays = Math.floor((today - start) / 86400000);
+      /* UTC calendar stamps avoid daylight-saving changes turning an exact
+         500-day milestone into 499 or 501 days. */
+      const startStamp = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+      const todayStamp = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+      const totalDays = Math.floor((todayStamp - startStamp) / 86400000);
       let totalMonths = (today.getFullYear() - start.getFullYear()) * 12 + today.getMonth() - start.getMonth();
-      if (today.getDate() < start.getDate()) totalMonths -= 1;
+      if (exactMonthDate(start, totalMonths) > today) totalMonths -= 1;
       return {
         valid:       true,
         totalYears:  Math.floor(Math.max(0, totalMonths) / 12),
@@ -1208,17 +1108,25 @@
     function durationParts(contact) {
       const start = parseSobrietyDate(contact.sobrietyDate);
       const today = new Date();
+      today.setHours(0, 0, 0, 0);
       if (start && start <= today) {
-        let years  = today.getFullYear() - start.getFullYear();
-        let months = today.getMonth()    - start.getMonth();
-        let days   = today.getDate()     - start.getDate();
-
-        if (days < 0) {
-          months -= 1;
-          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        /* Count complete calendar months first, then count days from that
+           anniversary. This makes an exact year display 01 00 00 instead of
+           00 11 30 when adjacent months have different lengths. */
+        let totalMonths = (today.getFullYear() - start.getFullYear()) * 12 +
+          today.getMonth() - start.getMonth();
+        let anchor = exactMonthDate(start, totalMonths);
+        if (anchor > today) {
+          totalMonths -= 1;
+          anchor = exactMonthDate(start, totalMonths);
         }
-        if (months < 0) { years -= 1; months += 12; }
-        return { years, months, days };
+        const startStamp = Date.UTC(anchor.getFullYear(), anchor.getMonth(), anchor.getDate());
+        const todayStamp = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+        return {
+          years: Math.floor(totalMonths / 12),
+          months: totalMonths % 12,
+          days: Math.floor((todayStamp - startStamp) / 86400000)
+        };
       }
 
       return {
@@ -1344,20 +1252,6 @@
       ].join(', ');
     }
 
-    function matchesQuery(contact) {
-      const q = state.query.trim().toLowerCase();
-      if (!q) return true;
-      return [
-        contact.name, contact.formattedName, contact.displayPhone,
-        contact.sobrietyDate, contact.birthMonth, contact.memberTier,
-        contact.milestoneType, contact.displayMilestone
-      ].some(v => String(v || '').toLowerCase().includes(q));
-    }
-
-    function digitsOnly(value) {
-      return String(value || '').replace(/\D/g, '');
-    }
-
     function compareNames(a, b) {
       return String(a.name || '').localeCompare(
         String(b.name || ''), undefined, { sensitivity: 'base' });
@@ -1368,70 +1262,76 @@
       return date ? date.getTime() : null;
     }
 
-    function compareSobrietyDates(a, b, direction) {
-      const aTime = sobrietyTime(a);
-      const bTime = sobrietyTime(b);
-      if (aTime === null && bTime === null) return compareNames(a, b);
-      if (aTime === null) return 1;
-      if (bTime === null) return -1;
-      return direction === 'desc' ? bTime - aTime : aTime - bTime;
+    function sameCalendarDay(a, b) {
+      return a && b && a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
     }
 
-    function compareDatePresence(a, b) {
-      const aHas = sobrietyTime(a) !== null;
-      const bHas = sobrietyTime(b) !== null;
-      if (aHas === bHas) return 0;
-      return aHas ? -1 : 1;
+    function exactMonthDate(start, months) {
+      const year = start.getFullYear() + Math.floor((start.getMonth() + months) / 12);
+      const month = (start.getMonth() + months) % 12;
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      return new Date(year, month, Math.min(start.getDate(), lastDay));
     }
 
-    function compareContacts(a, b) {
-      const mode = SORT_MODES[state.sortIndex].key;
-      const dp   = (mode === 'alpha' || mode === 'reverseAlpha')
-                     ? 0 : compareDatePresence(a, b);
-      if (dp) return dp;
-
-      if (mode === 'milestones') {
-        const tc = String(a.milestoneType || '').localeCompare(
-          String(b.milestoneType || ''), undefined, { sensitivity: 'base' });
-        return tc || b.totalDays - a.totalDays || compareNames(a, b);
-      }
-      if (mode === 'years')        return b.totalYears  - a.totalYears  || compareNames(a, b);
-      if (mode === 'months')       return b.totalMonths - a.totalMonths || compareNames(a, b);
-      if (mode === 'newest')       return compareSobrietyDates(a, b, 'desc') || compareNames(a, b);
-      if (mode === 'oldest')       return compareSobrietyDates(a, b, 'asc')  || compareNames(a, b);
-      if (mode === 'reverseAlpha') return compareNames(b, a) || b.totalDays - a.totalDays;
-      return compareNames(a, b) || b.totalDays - a.totalDays;
+    function milestoneLabel(months) {
+      if (months < 12) return `${months} months`;
+      if (months === 18) return '18 months';
+      const years = months / 12;
+      return `${years} ${years === 1 ? 'year' : 'years'}`;
     }
 
-    function searchRank(contact) {
-      const q = state.query.trim().toLowerCase();
-      if (!q) return 0;
-
-      const phoneQuery     = digitsOnly(q);
-      const name           = String(contact.name || '').toLowerCase();
-      const formattedName  = String(contact.formattedName || '').toLowerCase();
-      const phone          = digitsOnly(contact.displayPhone || contact.dialerNumber);
-      const fields = [
-        String(contact.sobrietyDate    || '').toLowerCase(),
-        String(contact.birthMonth      || '').toLowerCase(),
-        String(contact.memberTier      || '').toLowerCase(),
-        String(contact.milestoneType   || '').toLowerCase(),
-        String(contact.displayMilestone|| '').toLowerCase()
-      ];
-
-      if (name === q || formattedName === q)             return 0;
-      if (name.startsWith(q) || formattedName.startsWith(q)) return 1;
-      if (phoneQuery && phone.startsWith(phoneQuery))   return 2;
-      if (name.includes(q) || formattedName.includes(q)) return 3;
-      if (phoneQuery && phone.includes(phoneQuery))     return 4;
-      if (fields.some(f => f.startsWith(q)))            return 5;
-      return 6;
+    function officialMilestoneThisMonth(contact, today) {
+      const start = parseSobrietyDate(contact.sobrietyDate);
+      if (!start) return null;
+      /* The early chips stay on the member's sobriety day-of-month: the
+         one-, two-, and three-month dates are labeled 30/60/90 days. */
+      const candidates = [1, 2, 3].map((months, index) => ({
+        date: exactMonthDate(start, months),
+        label: `${[30, 60, 90][index]} days`
+      }));
+      [6, 9, 12, 18, 24].forEach(months => candidates.push({
+        date: exactMonthDate(start, months),
+        label: milestoneLabel(months)
+      }));
+      const years = today.getFullYear() - start.getFullYear();
+      if (years >= 3) candidates.push({
+        date: makeValidDate(start.getFullYear() + years, start.getMonth(), start.getDate()),
+        label: `${years} years`
+      });
+      return candidates.find(item => item.date &&
+        item.date.getFullYear() === today.getFullYear() &&
+        item.date.getMonth() === today.getMonth()) || null;
     }
 
-    function visibleContacts() {
-      return state.contacts
-        .filter(matchesQuery)
-        .sort((a, b) => searchRank(a) - searchRank(b) || compareContacts(a, b));
+    function reachedToday(contact, today) {
+      const start = parseSobrietyDate(contact.sobrietyDate);
+      if (!start) return [];
+      const notes = [];
+      const months = (today.getFullYear() - start.getFullYear()) * 12 +
+        today.getMonth() - start.getMonth();
+      if (months > 0 && sameCalendarDay(exactMonthDate(start, months), today))
+        notes.push(`${months} ${months === 1 ? 'month' : 'months'} to the day`);
+      const totals = calculateTotals(contact.sobrietyDate);
+      if (totals.valid && totals.totalDays >= 500 && totals.totalDays % 500 === 0)
+        notes.push(`${totals.totalDays.toLocaleString()} days`);
+      return notes;
+    }
+
+    function milestoneGroups() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const month = [];
+      const reached = [];
+      state.contacts.forEach(contact => {
+        const official = officialMilestoneThisMonth(contact, today);
+        if (official) month.push({ ...contact, milestoneNote: official.label, milestoneDate: official.date });
+        const notes = reachedToday(contact, today);
+        if (notes.length) reached.push({ ...contact, milestoneNote: notes.join(' • '), milestoneDate: today });
+      });
+      month.sort((a, b) => a.milestoneDate - b.milestoneDate || compareNames(a, b));
+      reached.sort(compareNames);
+      return { month, reached };
     }
 
     function renderState(message, tone = 'neutral') {
@@ -1441,18 +1341,38 @@
     }
 
     function renderCards() {
-      const contacts = visibleContacts();
       els.cards.innerHTML = '';
+      els.statePanel.innerHTML = '';
 
-      if (!contacts.length) {
-        renderState(state.contacts.length
-          ? 'No matching members found.'
-          : 'No members found in the sheet.');
+      if (!state.contacts.length) {
+        renderState('No members found in the sheet.');
         return;
       }
 
-      els.statePanel.innerHTML = '';
-      contacts.forEach(contact => {
+      if (!state.milestoneView) {
+        state.contacts.slice().sort(compareNames).forEach(renderContactCard);
+        return;
+      }
+
+      const groups = milestoneGroups();
+      if (!groups.month.length && !groups.reached.length) {
+        renderState('No milestones are due this month or today.');
+        return;
+      }
+      appendMilestoneSection('Celebrating This Month', groups.month);
+      appendMilestoneSection('Reached Today', groups.reached);
+    }
+
+    function appendMilestoneSection(title, contacts) {
+      if (!contacts.length) return;
+      const heading = document.createElement('h2');
+      heading.className = 'milestone-section-title';
+      heading.textContent = title;
+      els.cards.appendChild(heading);
+      contacts.forEach(renderContactCard);
+    }
+
+    function renderContactCard(contact) {
         const fragment = els.template.content.cloneNode(true);
         const card     = fragment.querySelector('.milestone-card');
         card.tabIndex  = 0;
@@ -1499,7 +1419,12 @@
           text.classList.add('disabled');
         }
 
-        save.addEventListener('click', () => downloadVCard(contact));
+        if (contact.dialerNumber) {
+          save.addEventListener('click', () => saveContact(contact, save));
+        } else {
+          save.classList.add('disabled');
+          save.disabled = true;
+        }
         card.addEventListener('pointerdown', event => {
           if (event.pointerType !== 'touch') selectCard(card);
         });
@@ -1509,7 +1434,6 @@
         });
         card.addEventListener('focusin', () => selectCard(card));
         els.cards.appendChild(fragment);
-      });
     }
 
     function deselectCard(card) {
@@ -1602,8 +1526,8 @@
       return `${year}-${month}-${day}`;
     }
 
-    function downloadVCard(contact) {
-      const safeName         = contact.formattedName || contact.name || 'AA Contact';
+    function buildVCard(contact) {
+      const safeName          = contact.name || 'AA Contact';
       const note             = contact.sobrietyDate ? `Sobriety date: ${contact.sobrietyDate}` : '';
       const sobrietyVCardDate = formatVCardDate(contact.sobrietyDate);
       const lines = [
@@ -1611,20 +1535,41 @@
         `FN:${escapeVCard(safeName)}`,
         `N:;${escapeVCard(safeName)};;;`,
         contact.dialerNumber ? `TEL;TYPE=CELL:${escapeVCard(contact.dialerNumber)}` : '',
-        sobrietyVCardDate ? `item1.X-ABDATE:${escapeVCard(sobrietyVCardDate)}` : '',
-        sobrietyVCardDate ? 'item1.X-ABLabel:Sobriety' : '',
+        sobrietyVCardDate ? `item1.X-ABDATE;TYPE=PREF:${escapeVCard(sobrietyVCardDate)}` : '',
+        sobrietyVCardDate ? 'item1.X-ABLabel:Sobriety Date' : '',
         note ? `NOTE:${escapeVCard(note)}` : '',
         'END:VCARD'
       ].filter(Boolean);
-      const blob      = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
-      const objectUrl = window.URL.createObjectURL(blob);
+      return lines.join('\r\n');
+    }
+
+    async function saveContact(contact, button) {
+      const safeName = contact.name || 'AA Contact';
+      const fileName = `${safeFileName(safeName)}.vcf`;
+      const file = new File([buildVCard(contact)], fileName, {
+        type: 'text/vcard;charset=utf-8'
+      });
+
+      /* The native share sheet is the reliable route to Contacts on current
+         iPhone/Android PWAs. Desktop browsers fall back to a .vcf download. */
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: `Add ${safeName} to Contacts` });
+          return;
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          console.warn('Contact share failed; using download fallback.', error);
+        }
+      }
+
+      const objectUrl = window.URL.createObjectURL(file);
       const anchor    = document.createElement('a');
       anchor.href     = objectUrl;
-      anchor.download = `${safeFileName(safeName)}.vcf`;
+      anchor.download = fileName;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      window.URL.revokeObjectURL(objectUrl);
+      window.setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000);
     }
 
     async function fetchContacts() {
@@ -1646,55 +1591,20 @@
       document.documentElement.style.setProperty('--header-h', h + 'px');
     }
 
-    function renderSearchState() {
-      els.searchPanel.classList.toggle('is-open', state.searchOpen);
-      els.searchToggle.classList.toggle('is-active', state.searchOpen);
-      els.searchToggle.setAttribute('aria-pressed', String(state.searchOpen));
-      els.searchToggle.setAttribute('aria-label',
-        state.searchOpen ? 'Hide search' : 'Show search');
-      document.body.classList.toggle('search-open', state.searchOpen);
-      if (state.searchOpen) requestAnimationFrame(() => els.search.focus());
-      /* Wait for the search-panel max-height transition (240 ms) to finish
-         before re-measuring so the padding-top lands at the right value. */
-      clearTimeout(renderSearchState._t);
-      renderSearchState._t = setTimeout(syncMainPadding, 260);
+    function renderMilestoneToggle() {
+      const active = state.milestoneView;
+      els.milestoneToggle.classList.toggle('is-active', active);
+      els.milestoneToggle.setAttribute('aria-pressed', String(active));
+      els.milestoneToggle.setAttribute('aria-label', active ? 'Show all members' : 'Show milestones');
+      els.milestoneToggle.setAttribute('title', active ? 'Show all members' : 'Show milestones');
     }
 
-    function closeSearch() {
-      state.searchOpen = false;
-      if (state.query) {
-        state.query = '';
-        els.search.value = '';
-        renderCards();
-      }
-      renderSearchState();
-    }
-
-    function renderSortState() {
-      const mode = SORT_MODES[state.sortIndex];
-      els.sortToggle.setAttribute('aria-label', `Sort: ${mode.label}`);
-      els.sortToggle.setAttribute('title',       `Sort: ${mode.label}`);
-    }
-
-    els.searchToggle.addEventListener('click', () => {
-      state.searchOpen = !state.searchOpen;
-      if (!state.searchOpen) { closeSearch(); return; }
-      renderSearchState();
-    });
-
-    els.sortToggle.addEventListener('click', () => {
-      state.sortIndex = (state.sortIndex + 1) % SORT_MODES.length;
-      renderSortState();
+    els.milestoneToggle.addEventListener('click', () => {
+      state.milestoneView = !state.milestoneView;
+      renderMilestoneToggle();
       renderCards();
-    });
-
-    els.search.addEventListener('input', event => {
-      state.query = event.target.value;
-      renderCards();
-    });
-
-    els.search.addEventListener('keydown', event => {
-      if (event.key === 'Escape') closeSearch();
+      els.header.classList.remove('header-hidden');
+      els.main.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     let lastScrollTop = 0;
@@ -1705,18 +1615,13 @@
 
       if (Math.abs(current - lastScrollTop) > 3) clearSelectedCard();
 
-      if (scrollingDown && current > 80 && document.activeElement !== els.search)
+      if (scrollingDown && current > 80)
         els.header.classList.add('header-hidden');
       if (scrollingUp || current < 24)
         els.header.classList.remove('header-hidden');
 
       lastScrollTop = Math.max(0, current);
     }, { passive: true });
-
-    els.search.addEventListener('focus', () => {
-      els.header.classList.remove('header-hidden');
-      els.main.scrollTo({ top: 0, behavior: 'smooth' });
-    });
 
     document.addEventListener('pointerdown', event => {
       if (event.target.closest('.milestone-card')) return;
@@ -1733,8 +1638,7 @@
 
     window.addEventListener('resize', syncMainPadding);
 
-    renderSearchState();
-    renderSortState();
+    renderMilestoneToggle();
     /* Measure header height once the browser has laid it out. */
     requestAnimationFrame(syncMainPadding);
     window.addEventListener('DOMContentLoaded', fetchContacts);
