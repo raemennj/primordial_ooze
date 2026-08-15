@@ -591,22 +591,6 @@
       user-select: none;
     }
 
-    .odometer-colon {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(3px, 1vw, 5px);
-      padding: 0 1px clamp(10px, 3vw, 14px);
-    }
-
-    .odometer-colon span {
-      width:  clamp(3px, 1vw, 5px);
-      height: clamp(3px, 1vw, 5px);
-      border-radius: 999px;
-      background: var(--odometer-color, #ff9500);
-      opacity: 0.42;
-      box-shadow: 0 0 6px var(--odometer-glow, rgba(255, 149, 0, 0.42));
-    }
-
     .odometer-label {
       color: color-mix(in srgb,
         var(--odometer-color, #667085) 45%, black);
@@ -1104,9 +1088,11 @@
     function parseContacts(data) {
       const columns = data.table.cols || [];
       const idx = {
-        name:             findColumn(columns, ['display name', 'name'], 0),
-        sobrietyDate:     findColumn(columns, ['sobriety date', 'birthday', 'birth date', 'bday'], 1),
-        displayPhone:     findColumn(columns, ['display phone', 'phone', 'phone number'], 2),
+        /* The source sheet's member-entry contract is B = name, C = date,
+           D = phone. Header matching wins; these are the safe fallbacks. */
+        name:             findColumn(columns, ['display name', 'member name', 'name'], 1),
+        sobrietyDate:     findColumn(columns, ['sobriety date', 'sobriety birthday', 'birthday', 'birth date', 'bday'], 2),
+        displayPhone:     findColumn(columns, ['display phone', 'phone number', 'phone'], 3),
         formattedName:    findColumn(columns, ['formatted name'], 4),
         dialerNumber:     findColumn(columns, ['dialer number', 'link phone'], 5),
         totalYears:       findColumn(columns, ['total years']),
@@ -1123,17 +1109,25 @@
         const name         = cell(row, idx.name);
         const displayPhone = cell(row, idx.displayPhone);
         const dialerNumber = cell(row, idx.dialerNumber) || cleanPhoneNumber(displayPhone);
-        const totalYears   = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, ''))  || 0;
-        const totalMonths  = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, '')) || 0;
-        const totalWeeks   = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, ''))  || 0;
-        const totalDays    = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, ''))   || 0;
+        const sheetYears   = Number.parseFloat(cell(row, idx.totalYears).replace(/,/g, ''));
+        const sheetMonths  = Number.parseFloat(cell(row, idx.totalMonths).replace(/,/g, ''));
+        const sheetWeeks   = Number.parseFloat(cell(row, idx.totalWeeks).replace(/,/g, ''));
+        const sheetDays    = Number.parseFloat(cell(row, idx.totalDays).replace(/,/g, ''));
+        const sobrietyDate = cell(row, idx.sobrietyDate);
+        const calculated   = calculateTotals(sobrietyDate);
+        /* A valid date is the source of truth. This avoids stale/zero helper
+           formulas making every card read 00 00 00. */
+        const totalYears   = calculated.valid ? calculated.totalYears  : (Number.isFinite(sheetYears)  ? sheetYears  : 0);
+        const totalMonths  = calculated.valid ? calculated.totalMonths : (Number.isFinite(sheetMonths) ? sheetMonths : 0);
+        const totalWeeks   = calculated.valid ? calculated.totalWeeks  : (Number.isFinite(sheetWeeks)  ? sheetWeeks  : 0);
+        const totalDays    = calculated.valid ? calculated.totalDays   : (Number.isFinite(sheetDays)   ? sheetDays   : 0);
 
         if (!name && !displayPhone) return null;
 
         return {
           name,
           formattedName:    cell(row, idx.formattedName) || name,
-          sobrietyDate:     cell(row, idx.sobrietyDate),
+          sobrietyDate,
           displayPhone,
           dialerNumber,
           totalYears,
@@ -1170,20 +1164,45 @@
     }
 
     function parseSobrietyDate(value) {
-      const text  = String(value || '').trim();
-      const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      const text = String(value || '').trim();
+      /* Accept displayed M/D/YYYY dates and raw GViz Date(YYYY,M,D) values. */
+      const gviz = text.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)$/i);
+      if (gviz) return makeValidDate(Number(gviz[1]), Number(gviz[2]), Number(gviz[3]));
+
+      const match = text.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
       if (!match) return null;
-
-      const month  = Number(match[1]) - 1;
-      const day    = Number(match[2]);
+      const month   = Number(match[1]) - 1;
+      const day     = Number(match[2]);
       const rawYear = Number(match[3]);
-      const year   = rawYear < 100 ? rawYear + 1900 : rawYear;
-      const date   = new Date(year, month, day);
+      const cutoff  = new Date().getFullYear() % 100;
+      const year    = rawYear < 100 ? rawYear + (rawYear <= cutoff ? 2000 : 1900) : rawYear;
+      return makeValidDate(year, month, day);
+    }
 
+    function makeValidDate(year, month, day) {
+      const date   = new Date(year, month, day);
       if (date.getFullYear() !== year ||
           date.getMonth()    !== month ||
           date.getDate()     !== day) return null;
       return date;
+    }
+
+    function calculateTotals(value) {
+      const start = parseSobrietyDate(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (!start || start > today) return { valid: false, totalYears: 0, totalMonths: 0, totalWeeks: 0, totalDays: 0 };
+
+      const totalDays = Math.floor((today - start) / 86400000);
+      let totalMonths = (today.getFullYear() - start.getFullYear()) * 12 + today.getMonth() - start.getMonth();
+      if (today.getDate() < start.getDate()) totalMonths -= 1;
+      return {
+        valid:       true,
+        totalYears:  Math.floor(Math.max(0, totalMonths) / 12),
+        totalMonths: Math.max(0, totalMonths),
+        totalWeeks:  Math.floor(totalDays / 7),
+        totalDays
+      };
     }
 
     function durationParts(contact) {
@@ -1230,13 +1249,6 @@
       return wrapper;
     }
 
-    function buildOdometerSeparator() {
-      const sep = document.createElement('div');
-      sep.className = 'odometer-colon';
-      sep.innerHTML = '<span></span><span></span>';
-      return sep;
-    }
-
     function renderOdometer(el, contact) {
       const parts    = durationParts(contact);
       const segments = document.createElement('div');
@@ -1247,8 +1259,6 @@
         ['Months', parts.months, 2],
         ['Days',   parts.days,   2]
       ].forEach(([label, value, digits], index) => {
-        if (index > 0) segments.appendChild(buildOdometerSeparator());
-
         const segment = document.createElement('div');
         segment.className = 'odometer-segment';
         segment.appendChild(buildOdometerNumber(value, digits));
