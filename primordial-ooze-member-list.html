@@ -27,13 +27,13 @@
       --btn-font:       clamp(0.78rem, 3.2vw, 0.95rem);
       --stat-num-font:  clamp(0.9rem,  3.6vw, 1.1rem);
       --stat-lbl-font:  clamp(0.56rem, 2.1vw, 0.68rem);
-      --card-px:        clamp(14px, 4vw,  20px);
-      --card-py:        clamp(14px, 3.5vw, 18px);
+      --card-px:        clamp(15px, 4.2vw, 20px);
+      --card-py:        clamp(13px, 3.5vw, 17px);
       --card-radius:    clamp(18px, 5vw,  24px);
-      --card-overlap:   clamp(114px, 31vw, 136px);
+      --card-overlap:   clamp(104px, 28vw, 126px);
       --btn-h:          clamp(40px, 10.5vw, 52px);
       --header-logo:    clamp(48px, 13vw, 62px);
-      --accent-bar-w:   clamp(10px, 2.8vw, 14px);
+      --accent-bar-w:   clamp(7px, 2vw, 10px);
 
       /* Brand palette */
       --ooze:      #e4b953;
@@ -269,7 +269,7 @@
       position: absolute;
       left: 0; right: 0; top: 0;
       z-index: 30;
-      padding: max(clamp(16px, 4.5vw, 22px), env(safe-area-inset-top)) 8px clamp(10px, 3vw, 14px);
+      padding: max(clamp(16px, 4.5vw, 22px), env(safe-area-inset-top)) 12px clamp(10px, 3vw, 14px);
     }
 
     /* Center inner content on wide screens */
@@ -296,8 +296,8 @@
       position: absolute;
       inset: 0;
       padding-top: var(--header-h, clamp(108px, 30vw, 140px));
-      padding-left:  8px;
-      padding-right: 8px;
+      padding-left:  12px;
+      padding-right: 12px;
       /* enough bottom room to scroll the last expanded card into view */
       padding-bottom: max(clamp(80px, 22vw, 120px), calc(env(safe-area-inset-bottom) + 64px));
       overflow-y: auto;
@@ -327,7 +327,7 @@
       background: rgba(252, 255, 248, 0.96);
       -webkit-backdrop-filter: blur(16px) saturate(140%);
       backdrop-filter: blur(16px) saturate(140%);
-      border: 1.5px solid rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.82);
       border-radius: var(--card-radius);
       box-shadow:
         0 -8px 18px -4px rgba(0, 0, 0, 0.28),
@@ -445,7 +445,7 @@
     .milestone-band {
       flex: 0 0 auto;
       width: min(44%, 210px);
-      min-width: clamp(148px, 40vw, 198px);
+      min-width: clamp(142px, 39vw, 190px);
       border-radius: clamp(10px, 3vw, 14px);
       background:
         radial-gradient(circle at 12% 24%,
@@ -694,7 +694,7 @@
       justify-content: center;
       gap: clamp(4px, 1.2vw, 6px);
       flex: 1 1 0%;
-      min-height: clamp(40px, 10.5vw, 50px);
+      min-height: clamp(36px, 9.5vw, 45px);
       padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.82);
@@ -824,6 +824,42 @@
       border: 1px solid rgba(255, 222, 146, .28);
       color: #fff8e8;
     }
+
+    @media (hover: hover) and (pointer: fine) {
+      .action-primary:hover {
+        background: linear-gradient(180deg, #f7d77f 0%, #e4b953 52%, #b98526 100%);
+        border-color: rgba(255,232,170,.72);
+        box-shadow: 0 4px 14px rgba(228,185,83,.24),
+                    inset 0 1px 0 rgba(255,255,255,.32);
+      }
+
+      .action-secondary:hover {
+        background: rgba(255,248,232,.16);
+        border-color: rgba(255,222,146,.34);
+      }
+    }
+
+    /* Keep the header and three contact controls comfortable on small phones. */
+    @media (max-width: 360px) {
+      :root {
+        --header-logo: 42px;
+        --btn-h: 40px;
+      }
+
+      .ooze-subtitle { display: none; }
+      .ooze-title { font-size: 1.05rem; }
+
+      .header-icon-button {
+        width: 38px;
+        height: 38px;
+      }
+
+      .card-actions-row { flex-wrap: wrap; }
+
+      .card-actions-row .save-button {
+        flex-basis: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -941,8 +977,13 @@
   </template>
 
   <script>
-    const SHEET_ID = '1rqItTzvPbPHIwGtY0sFQcquLP1LGqr8WarcVvBL1Kxw';
-    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    const SHEET_ID    = '1dNaAYSDLX6VVcY1AvxXIOfSe7b8G8vP-1k2f62QMqPY';
+    const SHEET_GID   = '40619912';
+    /* Row 5 contains the column labels; member records begin on row 6. */
+    const SHEET_RANGE = 'A5:Z';
+    const SHEET_URL =
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq` +
+      `?tqx=out:json&gid=${SHEET_GID}&range=${encodeURIComponent(SHEET_RANGE)}&headers=1`;
     const SORT_MODES = [
       { key: 'alpha',        label: 'alphabetical' },
       { key: 'milestones',   label: 'milestones' },
