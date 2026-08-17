@@ -68,16 +68,23 @@
       position: relative;
       isolation: isolate;
       width: 100%;
+      height: 100vh;
+      height: -webkit-fill-available;
       min-height: 100vh;
       min-height: -webkit-fill-available;
-      display: grid;
-      place-items: center;
       padding:
         max(22px, env(safe-area-inset-top))
         18px
         max(22px, env(safe-area-inset-bottom));
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       text-align: center;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .app-stack {
+      width: min(100%, 390px);
+      margin: 0 auto;
     }
 
     /*
@@ -183,7 +190,7 @@
     }
 
     .entry-card {
-      width: min(100%, 390px);
+      width: 100%;
       padding: 25px;
       border: 1px solid rgba(255, 222, 146, 0.28);
       border-radius: 24px;
@@ -199,6 +206,10 @@
       backdrop-filter: blur(13px) saturate(135%);
       transform: translate3d(var(--card-x), var(--card-y), 0);
       will-change: transform;
+    }
+
+    .entry-card + .entry-card {
+      margin-top: 16px;
     }
 
     .eyebrow {
@@ -373,9 +384,200 @@
       font-size: 0.78rem;
     }
 
+    .dashboard-card {
+      text-align: left;
+    }
+
+    .dashboard-card h1 {
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .dashboard-card .eyebrow,
+    .meeting-date,
+    .dashboard-message {
+      text-align: center;
+    }
+
+    .meeting-date {
+      margin: 0 0 17px;
+      color: rgba(255, 248, 232, 0.82);
+      font-size: 0.83rem;
+      text-shadow: 0 1px 8px #000;
+    }
+
+    .dashboard-message {
+      margin: 11px 0;
+      color: rgba(255, 248, 232, 0.76);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .needs-list,
+    .inventory-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .need-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(255, 232, 170, 0.18);
+    }
+
+    .need-row:first-child {
+      border-top: 0;
+    }
+
+    .need-name {
+      color: #ffe8aa;
+      font-size: 0.91rem;
+      font-weight: 800;
+    }
+
+    .need-members {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255, 248, 232, 0.76);
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    .need-count {
+      align-self: start;
+      min-width: 58px;
+      padding: 4px 8px;
+      border: 1px solid rgba(255, 232, 170, 0.22);
+      border-radius: 999px;
+      background: rgba(5, 8, 13, 0.32);
+      color: #fff3cf;
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .shortage-box {
+      margin: 12px 0 0;
+      padding: 11px 12px;
+      border: 1px solid rgba(231, 180, 65, 0.32);
+      border-radius: 13px;
+      background: rgba(89, 55, 5, 0.22);
+      color: #ffe8aa;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .inventory-details {
+      margin-top: 16px;
+      border-top: 1px solid rgba(255, 232, 170, 0.18);
+    }
+
+    .inventory-details summary {
+      padding: 14px 2px 5px;
+      color: #ffe8aa;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .inventory-list {
+      max-height: min(43vh, 355px);
+      margin-top: 7px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .inventory-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 9px;
+      align-items: center;
+      padding: 8px 1px;
+      border-top: 1px solid rgba(255, 232, 170, 0.14);
+    }
+
+    .inventory-label {
+      min-width: 0;
+      color: rgba(255, 248, 232, 0.92);
+      font-size: 0.82rem;
+    }
+
+    .inventory-label small {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255, 248, 232, 0.58);
+      font-size: 0.68rem;
+    }
+
+    .inventory-stepper {
+      display: grid;
+      grid-template-columns: 32px 34px 32px;
+      align-items: center;
+      border: 1px solid rgba(255, 232, 170, 0.22);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(5, 8, 13, 0.34);
+    }
+
+    .inventory-stepper button {
+      width: 32px;
+      min-height: 34px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: #ffe8aa;
+      font-size: 1.15rem;
+    }
+
+    .inventory-count {
+      color: #fff8e8;
+      font-size: 0.85rem;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .save-inventory {
+      min-height: 48px;
+      margin-top: 13px;
+    }
+
+    .inventory-status {
+      min-height: 1.2em;
+      margin: 9px 0 0;
+      color: #ffe8aa;
+      font-size: 0.76rem;
+      text-align: center;
+    }
+
+    .refresh-button {
+      display: block;
+      width: auto;
+      min-height: 0;
+      margin: 8px auto 0;
+      padding: 4px;
+      border: 0;
+      background: none;
+      box-shadow: none;
+      color: rgba(255, 232, 170, 0.82);
+      font-size: 0.74rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     @supports (height: 100dvh) {
-      body,
+      body {
+        min-height: 100dvh;
+      }
+
       main {
+        height: 100dvh;
         min-height: 100dvh;
       }
     }
@@ -387,7 +589,6 @@
       }
 
       .entry-card {
-        margin: auto 0;
         padding: 20px;
       }
 
@@ -430,7 +631,38 @@
       <div class="skybox-haze"></div>
     </div>
 
-    <form class="entry-card" id="memberForm" autocomplete="off">
+    <div class="app-stack">
+      <section class="entry-card dashboard-card" aria-labelledby="chipHeading">
+        <p class="eyebrow">Birthday &amp; Chip Manager</p>
+        <h1 id="chipHeading">Loading…</h1>
+        <p id="meetingDate" class="meeting-date">Checking the member list</p>
+
+        <div id="monthlyNeeds">
+          <p class="dashboard-message">Loading this month’s chip needs…</p>
+        </div>
+
+        <div id="shortageSummary" hidden></div>
+
+        <details id="inventoryDetails" class="inventory-details">
+          <summary id="inventorySummary">Chip inventory</summary>
+          <ul id="inventoryList" class="inventory-list"></ul>
+          <button
+            id="saveInventoryButton"
+            class="save-inventory"
+            type="button"
+            disabled
+          >
+            Save inventory
+          </button>
+          <p id="inventoryStatus" class="inventory-status" aria-live="polite"></p>
+        </details>
+
+        <button id="refreshDashboard" class="refresh-button" type="button">
+          Refresh birthday list
+        </button>
+      </section>
+
+      <form class="entry-card" id="memberForm" autocomplete="off">
       <p class="eyebrow">New Member Registration</p>
       <h1>Primordial Ooze</h1>
 
@@ -495,7 +727,8 @@
 
         <div id="recentList" hidden></div>
       </div>
-    </form>
+      </form>
+    </div>
   </main>
 
   <script>
@@ -512,6 +745,16 @@
     const recentEntries = document.querySelector('#recentEntries');
     const recentToggle = document.querySelector('#recentToggle');
     const recentList = document.querySelector('#recentList');
+    const chipHeading = document.querySelector('#chipHeading');
+    const meetingDate = document.querySelector('#meetingDate');
+    const monthlyNeeds = document.querySelector('#monthlyNeeds');
+    const shortageSummary = document.querySelector('#shortageSummary');
+    const inventoryDetails = document.querySelector('#inventoryDetails');
+    const inventorySummary = document.querySelector('#inventorySummary');
+    const inventoryList = document.querySelector('#inventoryList');
+    const saveInventoryButton = document.querySelector('#saveInventoryButton');
+    const inventoryStatus = document.querySelector('#inventoryStatus');
+    const refreshDashboard = document.querySelector('#refreshDashboard');
     const root = document.documentElement;
 
     const reduceMotion = window.matchMedia(
@@ -521,6 +764,258 @@
     const RECENT_ENTRIES_KEY = 'primordialOozeRecentEntries';
 
     let statusTimer;
+    let dashboardInventory = [];
+    let savedInventoryCounts = new Map();
+
+    function formatMilestoneDate(isoDate) {
+      const date = new Date(isoDate + 'T12:00:00');
+
+      return date.toLocaleDateString(undefined, {
+        month: 'numeric',
+        day: 'numeric'
+      });
+    }
+
+    function renderDashboard(data) {
+      dashboardInventory = data.inventory.map(item => ({ ...item }));
+      savedInventoryCounts = new Map(
+        dashboardInventory.map(item => [item.chipId, item.onHand])
+      );
+
+      chipHeading.textContent = data.monthLabel + ' Chips';
+      meetingDate.textContent = 'Birthday meeting · ' + data.meetingDate;
+      inventorySummary.textContent =
+        'Chip inventory · ' +
+        dashboardInventory.reduce((sum, item) => sum + item.onHand, 0) +
+        ' total';
+
+      monthlyNeeds.replaceChildren();
+
+      const neededItems = dashboardInventory.filter(
+        item => item.neededThisMonth > 0
+      );
+
+      if (!neededItems.length) {
+        const empty = document.createElement('p');
+        empty.className = 'dashboard-message';
+        empty.textContent = 'No listed members reach a chip milestone this month.';
+        monthlyNeeds.append(empty);
+      } else {
+        const list = document.createElement('ul');
+        list.className = 'needs-list';
+
+        neededItems.forEach(item => {
+          const row = document.createElement('li');
+          row.className = 'need-row';
+
+          const info = document.createElement('div');
+          const label = document.createElement('span');
+          label.className = 'need-name';
+          label.textContent = item.displayName;
+
+          const members = document.createElement('span');
+          members.className = 'need-members';
+          members.textContent = item.members
+            .map(member => member.name + ' · ' + formatMilestoneDate(member.date))
+            .join(', ');
+
+          const count = document.createElement('span');
+          count.className = 'need-count';
+          count.textContent = 'Need ' + item.neededThisMonth;
+
+          info.append(label, members);
+          row.append(info, count);
+          list.append(row);
+        });
+
+        monthlyNeeds.append(list);
+      }
+
+      renderShortages();
+      renderInventory();
+      saveInventoryButton.disabled = true;
+      inventoryStatus.textContent = '';
+    }
+
+    function renderShortages() {
+      const preparationItems = dashboardInventory.filter(
+        item => item.chipId === '24H' || item.neededThisMonth > 0
+      );
+
+      const shortages = preparationItems
+        .map(item => ({
+          displayName: item.displayName,
+          amount: Math.max(
+            0,
+            item.neededThisMonth + item.reserveTarget - item.onHand
+          )
+        }))
+        .filter(item => item.amount > 0);
+
+      shortageSummary.replaceChildren();
+
+      if (!shortages.length) {
+        shortageSummary.hidden = true;
+        return;
+      }
+
+      shortageSummary.hidden = false;
+      shortageSummary.className = 'shortage-box';
+
+      const strong = document.createElement('strong');
+      strong.textContent = 'Obtain before the meeting: ';
+
+      const text = document.createTextNode(
+        shortages
+          .map(item => item.displayName + ' × ' + item.amount)
+          .join(' · ')
+      );
+
+      shortageSummary.append(strong, text);
+    }
+
+    function renderInventory() {
+      inventoryList.replaceChildren();
+
+      dashboardInventory.forEach(item => {
+        const row = document.createElement('li');
+        row.className = 'inventory-row';
+        row.dataset.chipId = item.chipId;
+
+        const label = document.createElement('div');
+        label.className = 'inventory-label';
+        label.textContent = item.displayName;
+
+        const note = document.createElement('small');
+        note.textContent =
+          'Need ' + item.neededThisMonth +
+          ' · Reserve ' + item.reserveTarget;
+        label.append(note);
+
+        const stepper = document.createElement('div');
+        stepper.className = 'inventory-stepper';
+
+        const minus = document.createElement('button');
+        minus.type = 'button';
+        minus.dataset.adjust = '-1';
+        minus.setAttribute('aria-label', 'Remove one ' + item.displayName + ' chip');
+        minus.textContent = '−';
+
+        const count = document.createElement('span');
+        count.className = 'inventory-count';
+        count.textContent = item.onHand;
+
+        const plus = document.createElement('button');
+        plus.type = 'button';
+        plus.dataset.adjust = '1';
+        plus.setAttribute('aria-label', 'Add one ' + item.displayName + ' chip');
+        plus.textContent = '+';
+
+        stepper.append(minus, count, plus);
+        row.append(label, stepper);
+        inventoryList.append(row);
+      });
+    }
+
+    async function loadDashboard() {
+      refreshDashboard.disabled = true;
+      refreshDashboard.textContent = 'Refreshing…';
+      inventoryStatus.textContent = '';
+
+      try {
+        const response = await fetch(
+          GOOGLE_APPS_SCRIPT_URL + '?action=dashboard&t=' + Date.now()
+        );
+        const data = await response.json();
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Unable to load chip inventory.');
+        }
+
+        renderDashboard(data);
+      } catch (error) {
+        chipHeading.textContent = 'Chip Manager';
+        meetingDate.textContent = '';
+        monthlyNeeds.innerHTML = '';
+
+        const message = document.createElement('p');
+        message.className = 'dashboard-message';
+        message.textContent = error.message || 'Unable to load chip inventory.';
+        monthlyNeeds.append(message);
+      } finally {
+        refreshDashboard.disabled = false;
+        refreshDashboard.textContent = 'Refresh birthday list';
+      }
+    }
+
+    inventoryList.addEventListener('click', event => {
+      const button = event.target.closest('[data-adjust]');
+      if (!button) return;
+
+      const row = button.closest('.inventory-row');
+      const item = dashboardInventory.find(
+        inventoryItem => inventoryItem.chipId === row.dataset.chipId
+      );
+
+      if (!item) return;
+
+      item.onHand = Math.max(
+        0,
+        Math.min(999, item.onHand + Number(button.dataset.adjust))
+      );
+
+      row.querySelector('.inventory-count').textContent = item.onHand;
+      saveInventoryButton.disabled = !dashboardInventory.some(
+        inventoryItem =>
+          inventoryItem.onHand !== savedInventoryCounts.get(inventoryItem.chipId)
+      );
+      inventoryStatus.textContent = saveInventoryButton.disabled
+        ? ''
+        : 'Unsaved inventory changes';
+      renderShortages();
+    });
+
+    saveInventoryButton.addEventListener('click', async () => {
+      const changedInventory = dashboardInventory
+        .filter(item => item.onHand !== savedInventoryCounts.get(item.chipId))
+        .map(item => ({ chipId: item.chipId, onHand: item.onHand }));
+
+      if (!changedInventory.length) return;
+
+      saveInventoryButton.disabled = true;
+      saveInventoryButton.textContent = 'Saving…';
+      inventoryStatus.textContent = 'Updating the inventory sheet…';
+
+      try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify({
+            action: 'saveInventory',
+            inventory: changedInventory
+          })
+        });
+        const result = await response.json();
+
+        if (!result.ok) {
+          throw new Error(result.error || 'Unable to save inventory.');
+        }
+
+        await loadDashboard();
+        inventoryDetails.open = true;
+        inventoryStatus.textContent = 'Inventory saved.';
+      } catch (error) {
+        inventoryStatus.textContent = error.message || 'Unable to save inventory.';
+        saveInventoryButton.disabled = false;
+      } finally {
+        saveInventoryButton.textContent = 'Save inventory';
+      }
+    });
+
+    refreshDashboard.addEventListener('click', loadDashboard);
+    loadDashboard();
 
     function getRecentEntries() {
       try {
@@ -876,7 +1371,10 @@
               'Content-Type': 'text/plain;charset=utf-8'
             },
             body: JSON.stringify(
-              Object.fromEntries(new FormData(form))
+              {
+                action: 'addMember',
+                ...Object.fromEntries(new FormData(form))
+              }
             )
           }
         );
@@ -909,6 +1407,7 @@
           submittedEntry.name + ' was added.';
 
         showRecentLinkAfterDelay();
+        loadDashboard();
       } catch (error) {
         status.textContent =
           error.message || 'Unable to add member.';
