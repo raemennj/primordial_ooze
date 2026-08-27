@@ -29,7 +29,7 @@
       --stat-lbl-font:  clamp(0.56rem, 2.1vw, 0.68rem);
       --card-px:        clamp(15px, 4.2vw, 20px);
       --card-py:        clamp(13px, 3.5vw, 17px);
-      --card-radius:    clamp(18px, 5vw,  24px);
+      --card-radius:    8px;
       --card-overlap:   clamp(104px, 28vw, 136px);
       --btn-h:          clamp(40px, 10.5vw, 52px);
       --header-logo:    clamp(48px, 13vw, 62px);
@@ -39,10 +39,8 @@
       --ooze:      #e4b953;
       --ooze-dark: #76551b;
       --ooze-glow: rgba(228, 185, 83, 0.38);
-      --green:     #24745a;
-      --gold:      #b7791f;
-      --blue:      #2764a7;
-      --rose:      #a3445b;
+      --green:     #1d4f3a;
+      --gold:      #b9892f;
     }
 
     *, *::before, *::after {
@@ -385,14 +383,10 @@
       flex: 0 0 auto;
       width: min(44%, 210px);
       min-width: clamp(142px, 39vw, 190px);
-      border-radius: clamp(10px, 3vw, 14px);
-      background:
-        radial-gradient(circle at 12% 24%,
-          rgba(184, 255, 35, 0.18), transparent 28%),
-        color-mix(in srgb,
-          var(--band-color, var(--green)) 12%, white);
-      border: 1px solid
-        color-mix(in srgb, var(--band-color, var(--green)) 22%, white);
+      border-radius: 8px;
+      background: var(--band-bg,
+        linear-gradient(135deg, rgba(19, 48, 35, 0.92), rgba(6, 16, 12, 0.88)));
+      border: 1px solid var(--band-border, rgba(174, 132, 48, 0.34));
       position: relative;
       overflow: hidden;
       min-height: clamp(62px, 18vw, 80px);
@@ -400,6 +394,10 @@
       align-items: center;
       justify-content: center;
       padding: clamp(6px, 2vw, 10px) clamp(8px, 2.5vw, 12px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 244, 196, 0.14),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+        0 10px 20px rgba(0, 0, 0, 0.18);
     }
 
     .milestone-band::before {
@@ -407,9 +405,8 @@
       position: absolute;
       inset: 0;
       background: var(--milestone-bg,
-        radial-gradient(circle at 22% 50%,
-          rgba(255, 255, 255, 0.72), transparent 34%));
-      opacity: 0.72;
+        linear-gradient(115deg, transparent 18%, rgba(255, 240, 184, 0.16) 48%, transparent 78%));
+      opacity: 0.82;
     }
 
     .milestone-band > * { position: relative; z-index: 1; }
@@ -569,7 +566,7 @@
       justify-content: center;
       gap: clamp(4px, 1.2vw, 6px);
       height: var(--btn-h);
-      border-radius: 999px;
+      border-radius: 8px;
       font-size: var(--btn-font);
       font-weight: 800;
       font-family: inherit;
@@ -619,7 +616,7 @@
       flex: 1 1 0%;
       min-height: clamp(36px, 9.5vw, 45px);
       padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 10px);
-      border-radius: 999px;
+      border-radius: 7px;
       background: rgba(255, 255, 255, 0.82);
       border: 1px solid rgba(31, 41, 51, 0.10);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -720,8 +717,8 @@
       inset: 0;
       pointer-events: none;
       background: var(--card-sheen, transparent);
-      mix-blend-mode: overlay;
-      opacity: 0.9;
+      mix-blend-mode: soft-light;
+      opacity: 0.74;
       z-index: 1;
     }
 
@@ -737,12 +734,14 @@
                   0 0 36px var(--card-glow, rgba(228,185,83,.25)) !important;
     }
 
-    .member-name { color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
-    .card-meta { color: rgba(255, 248, 232, .75); }
+    .member-name { color: #fff7df; text-shadow: 0 1px 3px rgba(0,0,0,0.72); }
+    .card-meta { color: rgba(233, 225, 203, .76); }
 
     .card-tools {
-      background: rgba(5, 8, 13, .35);
-      border-top-color: rgba(255, 222, 146, .14);
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, .18), rgba(0, 0, 0, .30)),
+        rgba(5, 8, 13, .38);
+      border-top-color: rgba(185, 137, 47, .20);
     }
 
     .action-primary {
@@ -756,6 +755,9 @@
       background: var(--chip-bg, rgba(255, 248, 232, .10));
       border-color: var(--chip-border, rgba(255, 222, 146, .20));
       color: var(--chip-text, #fff8e8);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 244, 196, 0.10),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.28);
     }
 
     .stat-number { color: var(--chip-text, #fff8e8); }
@@ -1202,6 +1204,153 @@
       el.replaceChildren(segments);
     }
 
+    const TIME_IN_METAL_TIERS = [
+      {
+        name: 'Green Iron',
+        minMonths: 0,
+        bg: 'linear-gradient(135deg, rgba(13, 35, 27, 0.95) 0%, rgba(5, 13, 10, 0.97) 48%, rgba(22, 45, 36, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.055) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(120, 158, 132, 0.18) 47%, rgba(235, 228, 195, 0.18) 50%, rgba(120, 158, 132, 0.12) 54%, transparent 80%)',
+        border: 'rgba(86, 122, 98, 0.44)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.44), 0 20px 62px rgba(0,0,0,.48), inset 0 1px 1px rgba(190, 218, 184, 0.18), 0 0 22px rgba(35, 94, 66, 0.14)',
+        borderSelected: 'rgba(163, 188, 139, 0.88)',
+        glow: 'rgba(64, 114, 75, 0.34)',
+        accentBar: 'linear-gradient(180deg, #4f6f55 0%, #1d4f3a 34%, #9a8f55 52%, #10291e 82%, #51664a 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(19, 49, 36, 0.92), rgba(5, 14, 11, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(137, 159, 123, 0.16) 49%, rgba(234, 221, 168, 0.16) 52%, transparent 78%)',
+        bandBorder: 'rgba(103, 126, 88, 0.34)',
+        odometerColor: '#b3c48c',
+        odometerGlow: 'rgba(113, 141, 83, 0.42)',
+        btnPrimaryBg: 'linear-gradient(180deg, #64744f 0%, #263f2f 54%, #0b1d15 100%)',
+        btnPrimaryBorder: 'rgba(145, 151, 95, 0.58)',
+        btnPrimaryText: '#f5edcf',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #77845a 0%, #315039 54%, #10281d 100%)',
+        chipBg: 'rgba(174, 166, 111, 0.11)',
+        chipBorder: 'rgba(133, 128, 82, 0.26)',
+        chipText: '#e5dfc8'
+      },
+      {
+        name: 'Patina Steel',
+        minMonths: 3,
+        bg: 'linear-gradient(135deg, rgba(14, 49, 39, 0.95) 0%, rgba(7, 21, 17, 0.97) 48%, rgba(31, 63, 51, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(104, 151, 122, 0.19) 47%, rgba(226, 209, 149, 0.17) 50%, rgba(104, 151, 122, 0.13) 54%, transparent 80%)',
+        border: 'rgba(90, 148, 113, 0.46)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.44), 0 20px 62px rgba(0,0,0,.48), inset 0 1px 1px rgba(190, 218, 184, 0.20), 0 0 22px rgba(47, 124, 86, 0.16)',
+        borderSelected: 'rgba(169, 184, 123, 0.90)',
+        glow: 'rgba(82, 132, 76, 0.36)',
+        accentBar: 'linear-gradient(180deg, #66815c 0%, #236947 34%, #b09956 52%, #123822 82%, #7f8659 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(23, 71, 50, 0.92), rgba(7, 22, 16, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(144, 178, 120, 0.17) 49%, rgba(232, 213, 151, 0.16) 52%, transparent 78%)',
+        bandBorder: 'rgba(119, 144, 86, 0.36)',
+        odometerColor: '#c1c27f',
+        odometerGlow: 'rgba(156, 153, 82, 0.43)',
+        btnPrimaryBg: 'linear-gradient(180deg, #7f7f4e 0%, #2c5a3d 54%, #0c2619 100%)',
+        btnPrimaryBorder: 'rgba(164, 155, 85, 0.60)',
+        btnPrimaryText: '#f6edd0',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #929058 0%, #366b48 54%, #123421 100%)',
+        chipBg: 'rgba(188, 173, 103, 0.12)',
+        chipBorder: 'rgba(150, 139, 77, 0.27)',
+        chipText: '#ebe2c6'
+      },
+      {
+        name: 'Aged Bronze',
+        minMonths: 6,
+        bg: 'linear-gradient(135deg, rgba(45, 54, 30, 0.95) 0%, rgba(17, 18, 10, 0.97) 48%, rgba(62, 58, 30, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.055) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(142, 130, 78, 0.18) 47%, rgba(239, 218, 156, 0.18) 50%, rgba(118, 95, 54, 0.13) 54%, transparent 80%)',
+        border: 'rgba(150, 132, 75, 0.48)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.44), 0 20px 62px rgba(0,0,0,.48), inset 0 1px 1px rgba(235, 211, 151, 0.20), 0 0 22px rgba(131, 102, 44, 0.16)',
+        borderSelected: 'rgba(209, 178, 98, 0.92)',
+        glow: 'rgba(154, 120, 46, 0.38)',
+        accentBar: 'linear-gradient(180deg, #b59b62 0%, #5f642f 28%, #d4b66a 52%, #3f3216 82%, #947038 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(62, 63, 32, 0.92), rgba(20, 19, 10, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(188, 159, 84, 0.18) 49%, rgba(239, 218, 156, 0.17) 52%, transparent 78%)',
+        bandBorder: 'rgba(157, 126, 62, 0.38)',
+        odometerColor: '#d2bd76',
+        odometerGlow: 'rgba(183, 139, 57, 0.44)',
+        btnPrimaryBg: 'linear-gradient(180deg, #ad9254 0%, #676331 52%, #251d0d 100%)',
+        btnPrimaryBorder: 'rgba(197, 160, 83, 0.62)',
+        btnPrimaryText: '#171006',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #c0a260 0%, #77723a 52%, #302510 100%)',
+        chipBg: 'rgba(207, 173, 96, 0.12)',
+        chipBorder: 'rgba(169, 135, 70, 0.28)',
+        chipText: '#f0e2c1'
+      },
+      {
+        name: 'Brass',
+        minMonths: 12,
+        bg: 'linear-gradient(135deg, rgba(58, 50, 24, 0.95) 0%, rgba(20, 17, 7, 0.97) 48%, rgba(74, 61, 26, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(194, 157, 80, 0.19) 47%, rgba(255, 232, 163, 0.20) 50%, rgba(141, 103, 43, 0.13) 54%, transparent 80%)',
+        border: 'rgba(183, 143, 67, 0.50)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.44), 0 20px 62px rgba(0,0,0,.48), inset 0 1px 1px rgba(255, 229, 158, 0.22), 0 0 22px rgba(170, 122, 39, 0.18)',
+        borderSelected: 'rgba(226, 185, 98, 0.94)',
+        glow: 'rgba(185, 137, 47, 0.40)',
+        accentBar: 'linear-gradient(180deg, #dcc073 0%, #9b762b 30%, #f0d489 52%, #514018 82%, #c4963e 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(81, 65, 26, 0.92), rgba(24, 19, 7, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(205, 160, 78, 0.19) 49%, rgba(255, 232, 163, 0.18) 52%, transparent 78%)',
+        bandBorder: 'rgba(190, 145, 62, 0.40)',
+        odometerColor: '#e0c477',
+        odometerGlow: 'rgba(211, 160, 61, 0.45)',
+        btnPrimaryBg: 'linear-gradient(180deg, #d4b05c 0%, #9a7427 52%, #3c2d10 100%)',
+        btnPrimaryBorder: 'rgba(223, 177, 86, 0.64)',
+        btnPrimaryText: '#1b1305',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #e1bf6c 0%, #ad842f 52%, #493612 100%)',
+        chipBg: 'rgba(224, 184, 98, 0.13)',
+        chipBorder: 'rgba(184, 141, 68, 0.30)',
+        chipText: '#f5e5bd'
+      },
+      {
+        name: 'Old Gold',
+        minMonths: 36,
+        bg: 'linear-gradient(135deg, rgba(70, 52, 17, 0.95) 0%, rgba(24, 16, 5, 0.97) 48%, rgba(88, 64, 19, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(213, 162, 70, 0.20) 47%, rgba(255, 237, 174, 0.22) 50%, rgba(156, 106, 30, 0.14) 54%, transparent 80%)',
+        border: 'rgba(210, 155, 62, 0.52)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.44), 0 20px 62px rgba(0,0,0,.48), inset 0 1px 1px rgba(255, 232, 164, 0.24), 0 0 24px rgba(196, 135, 34, 0.20)',
+        borderSelected: 'rgba(244, 199, 101, 0.96)',
+        glow: 'rgba(214, 154, 49, 0.42)',
+        accentBar: 'linear-gradient(180deg, #efd078 0%, #b9892f 30%, #fff0a8 52%, #64420b 82%, #d6a13e 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(93, 66, 18, 0.92), rgba(29, 18, 5, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(226, 171, 69, 0.20) 49%, rgba(255, 237, 174, 0.19) 52%, transparent 78%)',
+        bandBorder: 'rgba(213, 155, 58, 0.42)',
+        odometerColor: '#efd078',
+        odometerGlow: 'rgba(231, 174, 62, 0.46)',
+        btnPrimaryBg: 'linear-gradient(180deg, #e0b957 0%, #b38328 52%, #553706 100%)',
+        btnPrimaryBorder: 'rgba(239, 196, 93, 0.66)',
+        btnPrimaryText: '#1d1303',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #edc766 0%, #c19231 52%, #654207 100%)',
+        chipBg: 'rgba(236, 190, 89, 0.14)',
+        chipBorder: 'rgba(203, 147, 55, 0.31)',
+        chipText: '#f9e8b8'
+      },
+      {
+        name: 'Deep Gold',
+        minMonths: 120,
+        bg: 'linear-gradient(135deg, rgba(82, 55, 12, 0.95) 0%, rgba(26, 15, 3, 0.97) 48%, rgba(103, 70, 14, 0.93) 100%)',
+        sheen: 'repeating-linear-gradient(105deg, rgba(255,255,255,.065) 0 1px, transparent 1px 7px), linear-gradient(115deg, transparent 18%, rgba(232, 176, 61, 0.22) 47%, rgba(255, 242, 187, 0.24) 50%, rgba(174, 114, 24, 0.14) 54%, transparent 80%)',
+        border: 'rgba(229, 171, 63, 0.56)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.45), 0 22px 66px rgba(0,0,0,.50), inset 0 1px 1px rgba(255, 238, 172, 0.26), 0 0 26px rgba(216, 151, 33, 0.22)',
+        borderSelected: 'rgba(255, 210, 108, 0.98)',
+        glow: 'rgba(232, 171, 57, 0.45)',
+        accentBar: 'linear-gradient(180deg, #ffe08a 0%, #c9972b 30%, #fff3b0 52%, #704805 82%, #e3ad3e 100%)',
+        bandBg: 'linear-gradient(135deg, rgba(108, 72, 15, 0.92), rgba(33, 19, 3, 0.92))',
+        bandSheen: 'linear-gradient(115deg, transparent 18%, rgba(239, 182, 61, 0.22) 49%, rgba(255, 242, 187, 0.20) 52%, transparent 78%)',
+        bandBorder: 'rgba(228, 166, 57, 0.45)',
+        odometerColor: '#f6d77e',
+        odometerGlow: 'rgba(244, 185, 62, 0.48)',
+        btnPrimaryBg: 'linear-gradient(180deg, #efc75f 0%, #c99628 52%, #624006 100%)',
+        btnPrimaryBorder: 'rgba(255, 209, 103, 0.70)',
+        btnPrimaryText: '#211503',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #f8d36c 0%, #d4a031 52%, #744d08 100%)',
+        chipBg: 'rgba(245, 199, 91, 0.15)',
+        chipBorder: 'rgba(217, 157, 53, 0.33)',
+        chipText: '#fbe9b5'
+      }
+    ];
+
+    function themeForTimeIn(contact) {
+      const months = Number.isFinite(contact.totalMonths) ? contact.totalMonths : 0;
+      return TIME_IN_METAL_TIERS.reduce((active, tier) =>
+        months >= tier.minMonths ? tier : active, TIME_IN_METAL_TIERS[0]);
+    }
+
     const METALLIC_PALETTES = [
       // 1. Titanium / Platinum Silver
       {
@@ -1393,9 +1542,9 @@
     }
 
     function initPaletteSequence() {
-      activePaletteSequence = shuffleArray(METALLIC_PALETTES);
+      activePaletteSequence = TIME_IN_METAL_TIERS.slice();
     }
-    // Initialize sequence randomly on load
+    // Keep the legacy sequence stable; card theme now comes from sober time.
     initPaletteSequence();
 
     function compareNames(a, b) {
@@ -1523,8 +1672,8 @@
         const card     = fragment.querySelector('.milestone-card');
         card.tabIndex  = 0;
 
-        const palette = activePaletteSequence.length ? activePaletteSequence : METALLIC_PALETTES;
-        const theme   = palette[index % palette.length];
+        const theme = themeForTimeIn(contact);
+        card.dataset.metalTier = theme.name;
 
         card.style.setProperty('--card-bg',               theme.bg);
         card.style.setProperty('--card-border',           theme.border);
@@ -1546,7 +1695,7 @@
         card.style.setProperty('--chip-text',             theme.chipText);
 
         fragment.querySelector('.milestone-band')
-          .style.setProperty('--milestone-bg', theme.bandBg);
+          .style.setProperty('--milestone-bg', theme.bandSheen || theme.bandBg);
 
         fragment.querySelector('.member-name').textContent =
           contact.name || 'Unnamed member';
