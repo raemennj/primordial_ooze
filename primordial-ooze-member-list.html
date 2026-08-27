@@ -699,48 +699,68 @@
       }
     }
 
-    /* ─── MEMBER-ENTRY GLASS RESTYLE ─── */
+    /* ─── MEMBER-ENTRY GLASS & METALLIC RESTYLE ─── */
     .milestone-card {
-      background: linear-gradient(145deg, rgba(8,16,24,.78), rgba(15,19,24,.64));
-      border-color: rgba(255, 222, 146, .28);
-      -webkit-backdrop-filter: blur(13px) saturate(135%);
-      backdrop-filter: blur(13px) saturate(135%);
-      box-shadow: 0 -8px 18px -4px rgba(0,0,0,.34),
-                  0 20px 70px rgba(0,0,0,.34),
-                  inset 0 1px 0 rgba(255,255,255,.08);
+      background: var(--card-bg, linear-gradient(145deg, rgba(8,16,24,.78), rgba(15,19,24,.64)));
+      border: 1px solid var(--card-border, rgba(255, 222, 146, .28));
+      border-radius: var(--card-radius);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: var(--card-shadow, 0 -8px 18px -4px rgba(0,0,0,.34), 0 20px 70px rgba(0,0,0,.34));
+      position: relative;
+      overflow: hidden;
+      will-change: transform;
+      transition: transform 240ms linear, box-shadow 240ms ease, border-color 240ms ease;
+    }
+
+    /* Brushed metallic light sheen overlay */
+    .milestone-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: var(--card-sheen, transparent);
+      mix-blend-mode: overlay;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    .card-header, .card-tools {
+      position: relative;
+      z-index: 2;
     }
 
     .milestone-card.is-selected {
-      border-color: rgba(255, 232, 170, .75);
-      box-shadow: 0 0 0 2px rgba(228,185,83,.30),
-                  0 28px 56px rgba(0,0,0,.52),
-                  0 0 36px rgba(228,185,83,.18);
+      border-color: var(--card-border-selected, rgba(255, 232, 170, .85)) !important;
+      box-shadow: 0 0 0 2px var(--card-glow, rgba(228,185,83,.40)),
+                  0 28px 56px rgba(0,0,0,.55),
+                  0 0 36px var(--card-glow, rgba(228,185,83,.25)) !important;
     }
 
-    .member-name { color: #fff8e8; }
-    .card-meta { color: rgba(255, 248, 232, .68); }
+    .member-name { color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+    .card-meta { color: rgba(255, 248, 232, .75); }
 
     .card-tools {
-      background: rgba(5, 8, 13, .30);
+      background: rgba(5, 8, 13, .35);
       border-top-color: rgba(255, 222, 146, .14);
     }
 
     .action-primary {
-      background: linear-gradient(180deg, #f0ca6b 0%, #d6a83e 52%, #a87820 100%);
-      border-color: rgba(255,232,170,.58);
-      color: #171006;
+      background: var(--btn-primary-bg, linear-gradient(180deg, #f0ca6b 0%, #d6a83e 52%, #a87820 100%));
+      border-color: var(--btn-primary-border, rgba(255,232,170,.58));
+      color: var(--btn-primary-text, #171006);
     }
 
     .action-secondary,
     .stat-chip {
-      background: rgba(255, 248, 232, .10);
-      border-color: rgba(255, 222, 146, .20);
-      color: #fff8e8;
+      background: var(--chip-bg, rgba(255, 248, 232, .10));
+      border-color: var(--chip-border, rgba(255, 222, 146, .20));
+      color: var(--chip-text, #fff8e8);
     }
 
-    .stat-number { color: #fff8e8; }
-    .stat-label { color: rgba(255,248,232,.58); }
-    .stat-chip svg { color: #fff8e8; }
+    .stat-number { color: var(--chip-text, #fff8e8); }
+    .stat-label { color: color-mix(in srgb, var(--chip-text, #fff8e8) 68%, transparent); }
+    .stat-chip svg { color: var(--chip-text, #fff8e8); }
 
     .state-msg {
       background: linear-gradient(145deg, rgba(8,16,24,.78), rgba(15,19,24,.64));
@@ -750,15 +770,16 @@
 
     @media (hover: hover) and (pointer: fine) {
       .action-primary:hover {
-        background: linear-gradient(180deg, #f7d77f 0%, #e4b953 52%, #b98526 100%);
-        border-color: rgba(255,232,170,.72);
-        box-shadow: 0 4px 14px rgba(228,185,83,.24),
+        background: var(--btn-primary-hover-bg, linear-gradient(180deg, #f7d77f 0%, #e4b953 52%, #b98526 100%));
+        border-color: var(--btn-primary-border, rgba(255,232,170,.72));
+        box-shadow: 0 4px 14px var(--card-glow, rgba(228,185,83,.24)),
                     inset 0 1px 0 rgba(255,255,255,.32);
       }
 
       .action-secondary:hover {
-        background: rgba(255,248,232,.16);
-        border-color: rgba(255,222,146,.34);
+        background: var(--chip-bg, rgba(255,248,232,.16));
+        border-color: var(--chip-border, rgba(255,222,146,.34));
+        filter: brightness(1.25);
       }
     }
 
@@ -1181,76 +1202,201 @@
       el.replaceChildren(segments);
     }
 
-    function tierMetal(contact) {
-      const tier = String(contact.memberTier || '').trim().toLowerCase();
-      if (tier.includes('platinum') || tier.includes('platnum')) {
-        return {
-          band:   '#8f9aa3',
-          display: '#eef2f5',
-          glow:   'rgba(238, 242, 245, 0.34)',
-          accent: 'linear-gradient(90deg, #616b74 0%, #f7f8f8 18%, #9ba5ad 34%, #d9dde0 52%, #737e87 72%, #ffffff 86%, #8b969f 100%)'
-        };
+    const METALLIC_PALETTES = [
+      // 1. Titanium / Platinum Silver
+      {
+        name: 'Platinum Titanium',
+        bg: 'linear-gradient(135deg, rgba(32, 40, 50, 0.92) 0%, rgba(16, 22, 30, 0.94) 50%, rgba(42, 52, 64, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(240, 246, 255, 0.18) 45%, rgba(255, 255, 255, 0.32) 50%, rgba(240, 246, 255, 0.18) 55%, transparent 80%)',
+        border: 'rgba(215, 228, 245, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 0 24px rgba(200, 220, 245, 0.15)',
+        borderSelected: 'rgba(240, 246, 255, 0.95)',
+        glow: 'rgba(220, 235, 255, 0.45)',
+        accentBar: 'linear-gradient(180deg, #ffffff 0%, #94a3b8 30%, #f1f5f9 50%, #64748b 80%, #cbd5e1 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(240, 246, 255, 0.25), transparent 60%), linear-gradient(135deg, rgba(148, 163, 184, 0.28), rgba(20, 28, 38, 0.6))',
+        bandBorder: 'rgba(215, 228, 245, 0.35)',
+        odometerColor: '#f1f5f9',
+        odometerGlow: 'rgba(240, 246, 255, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #f8fafc 0%, #94a3b8 55%, #475569 100%)',
+        btnPrimaryBorder: 'rgba(241, 245, 249, 0.65)',
+        btnPrimaryText: '#0f172a',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 55%, #64748b 100%)',
+        chipBg: 'rgba(241, 245, 249, 0.12)',
+        chipBorder: 'rgba(215, 228, 245, 0.25)',
+        chipText: '#f8fafc'
+      },
+      // 2. Gold / Brass Metal
+      {
+        name: 'Royal Gold',
+        bg: 'linear-gradient(135deg, rgba(46, 34, 12, 0.92) 0%, rgba(24, 17, 5, 0.94) 50%, rgba(56, 42, 16, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(255, 225, 140, 0.18) 45%, rgba(255, 245, 200, 0.30) 50%, rgba(255, 225, 140, 0.18) 55%, transparent 80%)',
+        border: 'rgba(255, 215, 110, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(255, 240, 180, 0.45), 0 0 24px rgba(230, 180, 50, 0.15)',
+        borderSelected: 'rgba(255, 235, 150, 0.95)',
+        glow: 'rgba(255, 215, 100, 0.45)',
+        accentBar: 'linear-gradient(180deg, #ffe58f 0%, #d49e1e 30%, #fef0a5 50%, #9e7008 80%, #ffd769 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(255, 238, 170, 0.25), transparent 60%), linear-gradient(135deg, rgba(212, 158, 30, 0.28), rgba(40, 30, 10, 0.6))',
+        bandBorder: 'rgba(255, 215, 110, 0.35)',
+        odometerColor: '#ffe494',
+        odometerGlow: 'rgba(255, 215, 100, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #ffd769 0%, #c69214 55%, #8f6402 100%)',
+        btnPrimaryBorder: 'rgba(255, 235, 150, 0.65)',
+        btnPrimaryText: '#1a1202',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #ffe082 0%, #e5aa17 55%, #a67503 100%)',
+        chipBg: 'rgba(255, 238, 170, 0.12)',
+        chipBorder: 'rgba(255, 215, 110, 0.25)',
+        chipText: '#fff8e8'
+      },
+      // 3. Copper / Rose Gold
+      {
+        name: 'Rose Copper',
+        bg: 'linear-gradient(135deg, rgba(52, 26, 22, 0.92) 0%, rgba(28, 12, 10, 0.94) 50%, rgba(62, 32, 26, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(255, 190, 170, 0.18) 45%, rgba(255, 220, 205, 0.30) 50%, rgba(255, 190, 170, 0.18) 55%, transparent 80%)',
+        border: 'rgba(255, 175, 150, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(255, 210, 190, 0.45), 0 0 24px rgba(235, 130, 100, 0.15)',
+        borderSelected: 'rgba(255, 200, 180, 0.95)',
+        glow: 'rgba(255, 160, 130, 0.45)',
+        accentBar: 'linear-gradient(180deg, #ffcbb8 0%, #d85a38 30%, #ffe3d8 50%, #9e3318 80%, #ff9e82 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(255, 190, 170, 0.25), transparent 60%), linear-gradient(135deg, rgba(216, 90, 56, 0.28), rgba(40, 16, 12, 0.6))',
+        bandBorder: 'rgba(255, 175, 150, 0.35)',
+        odometerColor: '#ffcbb8',
+        odometerGlow: 'rgba(255, 160, 130, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #ffab91 0%, #d84315 55%, #8c2505 100%)',
+        btnPrimaryBorder: 'rgba(255, 200, 180, 0.65)',
+        btnPrimaryText: '#1f0701',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #ffbeaa 0%, #f4511e 55%, #a72e07 100%)',
+        chipBg: 'rgba(255, 200, 180, 0.12)',
+        chipBorder: 'rgba(255, 175, 150, 0.25)',
+        chipText: '#fff5f2'
+      },
+      // 4. Emerald Steel
+      {
+        name: 'Emerald Steel',
+        bg: 'linear-gradient(135deg, rgba(16, 44, 32, 0.92) 0%, rgba(6, 24, 16, 0.94) 50%, rgba(22, 54, 38, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(160, 255, 210, 0.18) 45%, rgba(200, 255, 230, 0.30) 50%, rgba(160, 255, 210, 0.18) 55%, transparent 80%)',
+        border: 'rgba(135, 235, 190, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(190, 255, 220, 0.45), 0 0 24px rgba(50, 200, 140, 0.15)',
+        borderSelected: 'rgba(180, 255, 220, 0.95)',
+        glow: 'rgba(74, 222, 128, 0.45)',
+        accentBar: 'linear-gradient(180deg, #bbf7d0 0%, #16a34a 30%, #dcfce7 50%, #14532d 80%, #4ade80 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(160, 255, 210, 0.25), transparent 60%), linear-gradient(135deg, rgba(22, 163, 74, 0.28), rgba(10, 36, 24, 0.6))',
+        bandBorder: 'rgba(135, 235, 190, 0.35)',
+        odometerColor: '#a7f3d0',
+        odometerGlow: 'rgba(74, 222, 128, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #4ade80 0%, #15803d 55%, #052e16 100%)',
+        btnPrimaryBorder: 'rgba(180, 255, 220, 0.65)',
+        btnPrimaryText: '#03170b',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #6ee7b7 0%, #16a34a 55%, #0d4722 100%)',
+        chipBg: 'rgba(180, 255, 220, 0.12)',
+        chipBorder: 'rgba(135, 235, 190, 0.25)',
+        chipText: '#f0fdf4'
+      },
+      // 5. Cobalt Metal
+      {
+        name: 'Cobalt Metal',
+        bg: 'linear-gradient(135deg, rgba(18, 36, 58, 0.92) 0%, rgba(8, 18, 34, 0.94) 50%, rgba(26, 48, 74, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(170, 210, 255, 0.18) 45%, rgba(210, 235, 255, 0.30) 50%, rgba(170, 210, 255, 0.18) 55%, transparent 80%)',
+        border: 'rgba(145, 200, 255, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(200, 230, 255, 0.45), 0 0 24px rgba(60, 140, 240, 0.15)',
+        borderSelected: 'rgba(190, 225, 255, 0.95)',
+        glow: 'rgba(96, 165, 250, 0.45)',
+        accentBar: 'linear-gradient(180deg, #bfdbfe 0%, #2563eb 30%, #dbeafe 50%, #1e3a8a 80%, #60a5fa 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(170, 210, 255, 0.25), transparent 60%), linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(12, 26, 48, 0.6))',
+        bandBorder: 'rgba(145, 200, 255, 0.35)',
+        odometerColor: '#bfdbfe',
+        odometerGlow: 'rgba(96, 165, 250, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #60a5fa 0%, #1d4ed8 55%, #172554 100%)',
+        btnPrimaryBorder: 'rgba(190, 225, 255, 0.65)',
+        btnPrimaryText: '#07112c',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #93c5fd 0%, #2563eb 55%, #1e3a8a 100%)',
+        chipBg: 'rgba(190, 225, 255, 0.12)',
+        chipBorder: 'rgba(145, 200, 255, 0.25)',
+        chipText: '#eff6ff'
+      },
+      // 6. Amethyst Chrome
+      {
+        name: 'Amethyst Chrome',
+        bg: 'linear-gradient(135deg, rgba(44, 20, 58, 0.92) 0%, rgba(22, 8, 32, 0.94) 50%, rgba(56, 26, 72, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(220, 170, 255, 0.18) 45%, rgba(240, 210, 255, 0.30) 50%, rgba(220, 170, 255, 0.18) 55%, transparent 80%)',
+        border: 'rgba(215, 165, 255, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(235, 200, 255, 0.45), 0 0 24px rgba(170, 70, 240, 0.15)',
+        borderSelected: 'rgba(235, 195, 255, 0.95)',
+        glow: 'rgba(192, 132, 252, 0.45)',
+        accentBar: 'linear-gradient(180deg, #e9d5ff 0%, #9333ea 30%, #f3e8ff 50%, #581c87 80%, #c084fc 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(220, 170, 255, 0.25), transparent 60%), linear-gradient(135deg, rgba(147, 51, 234, 0.28), rgba(30, 12, 44, 0.6))',
+        bandBorder: 'rgba(215, 165, 255, 0.35)',
+        odometerColor: '#f3e8ff',
+        odometerGlow: 'rgba(192, 132, 252, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #c084fc 0%, #7e22ce 55%, #3b0764 100%)',
+        btnPrimaryBorder: 'rgba(235, 195, 255, 0.65)',
+        btnPrimaryText: '#18022b',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #d8b4fe 0%, #9333ea 55%, #4c1d95 100%)',
+        chipBg: 'rgba(235, 195, 255, 0.12)',
+        chipBorder: 'rgba(215, 165, 255, 0.25)',
+        chipText: '#faf5ff'
+      },
+      // 7. Crimson Ruby
+      {
+        name: 'Crimson Ruby',
+        bg: 'linear-gradient(135deg, rgba(56, 18, 28, 0.92) 0%, rgba(30, 6, 14, 0.94) 50%, rgba(68, 22, 36, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(255, 160, 180, 0.18) 45%, rgba(255, 200, 215, 0.30) 50%, rgba(255, 160, 180, 0.18) 55%, transparent 80%)',
+        border: 'rgba(255, 145, 170, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(255, 190, 210, 0.45), 0 0 24px rgba(230, 50, 90, 0.15)',
+        borderSelected: 'rgba(255, 180, 200, 0.95)',
+        glow: 'rgba(251, 113, 133, 0.45)',
+        accentBar: 'linear-gradient(180deg, #fecdd3 0%, #e11d48 30%, #ffe4e6 50%, #881337 80%, #fb7185 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(255, 160, 180, 0.25), transparent 60%), linear-gradient(135deg, rgba(225, 29, 72, 0.28), rgba(40, 10, 18, 0.6))',
+        bandBorder: 'rgba(255, 145, 170, 0.35)',
+        odometerColor: '#ffe4e6',
+        odometerGlow: 'rgba(251, 113, 133, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #fb7185 0%, #be123c 55%, #4c0519 100%)',
+        btnPrimaryBorder: 'rgba(255, 180, 200, 0.65)',
+        btnPrimaryText: '#21020a',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #fda4af 0%, #e11d48 55%, #710e2b 100%)',
+        chipBg: 'rgba(255, 180, 200, 0.12)',
+        chipBorder: 'rgba(255, 145, 170, 0.25)',
+        chipText: '#fff1f2'
+      },
+      // 8. Cyan Pewter
+      {
+        name: 'Cyan Pewter',
+        bg: 'linear-gradient(135deg, rgba(14, 46, 54, 0.92) 0%, rgba(6, 24, 30, 0.94) 50%, rgba(20, 58, 68, 0.90) 100%)',
+        sheen: 'linear-gradient(115deg, transparent 20%, rgba(150, 245, 255, 0.18) 45%, rgba(200, 250, 255, 0.30) 50%, rgba(150, 245, 255, 0.18) 55%, transparent 80%)',
+        border: 'rgba(135, 235, 245, 0.45)',
+        shadow: '0 -8px 18px -4px rgba(0,0,0,.38), 0 20px 70px rgba(0,0,0,.42), inset 0 1px 1px rgba(190, 250, 255, 0.45), 0 0 24px rgba(40, 190, 220, 0.15)',
+        borderSelected: 'rgba(180, 250, 255, 0.95)',
+        glow: 'rgba(34, 211, 238, 0.45)',
+        accentBar: 'linear-gradient(180deg, #a5f3fc 0%, #0891b2 30%, #cffaff 50%, #164e63 80%, #22d3ee 100%)',
+        bandBg: 'radial-gradient(circle at 18% 48%, rgba(150, 245, 255, 0.25), transparent 60%), linear-gradient(135deg, rgba(8, 145, 178, 0.28), rgba(8, 34, 42, 0.6))',
+        bandBorder: 'rgba(135, 235, 245, 0.35)',
+        odometerColor: '#cffaff',
+        odometerGlow: 'rgba(34, 211, 238, 0.5)',
+        btnPrimaryBg: 'linear-gradient(180deg, #22d3ee 0%, #0e7490 55%, #083344 100%)',
+        btnPrimaryBorder: 'rgba(180, 250, 255, 0.65)',
+        btnPrimaryText: '#031720',
+        btnPrimaryHoverBg: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 55%, #155e75 100%)',
+        chipBg: 'rgba(180, 250, 255, 0.12)',
+        chipBorder: 'rgba(135, 235, 245, 0.25)',
+        chipText: '#ecfeff'
       }
-      if (tier.includes('gold')) {
-        return {
-          band:   '#b7791f',
-          display: '#f6c453',
-          glow:   'rgba(246, 196, 83, 0.38)',
-          accent: 'linear-gradient(90deg, #6f4409 0%, #fff2a8 16%, #c9861b 34%, #f6c453 52%, #8a550d 72%, #ffe9a0 86%, #a46413 100%)'
-        };
+    ];
+
+    let activePaletteSequence = [];
+
+    function shuffleArray(arr) {
+      const array = arr.slice();
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
-      if (tier.includes('silver')) {
-        return {
-          band:   '#9ca3af',
-          display: '#d9dde3',
-          glow:   'rgba(217, 221, 227, 0.34)',
-          accent: 'linear-gradient(90deg, #666d76 0%, #ffffff 16%, #a7adb5 34%, #d9dde3 52%, #747b84 72%, #f7f8fa 86%, #8f96a0 100%)'
-        };
-      }
-      if (tier.includes('bronze')) {
-        return {
-          band:   '#a16207',
-          display: '#dc8d3a',
-          glow:   'rgba(220, 141, 58, 0.38)',
-          accent: 'linear-gradient(90deg, #673708 0%, #ffd08a 16%, #b56b22 34%, #dc8d3a 52%, #7b3f12 72%, #ffc98a 86%, #9a541a 100%)'
-        };
-      }
-      return {
-        band:   '#24745a',
-        display: '#58c493',
-        glow:   'rgba(88, 196, 147, 0.34)',
-        accent: 'linear-gradient(90deg, #14513e 0%, #79d4ad 18%, #278667 38%, #3fb487 58%, #165642 78%, #a3f0cf 90%, #1d6a51 100%)'
-      };
+      return array;
     }
 
-    function milestoneBackground(contact) {
-      const type = String(contact.milestoneType || '').trim().toLowerCase();
-      if (type.includes('year') || type.includes('annual')) {
-        return [
-          'radial-gradient(circle at 18% 48%, rgba(255, 238, 170, 0.78), transparent 30%)',
-          'linear-gradient(135deg, rgba(183, 121, 31, 0.20), transparent 52%)',
-          'repeating-linear-gradient(90deg, rgba(183, 121, 31, 0.13) 0 2px, transparent 2px 13px)'
-        ].join(', ');
-      }
-      if (type.includes('month')) {
-        return [
-          'radial-gradient(circle at 20% 44%, rgba(126, 211, 180, 0.58), transparent 32%)',
-          'linear-gradient(135deg, rgba(36, 116, 90, 0.18), transparent 58%)',
-          'repeating-linear-gradient(135deg, rgba(36, 116, 90, 0.12) 0 3px, transparent 3px 15px)'
-        ].join(', ');
-      }
-      if (type.includes('week')) {
-        return [
-          'radial-gradient(circle at 18% 48%, rgba(147, 197, 253, 0.58), transparent 32%)',
-          'linear-gradient(135deg, rgba(39, 100, 167, 0.17), transparent 58%)',
-          'repeating-linear-gradient(0deg, rgba(39, 100, 167, 0.10) 0 2px, transparent 2px 12px)'
-        ].join(', ');
-      }
-      return [
-        'radial-gradient(circle at 18% 48%, rgba(203, 213, 225, 0.72), transparent 32%)',
-        'linear-gradient(135deg, rgba(102, 112, 133, 0.14), transparent 58%)'
-      ].join(', ');
+    function initPaletteSequence() {
+      activePaletteSequence = shuffleArray(METALLIC_PALETTES);
     }
+    // Initialize sequence randomly on load
+    initPaletteSequence();
 
     function compareNames(a, b) {
       return String(a.name || '').localeCompare(
@@ -1350,7 +1496,7 @@
       }
 
       if (!state.milestoneView) {
-        state.contacts.slice().sort(compareNames).forEach(renderContactCard);
+        state.contacts.slice().sort(compareNames).forEach((contact, idx) => renderContactCard(contact, idx));
         return;
       }
 
@@ -1369,21 +1515,38 @@
       heading.className = 'milestone-section-title';
       heading.textContent = title;
       els.cards.appendChild(heading);
-      contacts.forEach(renderContactCard);
+      contacts.forEach((contact, idx) => renderContactCard(contact, idx));
     }
 
-    function renderContactCard(contact) {
+    function renderContactCard(contact, index = 0) {
         const fragment = els.template.content.cloneNode(true);
         const card     = fragment.querySelector('.milestone-card');
         card.tabIndex  = 0;
 
-        const metal = tierMetal(contact);
-        card.style.setProperty('--accent',         metal.accent);
-        card.style.setProperty('--band-color',     metal.band);
-        card.style.setProperty('--odometer-color', metal.display);
-        card.style.setProperty('--odometer-glow',  metal.glow);
+        const palette = activePaletteSequence.length ? activePaletteSequence : METALLIC_PALETTES;
+        const theme   = palette[index % palette.length];
+
+        card.style.setProperty('--card-bg',               theme.bg);
+        card.style.setProperty('--card-border',           theme.border);
+        card.style.setProperty('--card-sheen',            theme.sheen);
+        card.style.setProperty('--card-shadow',           theme.shadow);
+        card.style.setProperty('--card-border-selected',  theme.borderSelected);
+        card.style.setProperty('--card-glow',             theme.glow);
+        card.style.setProperty('--accent',                theme.accentBar);
+        card.style.setProperty('--band-bg',               theme.bandBg);
+        card.style.setProperty('--band-border',           theme.bandBorder);
+        card.style.setProperty('--odometer-color',        theme.odometerColor);
+        card.style.setProperty('--odometer-glow',         theme.odometerGlow);
+        card.style.setProperty('--btn-primary-bg',        theme.btnPrimaryBg);
+        card.style.setProperty('--btn-primary-border',    theme.btnPrimaryBorder);
+        card.style.setProperty('--btn-primary-text',      theme.btnPrimaryText);
+        card.style.setProperty('--btn-primary-hover-bg',  theme.btnPrimaryHoverBg);
+        card.style.setProperty('--chip-bg',               theme.chipBg);
+        card.style.setProperty('--chip-border',           theme.chipBorder);
+        card.style.setProperty('--chip-text',             theme.chipText);
+
         fragment.querySelector('.milestone-band')
-          .style.setProperty('--milestone-bg', milestoneBackground(contact));
+          .style.setProperty('--milestone-bg', theme.bandBg);
 
         fragment.querySelector('.member-name').textContent =
           contact.name || 'Unnamed member';
